@@ -16,8 +16,8 @@ export const gnbRootList: GnbRootListItem[] = [
         path: "/player",
         route: "팀정보",
     },
-    {
+    /**{
         path: "/arena",
         route: "투기장",
-    },
+    },*/
 ];

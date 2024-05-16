@@ -6,7 +6,7 @@ import { Result } from "@/model/match";
 export default function usePanelColor(teamResult: Result | null) {
     const panelColor = useMemo(() => {
         if (!teamResult || teamResult.outcome === null) {
-            return "bg-gray-200";
+            return "bg-gray-800 opacity-1";
         }
 
         return teamResult.outcome === "win"

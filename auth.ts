@@ -1,8 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { NextApiRequest } from "next";
-import { cookies } from "next/headers";
-import cookie from "cookie";
+import Google from "next-auth/providers/google"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -17,6 +15,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return (await response.json()) ?? null;
             },
         }),
+        Google({
+            clientId: process.env.GOOGLE_ID,
+            clientSecret: process.env.GOOGLE_SECRET,
+            authorization: {
+              params: {
+                prompt: "consent",
+                access_type: "offline",
+                response_type: "code",
+              },
+            },
+          }),
     ],
 });
 

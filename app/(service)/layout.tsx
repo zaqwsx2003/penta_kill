@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
-import Gnb from "./_components/Gnb";
 import Header from "./_components/Header";
-import { useRouter } from "next/navigation";
 
 type Props = { children: ReactNode };
 export default function Layout({ children }: Props) {

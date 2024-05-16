@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
 import {
     Card as CardRoot,
     CardContent,
@@ -10,8 +9,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { LCKTeams } from "@/dummy";
-import { Avatar } from "../../_components/Avatar";
-import { Popover } from "../../_components/Popover";
+import { Avatar } from "@/app/(service)/_components/Avatar";
+import { Popover } from "@/app/(service)/_components/Popover";
 
 export function Card() {
     return (
