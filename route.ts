@@ -10,7 +10,7 @@ export const gnbRootList: GnbRootListItem[] = [
     },
     {
         path: "/match",
-        route: "승부예측",
+        route: "경기분석",
     },
     {
         path: "/player",

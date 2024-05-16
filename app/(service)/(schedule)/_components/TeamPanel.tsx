@@ -14,8 +14,8 @@ type TeamPanel = {
 };
 
 const panelVariants = cva(
-    `relative flex items-center border-none rounded-[25px]
- px-5 py-3 min-h-[86px]`,
+    `relative flex items-center border-none rounded-[10px]
+ px-5 py-3 `,
     {
         variants: {
             position: {
