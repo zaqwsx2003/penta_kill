@@ -1,5 +1,11 @@
 "use client";
 
+import { scedule } from "@/dummy";
+
 export default function Home() {
-    return <div className='h-[200vh]'></div>;
+    return (
+        <div className='h-full'>
+            <div>{ scedule.data}</div>
+        </div>
+    );
 }
