@@ -10,7 +10,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { LCKTeams } from "@/dummy";
-import { Avatar } from "../../../_components/Avatar";
+import { Avatar } from "../../_components/Avatar";
 import { Popover } from "../../_components/Popover";
 
 export function Card() {

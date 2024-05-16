@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
-import Gnb from "./_components/Gnb";
+import Gnb from "./()/_components/Gnb";
 
 const inter = Inter({ subsets: ["latin"] });
 
