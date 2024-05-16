@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+div,
+:before,
+:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 html,
 body,
 :root {
@@ -69,8 +78,6 @@ body,
         --border: 217.2 32.6% 17.5%;
         --input: 217.2 32.6% 17.5%;
         --ring: 212.7 26.8% 83.9%;
-
-
     }
 }
 

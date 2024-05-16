@@ -1,11 +1,14 @@
-"use client";
-
-import { scedule } from "@/dummy";
+import { versers } from "@/dummy";
+import MatchCard from "./_components/MatchCard";
 
 export default function Home() {
+    const match = versers.data.schedule.events;
+
     return (
-        <div className='h-full'>
-            <div>{ scedule.data}</div>
+        <div className='w-[1024px] flex flex-col gap-10'>
+            {match.map((event, index) => (
+                <MatchCard event={event} key={index} />
+            ))}
         </div>
     );
 }

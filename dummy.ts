@@ -1281,8 +1281,7 @@ export const LCKTeams = [
         ],
     },
 ];
-
-export const scedule = {
+export const versers = {
     data: {
         schedule: {
             pages: { older: "b2xkZXI6OjEwNzkwNTI4NDk4Nzk5MjIzOA==", newer: null },
