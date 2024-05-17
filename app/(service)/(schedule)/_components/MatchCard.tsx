@@ -14,16 +14,19 @@ type MatchCardProps = {
 export default function MatchCard({ event }: MatchCardProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
     const [isHovered, setIsHovered] = useState(false);
+    const [isPanelHover, setIsPanelHover] = useState(false);
     const [isChevronVisible, setIsChevronVisible] = useState(false);
     const panel = useIncreasePanel();
 
     const handleMouseEnter = () => {
         setIsHovered(true);
+        setIsPanelHover(true);
         setIsChevronVisible(true);
     };
 
     const handleMouseLeave = () => {
         setIsHovered(false);
+        setIsPanelHover(false);
         setIsChevronVisible(false);
     };
 
@@ -46,30 +49,36 @@ export default function MatchCard({ event }: MatchCardProps) {
                 <span>{event.blockName}</span>
             </div>
             <div
-                className='flex'
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={handleChevronClick(event.match.id)}>
-                <TeamPanel event={event} position={0} />
-                <TeamPanel event={event} position={1} />
-            </div>
-            <div
-                className={`inline-block bg-gray-800 rounded-[10px] rounded-t-none w-full duration-300 overflow-hidden transition-max-height ease-in-out ${
-                    isHovered ? "pb-6 bg-blue-700" : "pb-0"
-                } ${isOpen ? "min-h-[600px]" : "max-h-0"}`}>
-                <div className={`bottom-0 flex justify-center w-full`}>
-                    {isOpen ? (
-                        <ChevronUp onClick={handleChevronClick(event.match.id)} />
-                    ) : (
-                        <ChevronDown onClick={handleChevronClick(event.match.id)} />
+                <div className='flex'>
+                    <TeamPanel event={event} position={0} />
+                    <TeamPanel event={event} position={1} />
+                </div>
+                <div
+                    className={`rounded-[10px] rounded-t-none w-full duration-300 overflow-hidden transition-max-height ease-out ${
+                        isHovered
+                            ? "pb-8  bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
+                            : "pb-0"
+                    } ${
+                        isOpen
+                            ? "min-h-[600px] bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
+                            : "max-h-0"
+                    }`}>
+                    <div className={`bottom-0 flex justify-center w-full pt-1`}>
+                        {isOpen ? (
+                            <ChevronUp />
+                        ) : (
+                            <ChevronDown className={`${isPanelHover ? "animate-bounce " : ""}`} />
+                        )}
+                    </div>
+                    {isOpen && (
+                        <div className='h-full '>
+                            ㄴㅇㄹㄴㅇㄴㅇㅁㄹㄴㅇㄹㅁㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
+                        </div>
                     )}
                 </div>
-
-                {isOpen && (
-                    <div className='h-full'>
-                        ㄴㅇㄹㄴㅇㄴㅇㅁㄹㄴㅇㄹㅁㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
-                    </div>
-                )}
             </div>
         </div>
     );

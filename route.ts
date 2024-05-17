@@ -6,7 +6,7 @@ export type GnbRootListItem = {
 export const gnbRootList: GnbRootListItem[] = [
     {
         path: "/",
-        route: "경기일정",
+        route: "승부예측",
     },
     {
         path: "/match",

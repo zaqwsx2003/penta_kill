@@ -39,7 +39,7 @@ export default function TeamPanel({ event, position }: TeamPanel) {
                 <Card className={`${cn(panelVariants({ position }))} ${panelColor}`}>
                     <CardContent className='flex items-center '>
                         <div className='flex gap-5'>
-                            <div className='max-w-[60px] max-h-[60px]'>
+                            <div className='min-w-[60px] min-h-[60px]'>
                                 <Image
                                     src={event.match.teams[position].image}
                                     width={60}

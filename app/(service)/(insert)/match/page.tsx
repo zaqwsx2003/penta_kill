@@ -1,5 +1,14 @@
 import React from "react";
+import YouTubePlayer from "./_components/YoutubePlayer";
 
 export default function page() {
-    return <div>경기 예측</div>;
+
+
+    return (
+        <div>
+            <div>
+                <YouTubePlayer />
+            </div>
+        </div>
+    );
 }
