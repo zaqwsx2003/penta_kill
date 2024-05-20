@@ -28,7 +28,7 @@ export default function RootLayout({
                 <QueryClientProvider>
                     <body
                         className={cn(
-                            "min-h-screen bg-background font-sans antialiased className='px-2'",
+                            "min-h-screen bg-background font-sans antialiased",
                             inter.className
                         )}>
                         <ThemeProvider

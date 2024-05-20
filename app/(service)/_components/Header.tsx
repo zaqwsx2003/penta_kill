@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { MenuIcon } from "lucide-react";
-import { gnbRootList } from "@/route";
+import React from "react";
+import { gnbRootList } from "@/routes";
 import GnbItem from "./GnbItem";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "../_lib/useHeader";
-// import { useCategoryStore } from "../../store/useCategory";
 
 export default function Header() {
     const path = usePathname();
     const { headerVisible } = useHeader();
+    const route = useRouter();
+
+    const routeLoginPageHandler = () => {
+        route.push("/auth/login");
+    };
 
     return (
         <header
@@ -30,7 +33,8 @@ export default function Header() {
                         />
                     ))}
                 </div>
-                <div className='ml-10'>
+                <div className='flex flex-row items-center gap-5 ml-10'>
+                    <div onClick={routeLoginPageHandler}>로그인</div>
                     <ModeToggle />
                 </div>
             </div>

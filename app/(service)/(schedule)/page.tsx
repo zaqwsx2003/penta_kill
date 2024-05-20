@@ -12,7 +12,7 @@ export default function Home() {
     const match = versers.data.schedule.events;
 
     return (
-        <>
+        <div className='relative flex-1 max-w-screen-lg mx-auto py-4'>
             <div className='flex items-center justify-center py-20'>
                 <h1 className={cn("text-5xl font-bold", font.className)}>승부예측</h1>
             </div>
@@ -21,6 +21,6 @@ export default function Home() {
                     <MatchCard event={event} key={index} />
                 ))}
             </div>
-        </>
+        </div>
     );
 }

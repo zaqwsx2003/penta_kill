@@ -1,6 +1,6 @@
 "use client";
 
-import { gnbRootList } from "@/route";
+import { gnbRootList } from "@/routes";
 import React from "react";
 import GnbItem from "./GnbItem";
 import { usePathname } from "next/navigation";
