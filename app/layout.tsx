@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 import Gnb from "./()/_components/Gnb";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,27 +23,30 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     return (
         <html lang='en'>
-            <AuthProvider>
-                <QueryClientProvider>
-                    <body
-                        className={cn(
-                            "min-h-screen bg-background font-sans antialiased",
-                            inter.className
-                        )}>
-                        <ThemeProvider
-                            attribute='class'
-                            defaultTheme='system'
-                            enableSystem
-                            disableTransitionOnChange
-                            storageKey='pentakill-theme'>
-                            {children}
-                        </ThemeProvider>
-                        <ReactQueryDevtools />
-                    </body>
-                </QueryClientProvider>
-            </AuthProvider>
+            <GoogleOAuthProvider clientId={clientId as string}>
+                <AuthProvider>
+                    <QueryClientProvider>
+                        <body
+                            className={cn(
+                                "min-h-screen bg-background font-sans antialiased",
+                                inter.className
+                            )}>
+                            <ThemeProvider
+                                attribute='class'
+                                defaultTheme='system'
+                                enableSystem
+                                disableTransitionOnChange
+                                storageKey='pentakill-theme'>
+                                {children}
+                            </ThemeProvider>
+                            <ReactQueryDevtools />
+                        </body>
+                    </QueryClientProvider>
+                </AuthProvider>
+            </GoogleOAuthProvider>
         </html>
     );
 }
