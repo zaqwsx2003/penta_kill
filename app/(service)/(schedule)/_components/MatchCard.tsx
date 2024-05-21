@@ -19,27 +19,36 @@ export default function MatchCard({ event }: MatchCardProps) {
     const panel = useIncreasePanel();
 
     const handleMouseEnter = () => {
-        setIsHovered(true);
-        setIsPanelHover(true);
-        setIsChevronVisible(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-        setIsPanelHover(false);
-        setIsChevronVisible(false);
-    };
-
-    const handleChevronClick = (id: string) => () => {
-        console.log(id, isOpen);
-        if (panel.openPanels[id]) {
-            panel.onClose(id);
-        } else {
-            panel.onOpen(id);
+        if (!outcomeNull) {
+            setIsHovered(true);
+            setIsPanelHover(true);
+            setIsChevronVisible(true);
         }
     };
 
-    const isOpen = panel.openPanels[event.match.id] || false;
+    const handleMouseLeave = () => {
+        if (!outcomeNull) {
+            setIsHovered(false);
+            setIsPanelHover(false);
+            setIsChevronVisible(false);
+        }
+    };
+
+    const handleChevronClick = (id: string) => () => {
+        if (!outcomeNull) {
+            if (panel.openPanels[id]) {
+                panel.onClose(id);
+            } else {
+                panel.onOpen(id);
+            }
+        }
+    };
+
+    const outcomeNull = event.match.teams.some(
+        (team) => team.result === null || team.result.outcome === null
+    );
+
+    const isOpen = (!outcomeNull && panel.openPanels[event.match.id]) || false;
 
     return (
         <div className='flex justify-between flex-col gap-2' key={event.match.id}>
@@ -58,8 +67,8 @@ export default function MatchCard({ event }: MatchCardProps) {
                 </div>
                 <div
                     className={`rounded-[10px] rounded-t-none w-full duration-300 overflow-hidden transition-max-height ease-out ${
-                        isHovered
-                            ? "pb-8  bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
+                        !outcomeNull && isHovered
+                            ? "pb-8 bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
                             : "pb-0"
                     } ${
                         isOpen
@@ -70,7 +79,7 @@ export default function MatchCard({ event }: MatchCardProps) {
                         {isOpen ? (
                             <ChevronUp />
                         ) : (
-                            <ChevronDown className={`${isPanelHover ? "animate-bounce " : ""}`} />
+                            <ChevronDown className={`${isPanelHover ? "animate-bounce" : ""}`} />
                         )}
                     </div>
                     {isOpen && (
