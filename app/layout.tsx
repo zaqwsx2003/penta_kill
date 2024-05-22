@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
-import AuthProvider from "./_components/AuthProvider";
-import { ThemeProvider } from "../components/theme-provider";
-import QueryClientProvider from "./_components/QueryClientProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "@/components/theme-provider";
+import QueryClientProvider from "@/app/_components/QueryClientProvider";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
-import Gnb from "./()/_components/Gnb";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -27,25 +24,23 @@ export default function RootLayout({
     return (
         <html lang='en'>
             <GoogleOAuthProvider clientId={clientId as string}>
-                <AuthProvider>
-                    <QueryClientProvider>
-                        <body
-                            className={cn(
-                                "min-h-screen bg-background font-sans antialiased",
-                                inter.className
-                            )}>
-                            <ThemeProvider
-                                attribute='class'
-                                defaultTheme='system'
-                                enableSystem
-                                disableTransitionOnChange
-                                storageKey='pentakill-theme'>
-                                {children}
-                            </ThemeProvider>
-                            <ReactQueryDevtools />
-                        </body>
-                    </QueryClientProvider>
-                </AuthProvider>
+                <QueryClientProvider>
+                    <body
+                        className={cn(
+                            "min-h-screen bg-background font-sans antialiased",
+                            inter.className
+                        )}>
+                        <ThemeProvider
+                            attribute='class'
+                            defaultTheme='system'
+                            enableSystem
+                            disableTransitionOnChange
+                            storageKey='pentakill-theme'>
+                            {children}
+                        </ThemeProvider>
+                        <ReactQueryDevtools />
+                    </body>
+                </QueryClientProvider>
             </GoogleOAuthProvider>
         </html>
     );

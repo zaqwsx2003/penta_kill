@@ -12,6 +12,10 @@ export default function Header() {
     const { headerVisible } = useHeader();
     const route = useRouter();
 
+    const routeRootPageHandler = () => {
+        route.push("/");
+    };
+
     const routeLoginPageHandler = () => {
         route.push("/auth/login");
     };
@@ -22,7 +26,9 @@ export default function Header() {
                 headerVisible ? "translate-y-0" : "-translate-y-full"
             } top-0 left-0 z-50`}>
             <div className='bg-white dark:bg-orange-400 h-20 flex items-center justify-between py-0 px-14 border-b'>
-                <div className='max-w-[200px] cursor-pointer'>penta - kill</div>
+                <div className='max-w-[200px] cursor-pointer' onClick={routeRootPageHandler}>
+                    penta - kill
+                </div>
                 <div className='flex-1 text-center w-auto'>
                     {gnbRootList.map((item, i) => (
                         <GnbItem
