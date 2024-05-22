@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/form-wrapper";
 import { useMutation } from "@tanstack/react-query";
-import { userLogin, userRegister } from "@/app/api/api";
+import { userRegister } from "@/app/api/api";
 
 type RegisterParams = z.infer<typeof RegisterSchema>;
 
@@ -34,19 +34,8 @@ export default function RegisterForm() {
         },
     });
 
-    const registerMutation = useMutation<RegisterParams, Error, RegisterParams>({
+    const mutation = useMutation<RegisterParams, Error, RegisterParams>({
         mutationFn: userRegister,
-        onSuccess: (data) => {
-            loginMutation.mutate({ email: data.email, password: data.password });
-        },
-        onError: (error: Error) => {
-            console.log(error);
-            setError(error.message);
-        },
-    });
-
-    const loginMutation = useMutation({
-        mutationFn: userLogin,
         onSuccess: () => {
             router.push("/");
         },
@@ -61,7 +50,7 @@ export default function RegisterForm() {
         setSuccess("");
 
         startTransition(() => {
-            registerMutation.mutate(data);
+            mutation.mutate(data);
         });
     };
 
@@ -80,7 +69,9 @@ export default function RegisterForm() {
                         {...register("username", { required: "Name is required" })}
                         className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                     />
-                    {errors.name && <span className='text-red-500'>{errors.name.message}</span>}
+                    {errors.username && (
+                        <span className='text-red-500'>{errors.username.message}</span>
+                    )}
                 </div>
                 <div className='flex flex-col w-full mt-4'>
                     <span className='dark:text-black'>이메일</span>

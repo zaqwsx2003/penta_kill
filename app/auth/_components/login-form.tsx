@@ -2,11 +2,15 @@
 
 import React, { useState, useTransition } from "react";
 import * as z from "zod";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schema";
 import { useRouter } from "next/navigation";
 import FormWrapper from "@/app/auth/_components/form-wrapper";
+import { useMutation } from "@tanstack/react-query";
+import { userLogin } from "@/app/api/api";
+
+type LoginParams = z.infer<typeof LoginSchema>;
 
 export default function LoginForm() {
     const router = useRouter();
@@ -29,15 +33,24 @@ export default function LoginForm() {
         },
     });
 
-    const routeRegisterHandler = () => {
-        router.push("/auth/register");
-    };
+    const loginMutation = useMutation({
+        mutationFn: userLogin,
+        onSuccess: () => {
+            router.push("/");
+        },
+        onError: (error: Error) => {
+            console.log(error);
+            setError(error.message);
+        },
+    });
 
-    const onSubmit = () => {
+    const onSubmit: SubmitHandler<LoginParams> = (data) => {
         setError("");
         setSuccess("");
 
-        startTransition(() => {});
+        startTransition(() => {
+            loginMutation.mutate(data);
+        });
     };
 
     return (
@@ -53,15 +66,15 @@ export default function LoginForm() {
                     <span className='dark:text-black'>이메일</span>
                     <input
                         type='text'
-                        {...(register("email"), { required: true })}
+                        {...register("email", { required: "Email is required" })}
                         className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                     />
                 </div>
-                <div className='flex flex-col w-full mt-4'>
+                <div className='flex flex-col w-full mt-4'> 
                     <span className='dark:text-black'>비밀번호</span>
                     <input
                         type='password'
-                        {...(register("password"), { required: true })}
+                        {...register("password", { required: "Password is required" })}
                         placeholder='********'
                         className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                     />
