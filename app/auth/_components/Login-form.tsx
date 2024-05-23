@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schema";
 import { useRouter } from "next/navigation";
-import FormWrapper from "@/app/auth/_components/form-wrapper";
+import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import { useMutation } from "@tanstack/react-query";
 import { userLogin } from "@/app/api/api";
 
@@ -70,7 +70,7 @@ export default function LoginForm() {
                         className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                     />
                 </div>
-                <div className='flex flex-col w-full mt-4'> 
+                <div className='flex flex-col w-full mt-4'>
                     <span className='dark:text-black'>비밀번호</span>
                     <input
                         type='password'

@@ -1,4 +1,6 @@
 import instance from "@/app/api/instance";
+import useUserStore from "@/lib/useUserSotre";
+import Cookies from "js-cookie";
 
 export type RegisterParams = {
     username: string;
@@ -24,6 +26,17 @@ type LoginParams = Pick<RegisterParams, "email" | "password">;
 export const userLogin = async ({ email, password }: LoginParams) => {
     try {
         const response = await instance.post("/users/login", { email, password });
+
+        // Extract the token from the Authorization header
+        const authHeader = response.headers["authorization"];
+        const accessToken = authHeader && authHeader.split(" ")[1];
+
+        if (accessToken) {
+            Cookies.set("Access_Token", accessToken, { sameSite: "strict" });
+            const setUser = useUserStore.getState().setUser;
+            setUser(accessToken);
+        }
+
         return response.data;
     } catch (error) {
         throw error;

@@ -5,8 +5,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { RegisterSchema } from "@/schema";
-import FormWrapper from "@/app/auth/_components/form-wrapper";
+import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import { useMutation } from "@tanstack/react-query";
 import { userRegister } from "@/app/api/api";
 

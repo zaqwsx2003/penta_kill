@@ -1,5 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { useCookies } from "react-cookie";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const instance = axios.create({
@@ -7,22 +6,20 @@ const instance = axios.create({
     withCredentials: true,
 });
 
-axios.interceptors.request.use(
+instance.interceptors.request.use(
     (config) => {
         const accessToken = Cookies.get("Access_Token");
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
-
         return config;
     },
-
     (error) => {
         return Promise.reject(error);
     }
 );
 
-axios.interceptors.response.use(
+instance.interceptors.response.use(
     (response) => {
         return response;
     },
