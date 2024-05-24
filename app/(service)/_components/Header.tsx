@@ -12,8 +12,6 @@ import { useSessionStore } from "@/lib/sessionStore";
 export default function Header() {
     const session = useSessionStore((state) => state.session);
     const token = useSessionStore((state) => state.accessToken);
-    console.log(token);
-    console.log(session);
     const path = usePathname();
     const { headerVisible } = useHeader();
     const route = useRouter();
@@ -39,6 +37,7 @@ export default function Header() {
                         alt='logo'
                         width={200}
                         height={40}
+                        priority={true}
                     />
                     <Image
                         src='/dark_small_logo.png'
@@ -46,6 +45,7 @@ export default function Header() {
                         alt='logo'
                         width={200}
                         height={40}
+                        priority={true}
                     />
                 </div>
                 <div className='flex-1 text-center w-auto'>

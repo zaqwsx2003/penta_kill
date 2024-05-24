@@ -37,7 +37,10 @@ export default function TeamPanel({ event, position }: TeamPanel) {
         <>
             <div className='w-1/2'>
                 <Card className={`${cn(panelVariants({ position }))} ${panelColor}`}>
-                    <CardContent className='flex items-center '>
+                    <CardContent
+                        className={`flex justify-between w-full ${
+                            position === 1 ? "flex-row-reverse" : ""
+                        }`}>
                         <div className='flex gap-5'>
                             <div className='min-w-[60px] min-h-[60px]'>
                                 <Image
@@ -48,6 +51,13 @@ export default function TeamPanel({ event, position }: TeamPanel) {
                                 />
                             </div>
                             <div className='font-bold'>{event.match.teams[position].code}</div>
+                        </div>
+                        <div className='flex items-center justify-center'>
+                            <div className='bg-gray-800 flex items-center justify-center border rounded-[10px] w-10 h-10'>
+                                <div className='text-white text-lg'>
+                                    {event.match.teams[position].result?.gameWins}
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

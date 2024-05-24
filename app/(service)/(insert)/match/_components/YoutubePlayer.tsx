@@ -17,6 +17,7 @@ const YouTubePlayer = () => {
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         }
 
+        // Define the callback function for the YouTube API
         const onYouTubeIframeAPIReady = () => {
             playerRef.current = new window.YT.Player("youtube-player", {
                 height: "390",
@@ -29,12 +30,14 @@ const YouTubePlayer = () => {
             });
         };
 
+        // Check if the YouTube API script has already been loaded
         if (!window.YT) {
             window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
         } else {
             onYouTubeIframeAPIReady();
         }
 
+        // Cleanup function to remove the player
         return () => {
             if (playerRef.current) {
                 playerRef.current.destroy();

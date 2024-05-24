@@ -65,7 +65,7 @@ export default function MatchCard({ event }: MatchCardProps) {
                     <TeamPanel event={event} position={0} />
                     <TeamPanel event={event} position={1} />
                 </div>
-                <div
+                {/* <div
                     className={`rounded-[10px] rounded-t-none w-full duration-300 overflow-hidden transition-max-height ease-out ${
                         !outcomeNull && isHovered
                             ? "pb-8 bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
@@ -87,7 +87,7 @@ export default function MatchCard({ event }: MatchCardProps) {
                             ㄴㅇㄹㄴㅇㄴㅇㅁㄹㄴㅇㄹㅁㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
                         </div>
                     )}
-                </div>
+                </div> */}
             </div>
         </div>
     );
