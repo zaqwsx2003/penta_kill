@@ -32,13 +32,6 @@ export const Social = () => {
                 onClick={googleSocialLogin}>
                 <FcGoogle className='h-5 w-5 ' />
             </Button>
-            <Button
-                size='lg'
-                className='w-full rounded-[10px]'
-                variant='outline'
-                onClick={() => {}}>
-                <FaGithub className='h-5 w-5' />
-            </Button>
         </div>
     );
 };

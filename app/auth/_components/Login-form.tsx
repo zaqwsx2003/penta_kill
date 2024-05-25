@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import { useMutation } from "@tanstack/react-query";
 import { userLogin } from "@/app/api/api";
+import FormError from "./Form-Error";
+import FormSuccess from "./Form-Success";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
@@ -61,25 +63,38 @@ export default function LoginForm() {
             showSocial>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className='flex flex-col items-center justify-center flex-grow w-full'>
-                <div className='flex flex-col w-full '>
-                    <span className='dark:text-black'>이메일</span>
-                    <input
-                        type='text'
-                        {...register("email", { required: "Email is required" })}
-                        className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
-                    />
+                className='flex flex-col items-center justify-between w-full gap-10'>
+                <div className='w-full'>
+                    <div className='flex flex-col w-full h-[5rem]'>
+                        <span className='dark:text-black'>이메일</span>
+                        <input
+                            type='text'
+                            {...register("email", { required: "Email is required" })}
+                            placeholder='gildong@gmail.com'
+                            className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
+                        />
+                        {errors.email && (
+                            <span className='text-red-500'>{errors.email.message}</span>
+                        )}
+                    </div>
+                    <div className='flex flex-col w-full mt-4 h-[5rem]'>
+                        <span className='dark:text-black'>비밀번호</span>
+                        <input
+                            type='password'
+                            {...register("password", { required: "Password is required" })}
+                            placeholder='********'
+                            className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
+                        />
+                        {errors.password && (
+                            <span className='text-red-500'>{errors.password.message}</span>
+                        )}
+                        <div className='mt-5'>
+                            <FormError message={error} />
+                            <FormSuccess message={success} />
+                        </div>
+                    </div>
                 </div>
-                <div className='flex flex-col w-full mt-4'>
-                    <span className='dark:text-black'>비밀번호</span>
-                    <input
-                        type='password'
-                        {...register("password", { required: "Password is required" })}
-                        placeholder='********'
-                        className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
-                    />
-                </div>
-                <button className='bg-black border w-full px-10 py-2 rounded-[10px] mt-8'>
+                <button className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 '>
                     <span className='text-white'>로그인</span>
                 </button>
             </form>

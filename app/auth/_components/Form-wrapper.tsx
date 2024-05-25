@@ -37,13 +37,14 @@ export default function FormWrapper({
                 />
             </Link>
 
-            <div className='w-[400px] h-[500px] bg-white rounded-[10px] flex flex-col items-center py-10 px-12'>
-                <h1 className='dark:text-black text space-y-1.5 p-6 text-3xl font-bold text-center'>
-                    {headerLabel}
-                </h1>
-
-                {children}
-                {showSocial && <Social />}
+            <div className='w-[400px] h-[600px] bg-white rounded-[10px] flex flex-col justify-between items-center py-10 px-12'>
+                <div className='w-full'>
+                    <h1 className='dark:text-black text space-y-1.5 p-6 text-3xl font-bold text-center'>
+                        {headerLabel}
+                    </h1>
+                    {children}
+                    {showSocial && <Social />}
+                </div>
                 <Link href={backButtonHref} className='text-black cursor-pointer'>
                     {backButtonLabel}
                 </Link>
