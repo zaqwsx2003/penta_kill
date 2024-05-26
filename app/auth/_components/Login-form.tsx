@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import * as z from "zod";
+import { useMutation } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schema";
-import { useRouter } from "next/navigation";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
-import { useMutation } from "@tanstack/react-query";
-import { userLogin } from "@/app/api/api";
-import FormError from "./Form-Error";
-import FormSuccess from "./Form-Success";
+import FormError from "@/app/auth/_components/Form-Error";
+import FormSuccess from "@/app/auth/_components/Form-Success";
+import serverActionLogin from "@/actions/login";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
@@ -36,22 +36,25 @@ export default function LoginForm() {
     });
 
     const loginMutation = useMutation({
-        mutationFn: userLogin,
-        onSuccess: () => {
+        mutationFn: serverActionLogin,
+        onSuccess: (data) => {
+            setSuccess(data.success);
+            setError("");
             router.push("/");
         },
         onError: (error: Error) => {
             console.log(error);
             setError(error.message);
+            setSuccess("");
         },
     });
 
-    const onSubmit: SubmitHandler<LoginParams> = (data) => {
+    const onSubmit: SubmitHandler<LoginParams> = (values) => {
         setError("");
         setSuccess("");
 
         startTransition(() => {
-            loginMutation.mutate(data);
+            loginMutation.mutate(values);
         });
     };
 
@@ -94,7 +97,9 @@ export default function LoginForm() {
                         </div>
                     </div>
                 </div>
-                <button className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 '>
+                <button
+                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5'
+                    disabled={isPending}>
                     <span className='text-white'>로그인</span>
                 </button>
             </form>
