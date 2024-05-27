@@ -1,3 +1,4 @@
+// src/lib/sessionStore.ts
 import { create } from "zustand";
 
 type User = {
@@ -13,6 +14,7 @@ type SessionState = {
     setSession: (user: User | null) => void;
     setLoading: (loading: boolean) => void;
     setAccessToken: (accessToken: string | null) => void;
+    logout: () => void; // 로그아웃 함수 추가
 };
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -22,4 +24,5 @@ export const useSessionStore = create<SessionState>((set) => ({
     setSession: (user) => set({ session: user }),
     setLoading: (loading) => set({ loading }),
     setAccessToken: (accessToken) => set({ accessToken }),
+    logout: () => set({ session: null, accessToken: null }), // 로그아웃 구현
 }));

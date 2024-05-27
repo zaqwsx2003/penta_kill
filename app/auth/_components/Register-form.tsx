@@ -11,12 +11,12 @@ import { useMutation } from "@tanstack/react-query";
 import serverActionRegister from "@/actions/register";
 import FormError from "./Form-Error";
 import FormSuccess from "./Form-Success";
+import { userRegister } from "@/app/api/api";
 
 type RegisterParams = z.infer<typeof RegisterSchema>;
 
 export default function RegisterForm() {
     const router = useRouter();
-    const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -37,7 +37,7 @@ export default function RegisterForm() {
     });
 
     const mutation = useMutation({
-        mutationFn: serverActionRegister,
+        mutationFn: userRegister,
         onSuccess: () => {
             router.push("/");
         },

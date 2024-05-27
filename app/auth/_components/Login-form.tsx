@@ -11,12 +11,14 @@ import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import FormError from "@/app/auth/_components/Form-Error";
 import FormSuccess from "@/app/auth/_components/Form-Success";
 import serverActionLogin from "@/actions/login";
+import { userLogin } from "@/app/api/api";
+import FormButton from "@/app/auth/_components/FormButton";
+import { login } from "@/lib/settingToken";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
 export default function LoginForm() {
     const router = useRouter();
-    const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -36,7 +38,12 @@ export default function LoginForm() {
     });
 
     const loginMutation = useMutation({
-        mutationFn: serverActionLogin,
+        mutationFn: async (values: LoginParams) => {
+            const response = await userLogin(values);
+            ("use server");
+            await login({ email: values.email, name: response.name });
+            return response;
+        },
         onSuccess: (data) => {
             setSuccess(data.success);
             setError("");
@@ -48,7 +55,6 @@ export default function LoginForm() {
             setSuccess("");
         },
     });
-
     const onSubmit: SubmitHandler<LoginParams> = (values) => {
         setError("");
         setSuccess("");
@@ -97,11 +103,7 @@ export default function LoginForm() {
                         </div>
                     </div>
                 </div>
-                <button
-                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5'
-                    disabled={isPending}>
-                    <span className='text-white'>로그인</span>
-                </button>
+                <FormButton label='로그인' isPending={isPending} />
             </form>
         </FormWrapper>
     );

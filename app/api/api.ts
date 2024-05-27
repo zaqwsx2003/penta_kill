@@ -1,6 +1,9 @@
 import instance from "@/app/api/instance";
 import Cookies from "js-cookie";
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/settingToken";
 
+// 회원가입
 export type RegisterParams = {
     username: string;
     email: string;
@@ -20,6 +23,7 @@ export const userRegister = async ({
     }
 };
 
+// 로그인
 type LoginParams = Pick<RegisterParams, "email" | "password">;
 
 export const userLogin = async ({ email, password }: LoginParams) => {
@@ -39,3 +43,8 @@ export const userLogin = async ({ email, password }: LoginParams) => {
         throw error;
     }
 };
+// TOKEN 가져오기
+export async function GET(request: NextRequest) {
+    const session = await getSession();
+    return NextResponse.json({ session });
+}
