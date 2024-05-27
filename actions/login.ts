@@ -1,30 +1,29 @@
 "use server";
 
-import { z } from "zod";
-import instance from "@/app/api/instance";
-import { LoginSchema } from "@/schema";
+import { NextApiRequest, NextApiResponse } from "next";
+import { signIn } from "next-auth/react";
 
-export default async function serverActionLogin(values: z.infer<typeof LoginSchema>) {
-    const validatedFields = LoginSchema.safeParse(values);
-
-    if (!validatedFields.success) {
-        throw new Error("로그인에 문제가 발생했습니다.");
+export default async function login(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method !== "POST") {
+        return res.status(405).end(); // Method Not Allowed
     }
 
-    const { email, password } = validatedFields.data;
+    const { email, password } = req.body;
 
     try {
-        const response = await instance.post("/user/login", {
+        const result = await signIn("credentials", {
+            redirect: false,
             email,
             password,
         });
 
-        if (response.data.success) {
-            return { success: "로그인 성공" };
+        if (result?.error) {
+            res.status(401).json({ error: result.error });
         } else {
-            throw new Error("로그인에 문제가 발생했습니다.");
+            res.status(200).json({ message: "로그인 성공", ...result });
         }
     } catch (error) {
-        throw new Error("로그인에 문제가 발생했습니다.");
+        console.error("Login error:", error);
+        res.status(500).json({ error: "로그인 중 오류가 발생했습니다." });
     }
 }

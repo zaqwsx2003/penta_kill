@@ -14,6 +14,7 @@ import serverActionLogin from "@/actions/login";
 import { userLogin } from "@/app/api/api";
 import FormButton from "@/app/auth/_components/FormButton";
 import { login } from "@/lib/settingToken";
+import { signIn } from "@/auth";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
@@ -37,31 +38,52 @@ export default function LoginForm() {
         },
     });
 
-    const loginMutation = useMutation({
-        mutationFn: async (values: LoginParams) => {
-            const response = await userLogin(values);
-            ("use server");
-            await login({ email: values.email, name: response.name });
-            return response;
-        },
-        onSuccess: (data) => {
-            setSuccess(data.success);
-            setError("");
-            router.push("/");
-        },
-        onError: (error: Error) => {
-            console.log(error);
-            setError(error.message);
-            setSuccess("");
-        },
-    });
-    const onSubmit: SubmitHandler<LoginParams> = (values) => {
+    // const loginMutation = useMutation({
+    //     mutationFn: async (values: LoginParams) => {
+    //         const response = await userLogin(values);
+
+    //         await login({ email: response.email, name: response.password });
+    //         return response;
+    //     },
+    //     onSuccess: (data) => {
+    //         setSuccess(data.success);
+    //         setError("");
+    //         router.push("/");
+    //     },
+    //     onError: (error: Error) => {
+    //         console.log(error);
+    //         setError(error.message);
+    //         setSuccess("");
+    //     },
+    // });
+
+    const onSubmit: SubmitHandler<LoginParams> = async (values) => {
         setError("");
         setSuccess("");
 
-        startTransition(() => {
-            loginMutation.mutate(values);
-        });
+        console.log("onSubmit called with values:", values); // Debugging log
+
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                setError(result.error || "로그인 중 오류가 발생했습니다.");
+            } else {
+                setSuccess("로그인 성공");
+                router.push("/");
+            }
+        } catch (error) {
+            console.error("Unexpected error during login:", error);
+            setError("로그인 중 오류가 발생했습니다.");
+        }
     };
 
     return (
@@ -80,6 +102,7 @@ export default function LoginForm() {
                             type='text'
                             {...register("email", { required: "Email is required" })}
                             placeholder='gildong@gmail.com'
+                            autoComplete='username'
                             className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                         />
                         {errors.email && (
@@ -92,6 +115,7 @@ export default function LoginForm() {
                             type='password'
                             {...register("password", { required: "Password is required" })}
                             placeholder='********'
+                            autoComplete='current-password'
                             className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
                         />
                         {errors.password && (
