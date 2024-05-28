@@ -17,7 +17,6 @@ body,
     height: 100%;
 }
 
-
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -91,6 +90,13 @@ body,
     }
 }
 
+* {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+* ::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
 /* :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

@@ -14,13 +14,13 @@ type TeamPanel = {
 };
 
 const panelVariants = cva(
-    `relative flex items-center border-none rounded-[10px]
+    `relative flex items-center light:border-none rounded-[10px] dark:border-gray-800
  px-5 py-3 `,
     {
         variants: {
             position: {
-                0: `rounded-r-none justify-start`,
-                1: `rounded-l-none justify-end`,
+                0: `rounded-r-none border-r-0 justify-start`,
+                1: `rounded-l-none border-l-0 justify-end`,
             },
         },
     }
@@ -28,17 +28,23 @@ const panelVariants = cva(
 
 export default function TeamPanel({ event, position }: TeamPanel) {
     const team = event.match?.teams[position];
-    const panelColor = useMatchPanelColor(team?.result || null);
+    // const panelColor = useMatchPanelColor(team?.result || null);  ${panelColor}
 
     if (!team) {
         return null;
     }
     return (
         <>
-            <div className='w-1/2'>
-                <Card className={`${cn(panelVariants({ position }))} ${panelColor}`}>
-                    <CardContent className='flex items-center '>
-                        <div className='flex gap-5'>
+            <div className='w-1/2 '>
+                <Card
+                    className={`${cn(panelVariants({ position }))}
+
+                 `}>
+                    <CardContent
+                        className={`flex justify-between w-full ${
+                            position === 1 ? "flex-row-reverse" : ""
+                        }`}>
+                        <div className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}>
                             <div className='min-w-[60px] min-h-[60px]'>
                                 <Image
                                     src={event.match.teams[position].image}
@@ -48,6 +54,13 @@ export default function TeamPanel({ event, position }: TeamPanel) {
                                 />
                             </div>
                             <div className='font-bold'>{event.match.teams[position].code}</div>
+                        </div>
+                        <div className='flex items-center justify-center'>
+                            <div className='bg-gray-800 flex items-center justify-center border rounded-[10px] w-12 h-12'>
+                                <div className='text-white text-4xl font-bold'>
+                                    {event.match.teams[position].result?.gameWins}
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
