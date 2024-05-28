@@ -1,6 +1,7 @@
 import instance from "@/app/api/instance";
 import Cookies from "js-cookie";
 
+// 회원가입
 export type RegisterParams = {
     username: string;
     email: string;
@@ -20,6 +21,7 @@ export const userRegister = async ({
     }
 };
 
+// 로그인
 type LoginParams = Pick<RegisterParams, "email" | "password">;
 
 export const userLogin = async ({ email, password }: LoginParams) => {
@@ -34,6 +36,16 @@ export const userLogin = async ({ email, password }: LoginParams) => {
             Cookies.set("Access_Token", accessToken, { sameSite: "strict" });
         }
 
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 경기일정
+export const getMatchList = async () => {
+    try {
+        const response = await instance.get("/schedules/leagues?league=lck");
         return response.data;
     } catch (error) {
         throw error;

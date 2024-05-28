@@ -11,15 +11,16 @@ import { useMutation } from "@tanstack/react-query";
 import { userLogin } from "@/app/api/api";
 import FormError from "./Form-Error";
 import FormSuccess from "./Form-Success";
+import { useSessionStore } from "@/lib/sessionStore";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
 export default function LoginForm() {
     const router = useRouter();
-    const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+    const setLogin = useSessionStore((state) => state.setLogin);
 
     const {
         register,
@@ -37,12 +38,15 @@ export default function LoginForm() {
 
     const loginMutation = useMutation({
         mutationFn: userLogin,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setSuccess(data.message);
+            setError("");
             router.push("/");
         },
         onError: (error: Error) => {
             console.log(error);
             setError(error.message);
+            setSuccess("");
         },
     });
 
@@ -94,7 +98,9 @@ export default function LoginForm() {
                         </div>
                     </div>
                 </div>
-                <button className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 '>
+                <button
+                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 '
+                    disabled={isPending}>
                     <span className='text-white'>로그인</span>
                 </button>
             </form>

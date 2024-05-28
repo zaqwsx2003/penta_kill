@@ -11,7 +11,7 @@ import { useSessionStore } from "@/lib/sessionStore";
 
 export default function Header() {
     const session = useSessionStore((state) => state.session);
-    const token = useSessionStore((state) => state.accessToken);
+    const isLogin = useSessionStore((state) => state.login);
     const path = usePathname();
     const { headerVisible } = useHeader();
     const route = useRouter();
@@ -58,8 +58,14 @@ export default function Header() {
                         />
                     ))}
                 </div>
+
                 <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
-                    <div onClick={routeLoginPageHandler}>로그인</div>
+                    {isLogin && isLogin ? (
+                        <div onClick={routeLoginPageHandler}>로그아웃</div>
+                    ) : (
+                        <div onClick={routeLoginPageHandler}>로그인</div>
+                    )}
+
                     <ModeToggle />
                 </div>
             </div>

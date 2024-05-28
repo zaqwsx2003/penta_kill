@@ -19,6 +19,7 @@ type CustomJwtPayload = JwtPayload & User;
 
 export default function SessionProvider({ children }: Props) {
     const setSession = useSessionStore((state) => state.setSession);
+    const setLogin = useSessionStore((state) => state.setLogin);
     const setLoading = useSessionStore((state) => state.setLoading);
     const setAccess = useSessionStore((state) => state.setAccessToken);
 
@@ -28,6 +29,7 @@ export default function SessionProvider({ children }: Props) {
                 const accessToken = Cookies.get("Access_Token");
                 console.log(accessToken);
                 if (accessToken) {
+                    setLogin(true);
                     const decodedToken = jwtDecode<CustomJwtPayload>(accessToken);
                     console.log("decodedToken", decodedToken);
                     const user: User = {
