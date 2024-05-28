@@ -12,7 +12,6 @@ const font = Do_Hyeon({
 export default function Home() {
     const cookieStore = cookies();
     const theme = cookieStore.get("theme");
-    console.log("theme", theme);
     const match = versers.data.schedule.events;
 
     return (

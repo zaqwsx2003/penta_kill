@@ -1,5 +1,7 @@
 import instance from "@/app/api/instance";
 import Cookies from "js-cookie";
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/settingToken";
 
 // 회원가입
 export type RegisterParams = {
@@ -51,3 +53,4 @@ export const getMatchList = async () => {
         throw error;
     }
 };
+

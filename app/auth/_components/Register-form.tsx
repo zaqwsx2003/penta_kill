@@ -5,19 +5,18 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { RegisterSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import { useMutation } from "@tanstack/react-query";
-import { userRegister } from "@/app/api/api";
+import serverActionRegister from "@/actions/register";
 import FormError from "./Form-Error";
 import FormSuccess from "./Form-Success";
+import { userRegister } from "@/app/api/api";
 
 type RegisterParams = z.infer<typeof RegisterSchema>;
 
 export default function RegisterForm() {
     const router = useRouter();
-    const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -37,7 +36,7 @@ export default function RegisterForm() {
         },
     });
 
-    const mutation = useMutation<RegisterParams, Error, RegisterParams>({
+    const mutation = useMutation({
         mutationFn: userRegister,
         onSuccess: () => {
             router.push("/");
@@ -48,12 +47,12 @@ export default function RegisterForm() {
         },
     });
 
-    const onSubmit: SubmitHandler<RegisterParams> = (data) => {
+    const onSubmit: SubmitHandler<RegisterParams> = (values) => {
         setError("");
         setSuccess("");
 
         startTransition(() => {
-            mutation.mutate(data);
+            mutation.mutate(values);
         });
     };
 
@@ -105,7 +104,8 @@ export default function RegisterForm() {
                 </div>
                 <button
                     type='submit'
-                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-12'>
+                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-12'
+                    disabled={isPending}>
                     <span className='text-white'>회원가입</span>
                 </button>
             </form>

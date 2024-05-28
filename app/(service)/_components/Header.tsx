@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,12 +17,39 @@ export default function Header() {
     const { headerVisible } = useHeader();
     const route = useRouter();
 
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const response = await fetch("/api/auth/session");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch session");
+                }
+                const data = await response.json();
+                console.log("Session Data:", data);
+            } catch (error) {
+                console.error("Error fetching session:", error);
+            }
+        };
+
+        fetchSession();
+
+        const accessToken = Cookies.get("Access_Token");
+        console.log("Access Token:", accessToken); // Access Token 출력
+
+    }, []); // 빈 배열을 의존성 배열로 설정하여 한 번만 실행되도록 함
+
     const routeRootPageHandler = () => {
         route.push("/");
     };
 
     const routeLoginPageHandler = () => {
         route.push("/auth/login");
+    };
+
+    const handleLogout = () => {
+        Cookies.remove("Access_Token");
+
+        route.push("/");
     };
 
     return (
@@ -60,11 +88,13 @@ export default function Header() {
                 </div>
 
                 <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
+
                     {isLogin && isLogin ? (
                         <div onClick={routeLoginPageHandler}>로그아웃</div>
                     ) : (
                         <div onClick={routeLoginPageHandler}>로그인</div>
                     )}
+
 
                     <ModeToggle />
                 </div>

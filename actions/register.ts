@@ -1,19 +1,31 @@
-import { RegisterSchema } from "@/schema";
-import { z } from "zod";
+"use server";
 
-export default async function register(values: z.infer<typeof RegisterSchema>) {
+import instance from "@/app/api/instance";
+import { z } from "zod";
+import { RegisterSchema } from "@/schema";
+
+export default async function serverActionRegister(values: z.infer<typeof RegisterSchema>) {
     const validatedFields = RegisterSchema.safeParse(values);
 
     if (!validatedFields.success) {
-        return { error: "Invalid fields!" };
+        return { error: "회원가입에 문제가 발생했습니다." };
     }
 
-    const { email, password, name } = validatedFields.data;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { email, password, username } = validatedFields.data;
 
-    const existingUser = await getUserByEmail(email);
+    try {
+        const response = await instance.post("/user/register", {
+            email,
+            password,
+            username,
+        });
 
-    if (existingUser) {
-        return { error: "Email already in use!" };
+        if (response.data.success) {
+            return { success: "회원가입 성공" };
+        } else {
+            throw new Error("회원가입에 문제가 발생했습니다.");
+        }
+    } catch (error) {
+        return { error: "회원가입에 문제가 발생했습니다." };
     }
 }

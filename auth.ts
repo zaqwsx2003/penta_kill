@@ -1,65 +1,78 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google"
+import NextAuth, { NextAuthConfig } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import axios from "axios";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+interface User {
+    id: string;
+    email: string;
+    name: string;
+    token: string;
+}
+
+export const authOptions: NextAuthConfig = {
+    pages: {
+        signIn: "/auth/login",
+        newUser: "/auth/register",
+    },
     providers: [
-        Credentials({
+        CredentialsProvider({
+            name: "Credentials",
             credentials: {
-                username: { label: "Username" },
+                username: { label: "Username", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials, request) {
-                const response = await fetch(request);
-                if (!response.ok) return null;
-                return (await response.json()) ?? null;
+            async authorize(credentials) {
+                try {
+                    const response = await axios.post(
+                        `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+                        {
+                            username: credentials.username,
+                            password: credentials.password,
+                        }
+                    );
+
+                    const user: User = response.data;
+
+                    if (user) {
+                        return user;
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    console.error("Error during authorization:", error);
+                    return null;
+                }
             },
         }),
-        Google({
+        GoogleProvider({
             clientId: process.env.GOOGLE_ID,
             clientSecret: process.env.GOOGLE_SECRET,
             authorization: {
-              params: {
-                prompt: "consent",
-                access_type: "offline",
-                response_type: "code",
-              },
-            },
-          }),
-    ],
-});
-
-/**
- *CredentialsProvider({
-            async authorize(credentials) {
-                const authResponse = await fetch(`${process.env.AUTH_URL}/api/login`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        id: credentials.username,
-                        password: credentials.password,
-                    }),
-                });
-                let setCookie = authResponse.headers.get("Set-Cookie");
-                console.log("set-cookie", setCookie);
-                if (setCookie) {
-                    const parsed = cookie.parse(setCookie);
-                    cookies().set("connect.sid", parsed["connect.sid"], parsed); // 브라우저에 쿠키를 심어주는 것
-                }
-                if (!authResponse.ok) {
-                    return null;
-                }
-
-                const user = await authResponse.json();
-                console.log("user", user);
-                return {
-                    email: user.id,
-                    name: user.nickname,
-                    image: user.image,
-                    ...user,
-                };
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                },
             },
         }),
- */
+    ],
+    callbacks: {
+        async jwt({ token, user, account, profile, isNewUser }: any) {
+            if (user) {
+                token.accessToken = (user as User).token;
+            }
+            return token;
+        },
+        async session({ session, token }: any) {
+            session.user = {
+                ...session.user,
+                accessToken: token.accessToken,
+            };
+            return session;
+        },
+    },
+    secret: process.env.AUTH_SECRET,
+};
+
+export default NextAuth(authOptions);
