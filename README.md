@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th style="text-align: center">프론트엔드</th>
+            <th style="text-align: center">프론트엔드</th>
             <th style="text-align: center">백엔드</th>
             <th style="text-align: center">데이터사이언스</th>
             <th style="text-align: center">데이터사이언스</th>
@@ -19,6 +20,7 @@
     <tbody>
         <tr>
             <td align="center"><a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/littleduck1219"><img src="https://avatars.githubusercontent.com/u/107936957?v=4" alt="박경덕" style="width: 400px;"></a></td>
+            <td align="center"><a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/solightnsalt"><img src="https://avatars.githubusercontent.com/u/108651896?v=4" alt="김다솔" style="width: 400px;"></a></td>
             <td align="center"><a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/kss123456789"><img src="https://avatars.githubusercontent.com/u/85011923?v=4" alt="김승수" style="width: 400px;"></a></td>
             <td align="center"><a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/zaqwsx2003"><img src="https://avatars.githubusercontent.com/u/47521211?v=4" alt="전준혁" style="width: 400px; height: auto;"></a></td>
             <td align="center"><a target="_blank" rel="noopener noreferrer nofollow" href=""><img src="https://avatars.githubusercontent.com/u/83434398?v=4" alt="최태혁" style="width: 400px;"></a></td>
@@ -26,6 +28,7 @@
         </tr>
         <tr>
             <td align="center"><a href="https://github.com/littleduck1219">박경덕</a></td>
+            <td align="center"><a href="https://github.com/solightnsalt">김다솔</a></td>
             <td align="center"><a href="https://github.com/kss123456789">김승수</a></td>
             <td align="center"><a href="https://github.com/zaqwsx2003">전준혁</a></td>
             <td align="center"><a href="https://github.com/chlxogur">최태혁</a></td>
@@ -38,11 +41,7 @@
 
 ### 기술
 
-<img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/>
-<img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/>
-<img src="https://img.shields.io/badge/TanStack Query-FF4154?style=flat-square&logo=reactquery&logoColor=white"/>
-<img src="https://img.shields.io/badge/reacthookform-EC5990?style=flat-square&logo=reacthookform&logoColor=white"/>
-<img src="https://img.shields.io/badge/zod-3E67B1?style=flat-square&logo=zod&logoColor=white"/>
+<img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/><img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/><img src="https://img.shields.io/badge/TanStack Query-FF4154?style=flat-square&logo=reactquery&logoColor=white"/><img src="https://img.shields.io/badge/reacthookform-EC5990?style=flat-square&logo=reacthookform&logoColor=white"/><img src="https://img.shields.io/badge/zod-3E67B1?style=flat-square&logo=zod&logoColor=white"/>
 
 ### Next.js
 
