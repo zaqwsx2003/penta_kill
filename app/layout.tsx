@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "@/components/Theme-provider";
-import QueryClientProvider from "@/app/_components/QueryClientProvider";
+import QueryClientProvider from "@/actions/_components/QueryClientProvider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";

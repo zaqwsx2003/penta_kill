@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { logout } from "@/lib/settingToken";
+// import { NextResponse } from "next/server";
+// import { logout } from "@/lib/settingToken";
 
-export async function POST() {
-    await logout();
-    return NextResponse.json({ success: true });
-}
+// export async function POST() {
+//     await logout();
+//     return NextResponse.json({ success: true });
+// }

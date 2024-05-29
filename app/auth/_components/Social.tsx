@@ -1,15 +1,11 @@
 "use client";
 
 import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 
 export const Social = () => {
-    // const searchParams = useSearchParams();
-    // const callbackUrl = searchParams.get("callbackUrl");
-
     const googleSocialLogin = useGoogleLogin({
         scope: "email profile",
         onSuccess: async ({ code }) => {
