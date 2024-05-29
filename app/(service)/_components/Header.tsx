@@ -9,6 +9,7 @@ import GnbItem from "@/app/(service)/_components/GnbItem";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "@/app/(service)/_lib/useHeader";
 import { useSessionStore } from "@/lib/sessionStore";
+import { signOut } from "next-auth/react";
 
 export default function Header() {
     const session = useSessionStore((state) => state.session);
@@ -29,9 +30,10 @@ export default function Header() {
     };
 
     const handleLogout = () => {
-        Cookies.remove("Access_Token");
-        setLogin(false);
-        setSession(null);
+        // Cookies.remove("Access_Token");
+        // setLogin(false);
+        // setSession(null);
+        signOut()
         route.push("/");
     };
 

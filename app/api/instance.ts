@@ -1,24 +1,25 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { getSession } from "next-auth/react";
 
 const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
     withCredentials: true,
 });
 
-instance.interceptors.request.use(
-    (config) => {
-        const accessToken = Cookies.get("Access_Token");
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+instance.interceptors.response.use(
+    (response) => {
+        const token = response.headers.authorization;
+        console.log("token", token);
+        if (token) {
+            Cookies.set("Access_Token", token);
         }
-        return config;
+        return response;
     },
     (error) => {
         return Promise.reject(error);
     }
 );
-
 instance.interceptors.response.use(
     (response) => {
         return response;

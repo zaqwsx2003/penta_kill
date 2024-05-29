@@ -1,13 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from "next/server";
+import { updateSession } from "./lib";
 
-export function middleware(req: NextRequest) {
-    const accessToken = req.cookies.get('Access_Token')?.value || null;
-    const url = req.nextUrl.clone();
-    url.searchParams.set('initialAccessToken', accessToken || '');
-
-    return NextResponse.rewrite(url);
+export async function middleware(request: NextRequest) {
+    return await updateSession(request);
 }
-
 export const config = {
     matcher: [],
 };

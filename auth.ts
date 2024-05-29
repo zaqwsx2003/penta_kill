@@ -1,7 +1,8 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import instance from "./app/api/instance";
 
 interface User {
     id: string;
@@ -10,7 +11,13 @@ interface User {
     token: string;
 }
 
-const authOptions: NextAuthConfig = {
+export const {
+    handlers: { GET, POST },
+    signIn,
+    signOut,
+    auth,
+} = NextAuth({
+    debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
@@ -19,31 +26,43 @@ const authOptions: NextAuthConfig = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text" },
+                email: { label: "email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials) {
+            async authorize(credentials, req) {
                 try {
-                    const response = await axios.post(
-                        `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+                    const response = await instance.post(
+                        "/users/login",
                         {
-                            username: credentials.username,
+                            email: credentials.email,
                             password: credentials.password,
+                        },
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
                         }
                     );
 
-                    const user: User = response.data;
-                    console.log("User:", user);
-
-                    if (user) {
+                    const token = response.headers.authorization;
+                    console.log(token);
+                    if (response.data && response.data.token) {
+                        const user: User = {
+                            id: response.data.id,
+                            email: response.data.email,
+                            name: response.data.name,
+                            token: token,
+                        };
                         return user;
                     } else {
-                        return null;
+                        console.error("Unexpected response format:", response.data);
                     }
-                } catch (error) {
-                    console.error("Error during authorization:", error);
-                    return null;
+                } catch (e: any) {
+                    const errorMessage = e.response?.data?.message || "Login failed";
+                    console.error("Error occurred:", errorMessage); // 에러 로그
+                    throw new Error(errorMessage + "&email=" + credentials.email);
                 }
+                return null;
             },
         }),
         GoogleProvider({
@@ -59,25 +78,15 @@ const authOptions: NextAuthConfig = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user, account, profile, isNewUser }: any) {
+        async jwt({ token, user }: any) {
             if (user) {
-                token.accessToken = (user as User).token;
+                token.accessToken = user.data.token;
             }
             return token;
         },
         async session({ session, token }: any) {
-            session.user = {
-                ...session.user,
-                accessToken: token.accessToken,
-            };
+            session.accessToken = token.accessToken;
             return session;
         },
     },
-    secret: process.env.AUTH_SECRET,
-};
-
-// NextAuth 인스턴스를 생성하고 필요한 핸들러들을 내보냅니다.
-const nextAuthInstance = NextAuth(authOptions);
-
-export const { handlers, signIn, signOut, auth } = nextAuthInstance;
-export default nextAuthInstance;
+});

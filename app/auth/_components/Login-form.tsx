@@ -14,6 +14,7 @@ import { userLogin } from "@/app/api/api";
 import { useSessionStore } from "@/lib/sessionStore";
 
 import FormButton from "@/app/auth/_components/FormButton";
+import { signIn } from "next-auth/react";
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
@@ -37,26 +38,45 @@ export default function LoginForm() {
         },
     });
 
-    const loginMutation = useMutation({
-        mutationFn: userLogin,
-        onSuccess: (data) => {
-            setSuccess(data.message);
-            setError("");
-            router.push("/");
-        },
-        onError: (error: Error) => {
-            console.log(error);
-            setError(error.message);
-            setSuccess("");
-        },
-    });
+    // const loginMutation = useMutation({
+    //     mutationFn: userLogin,
+    //     onSuccess: (data) => {
+    //         setSuccess(data.message);
+    //         setError("");
+    //         router.push("/");
+    //     },
+    //     onError: (error: Error) => {
+    //         console.log(error);
+    //         setError(error.message);
+    //         setSuccess("");
+    //     },
+    // });
+
+    // const onSubmit: SubmitHandler<LoginParams> = async (values) => {
+    //     setError("");
+    //     setSuccess("");
+    //     signIn();
+    //     // startTransition(() => {
+    //     //     loginMutation.mutate(values);
+    //     //     signIn();
+    //     // });
+    // };
 
     const onSubmit: SubmitHandler<LoginParams> = async (values) => {
         setError("");
         setSuccess("");
-        startTransition(() => {
-            loginMutation.mutate(values);
+        const result = await signIn("credentials", {
+            redirect: false,
+            email: values.email,
+            password: values.password,
         });
+
+        if (result?.error) {
+            setError(result.error);
+        } else {
+            setSuccess("로그인 성공");
+            router.push("/");
+        }
     };
 
     return (

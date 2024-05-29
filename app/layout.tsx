@@ -1,11 +1,11 @@
 import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "@/components/Theme-provider";
-import QueryClientProvider from "@/actions/_components/QueryClientProvider";
+import QueryClientProvider from "@/app/_components/QueryClientProvider";
 import { cn } from "@/lib/utils";
-import "./globals.css";
+import "@/app/globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import SessionProvider from "@/components/SessionProvider";
+import AuthProvider from "@/app/_components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,27 +19,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     return (
         <html lang='en'>
-            <SessionProvider>
-                <GoogleOAuthProvider clientId={clientId as string}>
-                    <QueryClientProvider>
-                        <body
-                            className={cn(
-                                "min-h-screen bg-background font-sans antialiased",
-                                inter.className
-                            )}>
-                            <ThemeProvider
-                                attribute='class'
-                                defaultTheme='system'
-                                enableSystem
-                                disableTransitionOnChange
-                                storageKey='pentakill-theme'>
-                                {children}
-                            </ThemeProvider>
-                            <ReactQueryDevtools />
-                        </body>
-                    </QueryClientProvider>
-                </GoogleOAuthProvider>
-            </SessionProvider>
+            <GoogleOAuthProvider clientId={clientId as string}>
+                <QueryClientProvider>
+                    <body
+                        className={cn(
+                            "min-h-screen bg-background font-sans antialiased",
+                            inter.className
+                        )}>
+                        <ThemeProvider
+                            attribute='class'
+                            defaultTheme='system'
+                            enableSystem
+                            disableTransitionOnChange
+                            storageKey='pentakill-theme'>
+                            {children}
+                        </ThemeProvider>
+                        <ReactQueryDevtools />
+                    </body>
+                </QueryClientProvider>
+            </GoogleOAuthProvider>
         </html>
     );
 }
