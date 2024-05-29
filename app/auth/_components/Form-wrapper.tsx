@@ -1,4 +1,4 @@
-import React, { Children, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Social } from "@/app/auth/_components/Social";
 import Link from "next/link";
 import Image from "next/image";

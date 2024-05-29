@@ -1,10 +1,15 @@
-import { auth } from "@/auth";
-import React from "react";
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware() {
-    const session = await auth();
+export function middleware(req: NextRequest) {
+    const accessToken = req.cookies.get('Access_Token')?.value || null;
+    const url = req.nextUrl.clone();
+    url.searchParams.set('initialAccessToken', accessToken || '');
+
+    return NextResponse.rewrite(url);
 }
 
 export const config = {
     matcher: [],
-  }
+};
+
+// "/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"

@@ -10,12 +10,10 @@ import { LoginSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import FormError from "@/app/auth/_components/Form-Error";
 import FormSuccess from "@/app/auth/_components/Form-Success";
-import serverActionLogin from "@/actions/login";
 import { userLogin } from "@/app/api/api";
 import { useSessionStore } from "@/lib/sessionStore";
 
 import FormButton from "@/app/auth/_components/FormButton";
-
 
 type LoginParams = z.infer<typeof LoginSchema>;
 
@@ -57,30 +55,9 @@ export default function LoginForm() {
     const onSubmit: SubmitHandler<LoginParams> = async (values) => {
         setError("");
         setSuccess("");
-
-        console.log("onSubmit called with values:", values); // Debugging log
-
-        try {
-            const response = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(values),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                setError(result.error || "로그인 중 오류가 발생했습니다.");
-            } else {
-                setSuccess("로그인 성공");
-                router.push("/");
-            }
-        } catch (error) {
-            console.error("Unexpected error during login:", error);
-            setError("로그인 중 오류가 발생했습니다.");
-        }
+        startTransition(() => {
+            loginMutation.mutate(values);
+        });
     };
 
     return (
@@ -124,13 +101,6 @@ export default function LoginForm() {
                         </div>
                     </div>
                 </div>
-
-                // <button
-                //     className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 '
-                //     disabled={isPending}>
-                //     <span className='text-white'>로그인</span>
-                // </button>
-
                 <FormButton label='로그인' isPending={isPending} />
             </form>
         </FormWrapper>

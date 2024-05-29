@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { usePathname, useRouter } from "next/navigation";
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
-import { usePathname, useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "@/app/(service)/_lib/useHeader";
 import { useSessionStore } from "@/lib/sessionStore";
@@ -13,44 +13,31 @@ import { useSessionStore } from "@/lib/sessionStore";
 export default function Header() {
     const session = useSessionStore((state) => state.session);
     const isLogin = useSessionStore((state) => state.login);
+    const setLogin = useSessionStore((state) => state.setLogin);
+    const setSession = useSessionStore((state) => state.setSession);
+
     const path = usePathname();
     const { headerVisible } = useHeader();
     const route = useRouter();
-
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const response = await fetch("/api/auth/session");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch session");
-                }
-                const data = await response.json();
-                console.log("Session Data:", data);
-            } catch (error) {
-                console.error("Error fetching session:", error);
-            }
-        };
-
-        fetchSession();
-
-        const accessToken = Cookies.get("Access_Token");
-        console.log("Access Token:", accessToken); // Access Token 출력
-
-    }, []); // 빈 배열을 의존성 배열로 설정하여 한 번만 실행되도록 함
 
     const routeRootPageHandler = () => {
         route.push("/");
     };
 
-    const routeLoginPageHandler = () => {
+    const handleLogin = () => {
         route.push("/auth/login");
     };
 
     const handleLogout = () => {
         Cookies.remove("Access_Token");
-
+        setLogin(false);
+        setSession(null);
         route.push("/");
     };
+
+    console.log("isLogin", isLogin);
+
+    useEffect(() => {});
 
     return (
         <header
@@ -88,13 +75,11 @@ export default function Header() {
                 </div>
 
                 <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
-
                     {isLogin && isLogin ? (
-                        <div onClick={routeLoginPageHandler}>로그아웃</div>
+                        <div onClick={handleLogout}>로그아웃</div>
                     ) : (
-                        <div onClick={routeLoginPageHandler}>로그인</div>
+                        <div onClick={handleLogin}>로그인</div>
                     )}
-
 
                     <ModeToggle />
                 </div>

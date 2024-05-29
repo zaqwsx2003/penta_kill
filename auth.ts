@@ -10,7 +10,7 @@ interface User {
     token: string;
 }
 
-export const authOptions: NextAuthConfig = {
+const authOptions: NextAuthConfig = {
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
@@ -33,6 +33,7 @@ export const authOptions: NextAuthConfig = {
                     );
 
                     const user: User = response.data;
+                    console.log("User:", user);
 
                     if (user) {
                         return user;
@@ -75,4 +76,8 @@ export const authOptions: NextAuthConfig = {
     secret: process.env.AUTH_SECRET,
 };
 
-export default NextAuth(authOptions);
+// NextAuth 인스턴스를 생성하고 필요한 핸들러들을 내보냅니다.
+const nextAuthInstance = NextAuth(authOptions);
+
+export const { handlers, signIn, signOut, auth } = nextAuthInstance;
+export default nextAuthInstance;
