@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import Cookies from "js-cookie";
 import { useSessionStore } from "@/lib/sessionStore";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 
 type Props = {
     children: React.ReactNode;
@@ -23,13 +23,14 @@ export default function SessionProvider({ children }: Props) {
     const setLogin = useSessionStore((state) => state.setLogin);
     const setLoading = useSessionStore((state) => state.setLoading);
     const setAccess = useSessionStore((state) => state.setAccessToken);
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
 
     useEffect(() => {
         const loadSession = async () => {
             try {
                 const accessToken =
-                    searchParams.get("initialAccessToken") || Cookies.get("Access_Token");
+                    // searchParams.get("initialAccessToken") ||
+                    Cookies.get("Access_Token");
                 console.log("Access Token: ", accessToken);
                 if (accessToken) {
                     setLogin(true);
@@ -55,7 +56,7 @@ export default function SessionProvider({ children }: Props) {
         };
 
         loadSession();
-    }, [searchParams, setSession, setLoading, setLogin, setAccess]);
+    }, [setSession, setLoading, setLogin, setAccess]);
 
     return <>{children}</>;
 }
