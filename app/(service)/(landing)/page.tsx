@@ -3,6 +3,7 @@ import MatchCard from "./_components/MatchCard";
 import { Do_Hyeon } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 
 const font = Do_Hyeon({
     subsets: ["latin"],

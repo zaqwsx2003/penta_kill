@@ -5,12 +5,15 @@ import { getSession } from "next-auth/react";
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
     withCredentials: true,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 instance.interceptors.response.use(
     (response) => {
         const token = response.headers.authorization;
-        console.log("token", token);
+
         if (token) {
             Cookies.set("Access_Token", token);
         }

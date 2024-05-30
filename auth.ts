@@ -1,22 +1,26 @@
-import NextAuth, { NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import axios, { AxiosError } from "axios";
-import instance from "./app/api/instance";
+import instance from "@/app/api/instance";
+import { jwtDecode } from "jwt-decode";
+
+interface UserInfo {
+    userid: number;
+    email: string;
+    username: string;
+    exp: number;
+    iat: number;
+}
 
 interface User {
-    id: string;
-    email: string;
-    name: string;
+    // id: string;
+    // email: string;
+    // name: string;
+    // userInfo: UserInfo;
     token: string;
 }
 
-export const {
-    handlers: { GET, POST },
-    signIn,
-    signOut,
-    auth,
-} = NextAuth({
+const nextAuthOptions = {
     debug: true,
     pages: {
         signIn: "/auth/login",
@@ -26,43 +30,31 @@ export const {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: { label: "email", type: "email" },
+                email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials, req) {
                 try {
-                    const response = await instance.post(
-                        "/users/login",
-                        {
-                            email: credentials.email,
-                            password: credentials.password,
-                        },
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
+                    const response = await instance.post("/users/login", {
+                        email: credentials.email,
+                        password: credentials.password,
+                    });
 
-                    const token = response.headers.authorization;
-                    console.log(token);
-                    if (response.data && response.data.token) {
+                    if (response.data) {
                         const user: User = {
-                            id: response.data.id,
-                            email: response.data.email,
-                            name: response.data.name,
-                            token: token,
+                            token: response.headers.authorization,
                         };
+
                         return user;
                     } else {
                         console.error("Unexpected response format:", response.data);
+                        throw new Error("Unexpected response format");
                     }
                 } catch (e: any) {
                     const errorMessage = e.response?.data?.message || "Login failed";
-                    console.error("Error occurred:", errorMessage); // 에러 로그
+                    console.error("Error occurred:", errorMessage);
                     throw new Error(errorMessage + "&email=" + credentials.email);
                 }
-                return null;
             },
         }),
         GoogleProvider({
@@ -80,13 +72,30 @@ export const {
     callbacks: {
         async jwt({ token, user }: any) {
             if (user) {
-                token.accessToken = user.data.token;
+                token.accessToken = user.token;
             }
             return token;
         },
         async session({ session, token }: any) {
             session.accessToken = token.accessToken;
+            const userInfo = jwtDecode<UserInfo>(token.accessToken.split(" ")[1]);
+            session.user = {
+                id: userInfo.userid.toString(),
+                email: userInfo.email,
+                name: userInfo.username,
+            };
+            console.log("Session:", session);
             return session;
         },
     },
-});
+};
+
+const {
+    handlers: { GET, POST },
+    signIn,
+    signOut,
+    auth,
+} = NextAuth(nextAuthOptions);
+
+export { GET, POST, signIn, signOut, auth };
+export default nextAuthOptions;
