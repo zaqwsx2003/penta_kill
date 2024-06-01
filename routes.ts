@@ -27,7 +27,7 @@ export const publicRoutes = ["/", "/auth/new-verification"];
 
 /**
  * An array of routes that are used for authentication
- * These routes will redirect logged in users to /settings
+ * These routes will redirect logged in users to /
  * @type {string[]}
  */
 export const authRoutes = [
@@ -41,6 +41,7 @@ export const authRoutes = [
 /**
  * The prefix for API authentication routes
  * Routes that start with this prefix are used for API authentication purposes
+ * 라우팅 인증 목적으로 사용됩니다.
  * @type {string}
  */
 export const apiAuthPrefix = "/api/auth";

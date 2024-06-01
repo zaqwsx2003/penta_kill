@@ -71,9 +71,13 @@ export default function Header() {
                     {loading ? (
                         <div>Loading...</div>
                     ) : session ? (
-                        <div onClick={logoutHandle}>로그아웃</div>
+                        <div className='hover:font-bold ease-in-out' onClick={logoutHandle}>
+                            로그아웃
+                        </div>
                     ) : (
-                        <Link href='/auth/login'>로그인</Link>
+                        <Link href='/auth/login' className='hover:font-bold ease-in-out'>
+                            로그인
+                        </Link>
                     )}
                     <ModeToggle />
                 </div>

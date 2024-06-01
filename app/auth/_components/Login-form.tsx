@@ -38,30 +38,6 @@ export default function LoginForm() {
         },
     });
 
-    // const loginMutation = useMutation({
-    //     mutationFn: userLogin,
-    //     onSuccess: (data) => {
-    //         setSuccess(data.message);
-    //         setError("");
-    //         router.push("/");
-    //     },
-    //     onError: (error: Error) => {
-    //         console.log(error);
-    //         setError(error.message);
-    //         setSuccess("");
-    //     },
-    // });
-
-    // const onSubmit: SubmitHandler<LoginParams> = async (values) => {
-    //     setError("");
-    //     setSuccess("");
-    //     signIn();
-    //     // startTransition(() => {
-    //     //     loginMutation.mutate(values);
-    //     //     signIn();
-    //     // });
-    // };
-
     const onSubmit: SubmitHandler<LoginParams> = async (values) => {
         setError("");
         setSuccess("");
