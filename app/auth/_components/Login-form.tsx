@@ -3,15 +3,12 @@
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import FormError from "@/app/auth/_components/Form-Error";
 import FormSuccess from "@/app/auth/_components/Form-Success";
-import { userLogin } from "@/app/api/api";
-import { useSessionStore } from "@/lib/sessionStore";
 
 import FormButton from "@/app/auth/_components/FormButton";
 import { signIn } from "next-auth/react";
@@ -38,21 +35,24 @@ export default function LoginForm() {
         },
     });
 
-    const onSubmit: SubmitHandler<LoginParams> = async (values) => {
-        setError("");
-        setSuccess("");
-        const result = await signIn("credentials", {
-            redirect: false,
-            email: values.email,
-            password: values.password,
-        });
+    const onSubmit: SubmitHandler<LoginParams> = (values) => {
+        startTransition(async () => {
+            setError("");
+            setSuccess("");
+            const result = await signIn("credentials", {
+                redirect: false,
+                email: values.email,
+                password: values.password,
+            });
 
-        if (result?.error) {
-            setError(result.error);
-        } else {
-            setSuccess("로그인 성공");
-            router.push("/");
-        }
+            if (result?.error) {
+                setError(result.error);
+            } else {
+                setSuccess("로그인 성공");
+                router.push("/");
+            }
+        })
+
     };
 
     return (

@@ -22,11 +22,7 @@ export default function Header() {
         route.push("/");
     };
 
-    // const loginHandle = () => {
-    //     route.push("/auth/login");
-    // };
-
-    const logoutHandle = () => {
+    const logoutHandler = () => {
         signOut();
         route.push("/");
     };
@@ -68,10 +64,9 @@ export default function Header() {
                     ))}
                 </div>
                 <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : session ? (
-                        <div className='hover:font-bold ease-in-out' onClick={logoutHandle}>
+                    {!loading &&
+                    session ? (
+                        <div className='hover:font-bold ease-in-out' onClick={logoutHandler}>
                             로그아웃
                         </div>
                     ) : (

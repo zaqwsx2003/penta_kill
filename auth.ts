@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, {NextAuthConfig} from "next-auth";
 import { jwtDecode } from "jwt-decode";
 import authConfig from "./auth.config";
 
@@ -10,12 +10,12 @@ interface UserInfo {
     iat: number;
 }
 
-const nextAuthOptions = {
+const nextAuthOptions:NextAuthConfig = {
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
     },
-    session: {strategy: "jwt"},
+    session: {strategy: "jwt" } ,
     ...authConfig,
     callbacks: {
         async jwt({ token, user }: any) {
