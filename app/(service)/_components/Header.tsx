@@ -26,7 +26,7 @@ export default function Header() {
         route.push("/");
     };
 
-    useEffect(() => {}, []);
+    console.log(session);
 
     return (
         <header
@@ -63,8 +63,7 @@ export default function Header() {
                     ))}
                 </div>
                 <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
-                    {!loading &&
-                    session ? (
+                    {!loading && session ? (
                         <div className='hover:font-bold ease-in-out' onClick={logoutHandler}>
                             로그아웃
                         </div>

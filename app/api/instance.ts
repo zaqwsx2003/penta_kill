@@ -4,25 +4,19 @@ import { getSession } from "next-auth/react";
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json",
-    },
 });
 
-instance.interceptors.response.use(
-    (response) => {
-        const token = response.headers.authorization;
-
-        if (token) {
-            Cookies.set("Access_Token", token);
-        }
-        return response;
+instance.interceptors.request.use(
+    (config) => {
+        const session = getSession();
+        console.log(session);
+        return config;
     },
     (error) => {
         return Promise.reject(error);
     }
 );
+
 instance.interceptors.response.use(
     (response) => {
         return response;
@@ -46,6 +40,8 @@ instance.interceptors.response.use(
                 );
                 const newAccessToken = response.data.accessToken;
                 Cookies.set("Access_Token", newAccessToken, { sameSite: "strict" });
+
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
                 return instance(originalRequest);
             } catch (error) {

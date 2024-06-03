@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import { jwtDecode } from "jwt-decode";
 import authConfig from "./auth.config";
+import Cookies from "js-cookie";
 
 interface UserInfo {
     userid: number;
@@ -11,7 +12,7 @@ interface UserInfo {
 }
 
 const nextAuthOptions: NextAuthConfig = {
-    debug: true,
+    // debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
@@ -27,6 +28,7 @@ const nextAuthOptions: NextAuthConfig = {
         },
         async session({ session, token }: any) {
             session.accessToken = token.accessToken;
+            Cookies.set("Access_Token", session.accessToken, { sameSite: "strict" });
             const userInfo = jwtDecode<UserInfo>(token.accessToken.split(" ")[1]);
             session.user = {
                 id: userInfo.userid.toString(),
