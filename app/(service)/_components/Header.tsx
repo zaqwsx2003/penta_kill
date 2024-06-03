@@ -8,7 +8,6 @@ import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "@/app/(service)/_lib/useHeader";
-import { auth } from "@/auth";
 import Link from "next/link";
 
 export default function Header() {
