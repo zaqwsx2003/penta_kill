@@ -41,18 +41,18 @@ export default function LoginForm() {
             setSuccess("");
             const result = await signIn("credentials", {
                 redirect: false,
-                email: values.email,
+                email: values.email as string,
                 password: values.password,
             });
 
             if (result?.error) {
                 setError(result.error);
+                console.log(error);
             } else {
                 setSuccess("로그인 성공");
                 router.push("/");
             }
-        })
-
+        });
     };
 
     return (

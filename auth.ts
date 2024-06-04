@@ -24,12 +24,12 @@ const nextAuthOptions: NextAuthConfig = {
             if (user) {
                 token.accessToken = user.token;
             }
-            return token;
+            return { ...token, ...user };
         },
         async session({ session, token }: any) {
             session.accessToken = token.accessToken;
-            Cookies.set("Access_Token", session.accessToken, { sameSite: "strict" });
             const userInfo = jwtDecode<UserInfo>(token.accessToken.split(" ")[1]);
+            session.expires = userInfo.exp;
             session.user = {
                 id: userInfo.userid.toString(),
                 email: userInfo.email,

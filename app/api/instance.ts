@@ -2,14 +2,32 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getSession } from "next-auth/react";
 
+type SessionType = {
+    accessToken?: string;
+    user: UserType;
+    expires: string;
+};
+
+type UserType = {
+    id: string;
+    email: string;
+    name: string;
+};
+
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
+    withCredentials: true,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 instance.interceptors.request.use(
-    (config) => {
-        const session = getSession();
-        console.log(session);
+    async (config) => {
+        const session: SessionType | null = await getSession();
+        const token = session?.accessToken;
+        console.log(token);
+        config.headers.authorization = `${session?.accessToken}`;
         return config;
     },
     (error) => {

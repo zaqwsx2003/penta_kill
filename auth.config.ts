@@ -2,6 +2,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import instance from "@/app/api/instance";
 import { NextAuthConfig } from "next-auth";
+import cookie from "cookie";
+import axios from "axios";
 
 interface User {
     // id: string;
@@ -21,19 +23,30 @@ export default {
             },
             async authorize(credentials, req) {
                 try {
-                    const response = await instance.post("/users/login", {
-                        email: credentials.email,
-                        password: credentials.password,
-                    });
+                    const response = await fetch(
+                        `${process.env.NEXT_PUBLIC_ENDPOINT}/users/login`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                email: credentials.email,
+                                password: credentials.password,
+                            }),
+                        }
+                    );
 
-                    if (response.data) {
+                    console.log("response", response);
+
+                    if (response) {
                         const user: User = {
-                            token: response.headers.authorization,
+                            token: response.headers.get("Authorization") as string,
                         };
 
                         return user;
                     } else {
-                        console.error("Unexpected response format:", response.data);
+                        console.error("Unexpected response format:", response);
                         throw new Error("Unexpected response format");
                     }
                 } catch (e: any) {

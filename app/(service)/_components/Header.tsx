@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import Cookies from "js-cookie";
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
 import { ModeToggle } from "@/components/ui/ModeToggle";
@@ -23,6 +24,7 @@ export default function Header() {
 
     const logoutHandler = () => {
         signOut();
+        Cookies.remove("Access_Token");
         route.push("/");
     };
 
