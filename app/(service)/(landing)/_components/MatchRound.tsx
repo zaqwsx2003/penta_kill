@@ -22,7 +22,9 @@ export default function MatchRound() {
     return (
         <>
             {match.map((event, index) => (
-                <MatchCard event={event} key={index} />
+                <>
+                    <MatchCard event={event} key={index} />
+                </>
             ))}
         </>
     );

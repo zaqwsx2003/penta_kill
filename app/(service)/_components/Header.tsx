@@ -28,8 +28,6 @@ export default function Header() {
         route.push("/");
     };
 
-    console.log(session);
-
     return (
         <header
             className={`sticky w-full transition-transform duration-300 ease-in-out ${

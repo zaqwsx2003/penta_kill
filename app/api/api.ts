@@ -1,4 +1,5 @@
 import instance from "@/app/api/instance";
+import { signIn } from "@/auth";
 import Cookies from "js-cookie";
 
 // 회원가입
@@ -51,4 +52,3 @@ export const getMatchList = async () => {
         throw error;
     }
 };
-

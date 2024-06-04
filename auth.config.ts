@@ -21,6 +21,7 @@ export default {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
+
             async authorize(credentials, req) {
                 try {
                     const response = await fetch(

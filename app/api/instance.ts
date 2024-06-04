@@ -25,8 +25,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
     async (config) => {
         const session: SessionType | null = await getSession();
-        const token = session?.accessToken;
-        console.log(token);
         config.headers.authorization = `${session?.accessToken}`;
         return config;
     },

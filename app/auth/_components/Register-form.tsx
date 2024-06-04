@@ -8,10 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import { useMutation } from "@tanstack/react-query";
-import serverActionRegister from "@/actions/register";
 import FormError from "./Form-Error";
 import FormSuccess from "./Form-Success";
 import { userRegister } from "@/app/api/api";
+import { signIn } from "next-auth/react";
 
 type RegisterParams = z.infer<typeof RegisterSchema>;
 
@@ -20,10 +20,12 @@ export default function RegisterForm() {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+    const [registerParams, setRegisterParams] = useState<RegisterParams | null>(null);
 
     const {
         register,
         handleSubmit,
+        getValues,
         setValue,
         formState: { errors },
     } = useForm<RegisterParams>({
@@ -40,6 +42,14 @@ export default function RegisterForm() {
         mutationFn: userRegister,
         onSuccess: () => {
             router.push("/");
+            if (registerParams) {
+                signIn("credentials", {
+                    redirect: false,
+                    email: registerParams.email,
+                    password: registerParams.password,
+                });
+            }
+            setSuccess("")
         },
         onError: (error: Error) => {
             console.log(error);
@@ -50,6 +60,7 @@ export default function RegisterForm() {
     const onSubmit: SubmitHandler<RegisterParams> = (values) => {
         setError("");
         setSuccess("");
+        setRegisterParams(values);
 
         startTransition(() => {
             mutation.mutate(values);
