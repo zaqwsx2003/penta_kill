@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import useMatchPanelColor from "../_lib/useMatchPanelColor";
-import { Event } from "@/model/match";
+// import { Event } from "@/model/match";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +26,10 @@ const panelVariants = cva(
     }
 );
 
-export default function TeamPanel({ event, position }: TeamPanel) {
-    const team = event.match?.teams[position];
+export default function TeamPanel({ match, position }: any) {
+
+
+    const team = match[position];
     // const panelColor = useMatchPanelColor(team?.result || null);  ${panelColor}
 
     if (!team) {
@@ -38,7 +40,6 @@ export default function TeamPanel({ event, position }: TeamPanel) {
             <div className='w-1/2 '>
                 <Card
                     className={`${cn(panelVariants({ position }))}
-
                  `}>
                     <CardContent
                         className={`flex justify-between w-full ${
@@ -47,18 +48,18 @@ export default function TeamPanel({ event, position }: TeamPanel) {
                         <div className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}>
                             <div className='min-w-[60px] min-h-[60px]'>
                                 <Image
-                                    src={event.match.teams[position].image}
+                                    src={match[position].image}
                                     width={60}
                                     height={60}
                                     alt='team'
                                 />
                             </div>
-                            <div className='font-bold'>{event.match.teams[position].code}</div>
+                            <div className='font-bold'>{match[position].code}</div>
                         </div>
                         <div className='flex items-center justify-center'>
                             <div className='bg-gray-800 flex items-center justify-center border rounded-[10px] w-12 h-12'>
                                 <div className='text-white text-4xl font-bold'>
-                                    {event.match.teams[position].result?.gameWins}
+                                    {match[position].result?.gameWins}
                                 </div>
                             </div>
                         </div>

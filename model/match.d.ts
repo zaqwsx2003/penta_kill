@@ -1,55 +1,50 @@
-export interface League {
+export interface WeekMatches {
+    data: DaysMatch[];
+}
+
+export interface DaysMatch {
+    blockName: string;
+    league: MatchLeague;
+    match: MatchDetails;
+    startTime: string;
+    state: string;
+    type: string;
+}
+
+export interface MatchLeague {
     name: string;
     slug: string;
 }
 
-export interface Result {
-    outcome: string | null;
-    gameWins: number;
+export interface MatchDetails {
+    flags?: string[] | null;
+    id: string;
+    strategy?: MatchStrategy;
+    teams?: MatchTeams[];
+    startTime?: Date | string;
+    state?: string;
+    type?: string;
 }
 
-export interface record {
-    wins: number;
-    losses: number;
+export interface MatchStrategy {
+    count: number;
+    type: string;
 }
 
-export interface Team {
-    name: string;
+export interface MatchTeams {
     code: string;
     image: string;
-    result: Result | null;
-    record: record | null;
+    name: string;
+    record: MatchRecord;
+    result: MatchResult | null;
 }
 
-export interface Match {
-    id: string;
-    flags: string[];
-    teams: Team[];
-    strategy: {
-        type: string;
-        count: number;
-    };
+export interface MatchRecord {
+    win: number;
+    lose: number;
 }
 
-export interface Event {
-    startTime: string;
-    state: string;
-    type: string;
-    blockName: string;
-    league: League;
-    match: Match;
-}
-
-export interface VersersData {
-    schedule: {
-        pages: {
-            older: string | null;
-            newer: string | null;
-        };
-        events: Event[];
-    };
-}
-
-export interface Versers {
-    data: VersersData;
+export interface MatchResult {
+    gameWins: number;
+    outcome: string | null;
 }
