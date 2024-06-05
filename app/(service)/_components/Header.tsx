@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import Cookies from "js-cookie";
+import Link from "next/link";
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "@/app/(service)/_lib/useHeader";
-import Link from "next/link";
 
 export default function Header() {
     const path = usePathname();
@@ -28,7 +28,7 @@ export default function Header() {
         route.push("/");
     };
 
-    return (
+    const headerContent = useMemo(() => (
         <header
             className={`sticky w-full transition-transform duration-300 ease-in-out ${
                 headerVisible ? "translate-y-0" : "-translate-y-full"
@@ -72,9 +72,10 @@ export default function Header() {
                             로그인
                         </Link>
                     )}
-                    <ModeToggle />
                 </div>
             </div>
         </header>
-    );
+    ), [headerVisible, path, loading, session]);
+
+    return headerContent;
 }

@@ -1,18 +1,29 @@
 "use client";
 
 import { useMemo } from "react";
-import { Result } from "@/model/match";
+import { MatchTeams } from "@/model/Match";
 
-export default function usePanelColor(teamResult: Result | null) {
+type PanelColorProps = {
+    team: MatchTeams;
+    matchState: string;
+};
+
+export default function usePanelColor({ team, matchState }: PanelColorProps) {
     const panelColor = useMemo(() => {
-        if (!teamResult || teamResult.outcome === null) {
-            return "bg-gray-800 hover:bg-gray-500 text-white";
+        if (matchState === "unstarted" && team.code) {
+            return "hover:bg-blue-500";
+        } else if (
+            team?.result?.outcome === null &&
+            team?.code === "TBD" &&
+            matchState === "unstarted"
+        ) {
+            return "bg-gray-800 text-white";
         }
 
-        return teamResult.outcome === "win"
+        return team?.result?.outcome === "win"
             ? "bg-blue-700 dark:bg-green-500"
             : "bg-gray-900 opacity-[0.2] dark:opacity-1 text-white";
-    }, [teamResult]);
+    }, [team, matchState]);
 
     return panelColor;
 }

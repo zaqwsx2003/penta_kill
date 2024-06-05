@@ -2,15 +2,16 @@
 
 import React from "react";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import useMatchPanelColor from "../_lib/useMatchPanelColor";
-// import { Event } from "@/model/match";
 import { cva } from "class-variance-authority";
+
+import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 type TeamPanel = {
     event: Event;
     position: 0 | 1;
+    matchState: string;
 };
 
 const panelVariants = cva(
@@ -26,11 +27,9 @@ const panelVariants = cva(
     }
 );
 
-export default function TeamPanel({ match, position }: any) {
-
-
+export default function TeamPanel({ match, position, matchState }: any) {
     const team = match[position];
-    // const panelColor = useMatchPanelColor(team?.result || null);  ${panelColor}
+    const panelColor = useMatchPanelColor(team || matchState || null);
 
     if (!team) {
         return null;
@@ -39,7 +38,7 @@ export default function TeamPanel({ match, position }: any) {
         <>
             <div className='w-1/2 '>
                 <Card
-                    className={`${cn(panelVariants({ position }))}
+                    className={`${cn(panelVariants({ position }))}, ${panelColor}
                  `}>
                     <CardContent
                         className={`flex justify-between w-full ${
