@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { cva } from "class-variance-authority";
 
@@ -62,11 +62,11 @@ export default function MatchRound() {
             </div>
             <div className='flex flex-col gap-y-10'>
                 {weeklyArrayFiltered.map((event: any, index: number) => (
-                    <React.Fragment key={index}>
+                    <Fragment key={index}>
                         {event.map((match: DaysMatch, index: number) => (
                             <MatchCard key={index} matches={match} />
                         ))}
-                    </React.Fragment>
+                    </Fragment>
                 ))}
             </div>
         </>

@@ -1,20 +1,20 @@
 import { create } from "zustand";
 
-type SelectedTeam = {
-    id: string;
-    selected: boolean;
+type SelectedGame = {
+    matchId: string;
     teamCode: string;
-    setSelected: (id: string, selected: boolean, teamCode: string) => void;
+    selected: boolean;
 };
 
-export const useSelectedTeam = create<SelectedTeam>((set) => ({
-    id: "",
-    selected: false,
-    teamCode: "",
-    setSelected: (id, selected, teamCode) =>
-        set((state) => ({
-            id,
-            selected,
-            teamCode,
+type SelectedTeamStore = {
+    game: SelectedGame | null;
+    setGameSelection: (matchId: string, teamCode: string, selected: boolean) => void;
+};
+
+export const useSelectedTeam = create<SelectedTeamStore>((set) => ({
+    game: null,
+    setGameSelection: (matchId, teamCode, selected) =>
+        set(() => ({
+            game: { matchId, teamCode, selected },
         })),
 }));

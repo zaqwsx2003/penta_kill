@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { cva } from "class-variance-authority";
 
@@ -12,11 +12,11 @@ type TeamPanel = {
     event: Event;
     position: 0 | 1;
     matchState: string;
+    onClick: () => void;
 };
 
 const panelVariants = cva(
-    `relative flex items-center light:border-none rounded-[10px] dark:border-gray-800
- px-5 py-3 `,
+    `relative flex items-center light:border-none rounded-[10px] dark:border-gray-800 px-5 py-3`,
     {
         variants: {
             position: {
@@ -27,25 +27,26 @@ const panelVariants = cva(
     }
 );
 
-export default function TeamPanel({ match, position, matchState }: any) {
+export default function TeamPanel({ match, position, matchState, onClick }: any) {
     const team = match[position];
     const panelColor = useMatchPanelColor({ team, matchState });
 
     if (!team) {
         return null;
     }
+
     return (
         <>
-            <div className='w-1/2 '>
+            <div className='w-1/2' onClick={onClick}>
                 <Card
                     className={`${cn(panelVariants({ position }))}, ${panelColor}
                  `}>
                     <CardContent
-                        className={`flex justify-between w-full ${
+                        className={`flex justify-between h-20 items-center w-full ${
                             position === 1 ? "flex-row-reverse" : ""
-                        }`}>
+                        } `}>
                         <div className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}>
-                            <div className='min-w-[60px] min-h-[60px]'>
+                            <div className='flex justify-center items-center min-w-[60px] min-h-[60px]'>
                                 <Image
                                     src={match[position].image}
                                     width={60}
