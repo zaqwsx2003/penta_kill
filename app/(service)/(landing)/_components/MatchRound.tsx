@@ -7,7 +7,7 @@ import { cva } from "class-variance-authority";
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import instance from "@/app/api/instance";
 import { cn } from "@/lib/utils";
-import { DaysMatch } from "@/model/Match";
+import { DaysMatch } from "@/model/match";
 
 const matchWeekVariant = cva(
     `flex justify-center items-center w-32 h-20 border border-white rounded-[10px] overflow-hidden cursor-pointer`,
@@ -33,15 +33,11 @@ export default function MatchRound() {
         },
     });
 
-
-
     useEffect(() => {
         if (match?.data) {
             setCurrentWeek(match.data.currentWeek);
         }
     }, [match]);
-
-
 
     if (isLoading) return <div>Loading</div>;
     if (isError) return <div>Error</div>;

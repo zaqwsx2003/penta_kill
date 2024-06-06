@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { MatchTeams } from "@/model/Match";
+import { MatchTeams } from "@/model/match";
 
 type PanelColorProps = {
     team: MatchTeams;
@@ -24,6 +24,8 @@ export default function usePanelColor({ team, matchState }: PanelColorProps) {
             ? "bg-blue-700 dark:bg-green-500"
             : "bg-gray-900 opacity-[0.2] dark:opacity-1 text-white";
     }, [team, matchState]);
+
+    const isSelected = useMemo(() => {}, []);
 
     return panelColor;
 }

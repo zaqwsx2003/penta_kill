@@ -29,7 +29,7 @@ const panelVariants = cva(
 
 export default function TeamPanel({ match, position, matchState }: any) {
     const team = match[position];
-    const panelColor = useMatchPanelColor(team || matchState || null);
+    const panelColor = useMatchPanelColor({ team, matchState });
 
     if (!team) {
         return null;
