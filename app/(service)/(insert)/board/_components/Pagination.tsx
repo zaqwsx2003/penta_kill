@@ -12,7 +12,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
 	}
 
 	return (
-		<div className="flex justify-center mt-4">
+		<div className="flex justify-center mt-4 text-xs">
 			{pageNumbers.map((number) => (
 				<button
 					key={number}

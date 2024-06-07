@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import Link from "next/link";
 import Post from "./_components/Post";
 import Pagination from "./_components/Pagination";
 
@@ -22,14 +24,14 @@ const BoardPage = () => {
 	const indexOfFirstPost = indexOfLastPost - postsPerPage;
 	const currentPosts = mockPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-	const handlePageChange = (page: number) => {
+	const pageChangeHandler = (page: number) => {
 		setCurrentPage(page);
 	};
 
 	return (
 		<div className="container max-w-3xl mx-auto p-4">
-			<h1 className="text-2xl font-bold mb-4">Board</h1>
-			<div className="grid grid-cols-12 gap-4 bg-gray-800 text-white p-4 rounded-md">
+			<h1 className="text-2xl font-bold mb-4">펜타톡</h1>
+			<div className="grid grid-cols-12 gap-4 bg-gray-800 text-white p-4 rounded-md text-xs">
 				<div className="col-span-1">#</div>
 				<div className="col-span-5">제목</div>
 				<div className="col-span-2">글쓴이</div>
@@ -37,7 +39,7 @@ const BoardPage = () => {
 				<div className="col-span-1">조회수</div>
 				<div className="col-span-1">추천</div>
 			</div>
-			<div className="grid grid-cols-1 gap-2 mt-2">
+			<div className="grid grid-cols-1 gap-2 mt-2 text-xs">
 				{currentPosts.map((post, index) => (
 					<Post key={post.id} index={indexOfFirstPost + index + 1} {...post} />
 				))}
@@ -45,7 +47,7 @@ const BoardPage = () => {
 			<Pagination
 				currentPage={currentPage}
 				totalPages={totalPages}
-				onPageChange={handlePageChange}
+				onPageChange={pageChangeHandler}
 			/>
 		</div>
 	);
