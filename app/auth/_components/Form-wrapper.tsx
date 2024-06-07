@@ -20,26 +20,18 @@ export default function FormWrapper({
 }: FormWrapperProps) {
     return (
         <div className='flex flex-col items-center justify-center'>
-            <Link href={"/"}>
+            <Link href={"/"} className='cursor-pointer'>
                 <Image
                     src='/dark_big_logo.png'
-                    className='dark:block hidden'
-                    width={500}
-                    height={260}
-                    alt='logo'
-                />
-                <Image
-                    src='/light_big_logo.png'
-                    className='dark:hidden'
+                    className='block '
                     width={500}
                     height={260}
                     alt='logo'
                 />
             </Link>
-
             <div className='w-[400px] h-[600px] bg-white rounded-[10px] flex flex-col justify-between items-center py-10 px-12'>
                 <div className='w-full'>
-                    <h1 className='dark:text-black text space-y-1.5 p-6 text-3xl font-bold text-center'>
+                    <h1 className='text-black space-y-1.5 p-6 text-3xl font-bold text-center'>
                         {headerLabel}
                     </h1>
                     {children}

@@ -1,20 +1,22 @@
 import { create } from "zustand";
 
-type SelectedGame = {
+type BetInfo = {
     matchId: string;
     teamCode: string;
-    selected: boolean;
+    points: number | null; // Points bet on the team
 };
 
-type SelectedTeamStore = {
-    game: SelectedGame | null;
-    setGameSelection: (matchId: string, teamCode: string, selected: boolean) => void;
+type SelectedGameStore = {
+    betInfo: BetInfo | null;
+    setBet: (matchId: string, teamCode: string, points: number | null) => void;
+    clearBet: () => void;
 };
 
-export const useSelectedTeam = create<SelectedTeamStore>((set) => ({
-    game: null,
-    setGameSelection: (matchId, teamCode, selected) =>
+export const useSelectedGameStore = create<SelectedGameStore>((set) => ({
+    betInfo: null,
+    setBet: (matchId, teamCode, points) =>
         set(() => ({
-            game: { matchId, teamCode, selected },
+            betInfo: { matchId, teamCode, points },
         })),
+    clearBet: () => set(() => ({ betInfo: null })),
 }));

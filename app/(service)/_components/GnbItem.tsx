@@ -13,7 +13,7 @@ export default function GnbItem({
         <>
             <Link
                 href={path}
-                className={`cursor-pointer inline-block mx-10 py-6 px-4 ${
+                className={`cursor-pointer text-white inline-block mx-10 py-6 px-4 ${
                     currentPath
                         ? "font-bold border-blue-800 dark.border-white border-b-4 py-4 text-blue-800 dark:text-white "
                         : ""

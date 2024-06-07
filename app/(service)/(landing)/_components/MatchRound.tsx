@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { DaysMatch } from "@/model/match";
 
 const matchWeekVariant = cva(
-    `flex justify-center items-center w-32 h-20 border border-white rounded-[10px] overflow-hidden cursor-pointer`,
+    `flex justify-center items-center w-32 h-20 border border-white rounded-[10px] overflow-hidden cursor-pointer text-white`,
     {
         variants: {
             selectWeek: { true: `bg-blue-500`, false: "" },

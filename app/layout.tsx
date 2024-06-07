@@ -27,14 +27,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 "min-h-screen bg-background font-sans antialiased",
                                 inter.className
                             )}>
-                            <ThemeProvider
+                            {children}
+                            {/* <ThemeProvider
                                 attribute='class'
                                 defaultTheme='system'
                                 enableSystem
                                 disableTransitionOnChange
                                 storageKey='pentakill-theme'>
-                                {children}
-                            </ThemeProvider>
+                            </ThemeProvider> */}
                             <ReactQueryDevtools />
                         </body>
                     </QueryClientProvider>

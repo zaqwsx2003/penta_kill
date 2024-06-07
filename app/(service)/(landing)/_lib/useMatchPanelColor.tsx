@@ -17,7 +17,7 @@ export default function usePanelColor({ team, matchState }: PanelColorProps) {
             team?.code === "TBD" &&
             matchState === "unstarted"
         ) {
-            return "bg-gray-800 text-white";
+            return "b[g-gray-800 text-white";
         }
 
         return team?.result?.outcome === "win"
