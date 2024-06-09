@@ -41,7 +41,6 @@ export default function RegisterForm() {
     const mutation = useMutation({
         mutationFn: userRegister,
         onSuccess: () => {
-            router.push("/");
             if (registerParams) {
                 signIn("credentials", {
                     redirect: false,
@@ -49,7 +48,8 @@ export default function RegisterForm() {
                     password: registerParams.password,
                 });
             }
-            setSuccess("")
+            router.push("/");
+            setSuccess("");
         },
         onError: (error: Error) => {
             console.log(error);

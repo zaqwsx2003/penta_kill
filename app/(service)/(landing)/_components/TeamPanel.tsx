@@ -19,6 +19,7 @@ type TeamPanelProps = {
     onClick: () => void;
     isModalOpen: boolean;
     matchTime: string;
+    setIsModalOpen: (open: boolean) => void;
 };
 
 const panelVariants = cva(
@@ -40,6 +41,7 @@ export default function TeamPanel({
     onClick,
     isModalOpen,
     matchTime,
+    setIsModalOpen,
 }: TeamPanelProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
     const { setBet, betInfo } = useSelectedGameStore();
@@ -53,8 +55,14 @@ export default function TeamPanel({
     const mutation = useMutation({
         mutationKey: ["betting", "point"],
         mutationFn: async (data: { matchId: string; teamCode: string; point: number }) => {
-            const response = await instance.post("/point/bettings", data);
+            const response = await instance.post("/points/bettings", data);
             return response.data;
+        },
+        onSuccess: () => {
+            setIsModalOpen(false);
+        },
+        onError: (error) => {
+            setIsModalOpen(false);
         },
     });
 

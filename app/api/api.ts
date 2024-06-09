@@ -43,7 +43,17 @@ export const userLogin = async ({ email, password }: LoginParams) => {
     }
 };
 
-// 경기일정
+// 승부예측(일정)
+export const getMatchPredictionList = async () => {
+    try {
+        const response = await instance.get("/bets/recentTournament/schedules");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 경기일정 (수정해야함)
 export const getMatchList = async () => {
     try {
         const response = await instance.get("/schedules/leagues?league=lck");

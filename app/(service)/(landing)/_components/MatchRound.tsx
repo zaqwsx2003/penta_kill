@@ -1,22 +1,13 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { cva } from "class-variance-authority";
 
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import instance from "@/app/api/instance";
-import { cn } from "@/lib/utils";
 import { DaysMatch } from "@/model/match";
-
-const matchWeekVariant = cva(
-    `flex justify-center items-center w-32 h-20 border border-white rounded-[10px] overflow-hidden cursor-pointer text-white`,
-    {
-        variants: {
-            selectWeek: { true: `bg-blue-500`, false: "" },
-        },
-    }
-);
+import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
+import { getMatchPredictionList } from "@/app/api/api";
 
 export default function MatchRound() {
     const [currentWeek, setCurrentWeek] = useState<number>(0);
@@ -27,10 +18,7 @@ export default function MatchRound() {
         isError,
     } = useQuery({
         queryKey: ["match"],
-        queryFn: async () => {
-            const response = await instance.get("/bets/recentTournament/schedules");
-            return response.data;
-        },
+        queryFn: getMatchPredictionList,
     });
 
     useEffect(() => {
@@ -50,16 +38,11 @@ export default function MatchRound() {
 
     return (
         <>
-            <div className='flex flex-row gap-x-10 gap-y-10 justify-center items-center flex-wrap'>
-                {weeklyArray.map((_, index: number) => (
-                    <div
-                        className={cn(matchWeekVariant({ selectWeek: currentWeek === index }))}
-                        key={index}
-                        onClick={() => setCurrentWeek(index)}>
-                        {index + 1}주차
-                    </div>
-                ))}
-            </div>
+            <WeekDropDown
+                currentWeek={currentWeek}
+                setCurrentWeek={setCurrentWeek}
+                weeklyArray={weeklyArray}
+            />
             <div className='flex flex-col gap-y-10'>
                 {weeklyArrayFiltered.map((event: any, index: number) => (
                     <Fragment key={index}>

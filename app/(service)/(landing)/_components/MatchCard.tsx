@@ -29,8 +29,7 @@ export default function MatchCard({ matches }: MatchCardProps) {
 
     const TeamPanelMemoized = memo(TeamPanel);
 
-    useEffect(() => {
-    }, [matches]);
+    useEffect(() => {}, [matches]);
 
     return (
         <div className='flex justify-between flex-col gap-2' key={matches.match.id}>
@@ -57,6 +56,7 @@ export default function MatchCard({ matches }: MatchCardProps) {
                             activeModalTeam.teamCode === team.code
                         }
                         matchTime={matches.startTime}
+                        setIsModalOpen={setIsModalOpen}
                     />
                 ))}
             </div>
