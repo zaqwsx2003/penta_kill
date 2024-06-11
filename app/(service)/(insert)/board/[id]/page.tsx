@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import avatarImg from "@/public/mid.png";
 
-const PostDetail = () => {
+export default function Page() {
 	const { id } = useParams();
 
 	// 목업 데이터
@@ -23,7 +23,6 @@ const PostDetail = () => {
 
 감사합니다.`,
 	};
-
 	return (
 		<div className="max-w-4xl mx-auto p-4 text-white">
 			<div className="bg-gray-800 p-6 rounded-md">
@@ -62,6 +61,4 @@ const PostDetail = () => {
 			</div>
 		</div>
 	);
-};
-
-export default PostDetail;
+}
