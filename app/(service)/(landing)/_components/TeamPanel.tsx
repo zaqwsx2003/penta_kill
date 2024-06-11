@@ -1,25 +1,22 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { cva } from "class-variance-authority";
-
 import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import useKoreanDateFormat from "@/app/(service)/_lib/useDate";
-import { useSelectedGameStore } from "@/lib/gameSelectStore";
-import { useMutation } from "@tanstack/react-query";
-import instance from "@/app/api/instance";
+import BettingModal from "./BettingModal";
+import { useBettingModalState } from "@/lib/bettingModalStore";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import SessionModal from "./SessionModal";
 
 type TeamPanelProps = {
     match: any;
     position: 0 | 1;
     matchState: string;
-    onClick: () => void;
-    isModalOpen: boolean;
     matchTime: string;
-    setIsModalOpen: (open: boolean) => void;
 };
 
 const panelVariants = cva(
@@ -34,82 +31,32 @@ const panelVariants = cva(
     }
 );
 
-export default function TeamPanel({
-    match,
-    position,
-    matchState,
-    onClick,
-    isModalOpen,
-    matchTime,
-    setIsModalOpen,
-}: TeamPanelProps) {
-    const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
-    const { setBet, betInfo } = useSelectedGameStore();
+export default function TeamPanel({ match, position, matchState, matchTime }: TeamPanelProps) {
+    const session = useSession();
+    const router = useRouter();
+    const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
+        useBettingModalState();
+    const [sessionModal, setSessionModal] = useState<boolean>(false);
     const team = match.teams[position];
     const panelColor = useMatchPanelColor({ team, matchState });
-
-    const [inputOpen, setInputOpen] = useState<boolean>(false);
-    const [point, setPoint] = useState<number | null>(null);
-    const [inputValue, setInputValue] = useState<string>("");
-
-    const mutation = useMutation({
-        mutationKey: ["betting", "point"],
-        mutationFn: async (data: { matchId: string; teamCode: string; point: number }) => {
-            const response = await instance.post("/points/bettings", data);
-            return response.data;
-        },
-        onSuccess: () => {
-            setIsModalOpen(false);
-        },
-        onError: (error) => {
-            setIsModalOpen(false);
-        },
-    });
-
-    const toggleBet = () => {
-        if (!inputOpen && betInfo?.teamCode === team.code && betInfo?.matchId === match.id) {
-            setBet(match.id, team.code, null);
-        } else {
-            const points = parseInt(inputValue, 10);
-            if (!isNaN(points)) {
-                setBet(match.id, team.code, points);
-                mutation.mutate({
-                    matchId: match.id,
-                    teamCode: team.code,
-                    point: points,
-                });
-            }
-        }
-        setInputOpen(false);
-    };
-
-    const handleModalClick = (e: React.MouseEvent<HTMLFormElement>) => {
-        e.stopPropagation();
-    };
-
-    const inputHandler = () => {
-        setInputOpen(true);
-    };
-
-    const setPointHandler = () => {
-        const value = parseInt(inputValue, 10);
-        if (!isNaN(value)) {
-            setPoint(value);
-            setInputOpen(false);
-        }
-    };
-
-    const setPointCancelHandler = () => {
-        setInputOpen(false);
-    };
 
     if (!team) {
         return null;
     }
 
+    const handleOpenModal = () => {
+        if (!session.data) {
+            setSessionModal(true);
+        } else if (matchId === match.id && teamCode === team.code) {
+            BettingOnClose();
+        } else {
+            BettingOnOpen(match.id, team.code);
+        }
+    };
+
     return (
         <>
-            <div className='w-1/2' onClick={onClick}>
+            <div className='w-1/2' onClick={handleOpenModal}>
                 <Card className={`${cn(panelVariants({ position }))}, ${panelColor}`}>
                     <CardContent
                         className={`flex justify-between h-20 items-center w-full ${
@@ -130,69 +77,9 @@ export default function TeamPanel({
                         </div>
                     </CardContent>
                 </Card>
-                {isModalOpen && (
-                    <div className='fixed z-50 bottom-4 rounded-[10px] left-1/2 transform -translate-x-1/2 mx-auto w-full max-w-md p-4 bg-white shadow-lg'>
-                        <form onClick={handleModalClick} className='flex flex-col gap-y-4'>
-                            <p className='text-3xl font-bold text-center'>승리팀 예측</p>
-                            <div className='text-black bg-gray-300 text-center px-2 py-2 font-semibold'>
-                                {team.name}
-                                <span className='font-normal rounded'>팀 을 선택하셨습니다.</span>
-                                <p>{KoreanDateFormat(matchTime)}</p>
-                            </div>
-                            <div>
-                                {point ? (
-                                    <div className='flex flex-row text-center font-bold items-center justify-center'>
-                                        <span>{point}</span>
-                                        <Image
-                                            src='/pointbeed.png'
-                                            width={30}
-                                            height={30}
-                                            alt='point'
-                                        />
-                                    </div>
-                                ) : inputOpen ? (
-                                    <div className='flex flex-row justify-between gap-2 rounded-[10px] border-[2px] py-2 pl-4 pr-5'>
-                                        <input
-                                            type='text'
-                                            placeholder='배팅 포인트를 입력하세요'
-                                            className='border rounded  flex-1 outline-none border-none text-right pr-3'
-                                            onChange={(e) => setInputValue(e.target.value)}
-                                        />
-                                        <div className='flex gap-2 flex-row items-center justify-center'>
-                                            <div
-                                                className='bg-blue-500 hover:bg-blue-300 p-1 rounded'
-                                                onClick={setPointHandler}>
-                                                확인
-                                            </div>
-                                            <div
-                                                className='bg-red-500 hover:bg-red-300 p-1 rounded'
-                                                onClick={setPointCancelHandler}>
-                                                취소
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div onClick={inputHandler} className='text-center'>
-                                        <p className='inline-block bg-blue-500 py-2 px-2 rounded hover:font-semibold hover:bg-blue-300 ease-in-out my-2'>
-                                            포인트 입력하기
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                            <button
-                                type='button'
-                                onClick={toggleBet}
-                                className='bg-blue-500 text-white p-2 rounded inline-block px-5 '>
-                                확인
-                            </button>
-                            <button
-                                type='button'
-                                onClick={onClick}
-                                className='bg-red-500 text-white p-2 rounded inline-block px-5'>
-                                닫기
-                            </button>
-                        </form>
-                    </div>
+                {sessionModal && <SessionModal />}
+                {bettingIsOpen && matchId === match.id && teamCode === team.code && (
+                    <BettingModal match={match} team={team} matchTime={matchTime} />
                 )}
             </div>
         </>

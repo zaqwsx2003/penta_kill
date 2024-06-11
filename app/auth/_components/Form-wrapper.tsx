@@ -19,7 +19,7 @@ export default function FormWrapper({
     showSocial,
 }: FormWrapperProps) {
     return (
-        <div className='flex flex-col items-center justify-center'>
+        <div className='flex flex-col items-center justify-center h-screen'>
             <Link href={"/"} className='cursor-pointer'>
                 <Image
                     src='/dark_big_logo.png'

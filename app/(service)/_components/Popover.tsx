@@ -1,6 +1,7 @@
+import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
 import { Popover as PopoverRoot, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import Image from "next/image";
 
 type Players = {
     id: string;

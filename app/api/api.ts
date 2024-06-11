@@ -53,6 +53,20 @@ export const getMatchPredictionList = async () => {
     }
 };
 
+// 베팅하기
+export const postBettingPoint = async (data: {
+    matchId: string;
+    teamCode: string;
+    point: number;
+}) => {
+    try {
+        const response = await instance.post("/points/bettings", data);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // 경기일정 (수정해야함)
 export const getMatchList = async () => {
     try {

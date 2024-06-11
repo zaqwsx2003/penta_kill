@@ -32,8 +32,8 @@ export default function MatchRound() {
 
     const weeklySchedules = match?.data?.weeklySchedules;
     const weeklyArray = Array.from({ length: weeklySchedules?.length || 0 });
-    const weeklyArrayFiltered = weeklySchedules.filter(
-        (data: any, index: number) => index === currentWeek
+    const weeklyArrayFiltered = weeklySchedules?.filter(
+        (data: any, index: number) => index === currentWeek,
     );
 
     return (
@@ -43,7 +43,7 @@ export default function MatchRound() {
                 setCurrentWeek={setCurrentWeek}
                 weeklyArray={weeklyArray}
             />
-            <div className='flex flex-col gap-y-10'>
+            <div className="flex flex-col gap-y-10">
                 {weeklyArrayFiltered.map((event: any, index: number) => (
                     <Fragment key={index}>
                         {event.map((match: DaysMatch, index: number) => (

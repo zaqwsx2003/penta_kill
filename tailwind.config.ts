@@ -52,6 +52,7 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                "neutral-900": "#111827",
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -74,7 +75,7 @@ const config = {
             },
         },
     },
-    plugins: [require("tailwindcss-animate")],
+    plugins: [require("tailwindcss-animated")],
 } satisfies Config;
 
 export default config;
