@@ -6,7 +6,7 @@ import Post from "./_components/Post";
 import Pagination from "./_components/Pagination";
 import { useForm } from "react-hook-form";
 
-const BoardPage = () => {
+export default function Page() {
 	const mockPosts = Array.from({ length: 50 }, (_, i) => ({
 		id: i + 1,
 		title: `Post ${i + 1}`,
@@ -29,7 +29,7 @@ const BoardPage = () => {
 		setCurrentPage(page);
 	};
 
-	// Form handling (모양만 구현)
+	// Form handling (일단 레이아웃만)
 	type SearchFormValues = {
 		searchQuery: string;
 		searchType: string;
@@ -85,6 +85,4 @@ const BoardPage = () => {
 			/>
 		</div>
 	);
-};
-
-export default BoardPage;
+}

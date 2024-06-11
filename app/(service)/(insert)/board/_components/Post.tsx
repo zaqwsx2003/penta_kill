@@ -10,7 +10,7 @@ interface PostCardProps {
 	recommendation: number;
 }
 
-const Post: React.FC<PostCardProps> = ({
+export default function Post({
 	index,
 	id,
 	title,
@@ -19,21 +19,21 @@ const Post: React.FC<PostCardProps> = ({
 	views,
 	comments,
 	recommendation,
-}) => (
-	<div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-700 text-white text-xs">
-		<div className="col-span-1">{index}</div>
-		<div className="col-span-5">
-			<Link href={`/board/${id}`}>
-				<span className="hover:underline">
-					{title} [{comments}]
-				</span>
-			</Link>
+}: PostCardProps) {
+	return (
+		<div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-700 text-white text-xs">
+			<div className="col-span-1">{index}</div>
+			<div className="col-span-5">
+				<Link href={`/board/${id}`}>
+					<span className="hover:underline">
+						{title} [{comments}]
+					</span>
+				</Link>
+			</div>
+			<div className="col-span-2">{author}</div>
+			<div className="col-span-2">{date}</div>
+			<div className="col-span-1">{views}</div>
+			<div className="col-span-1">{recommendation}</div>
 		</div>
-		<div className="col-span-2">{author}</div>
-		<div className="col-span-2">{date}</div>
-		<div className="col-span-1">{views}</div>
-		<div className="col-span-1">{recommendation}</div>
-	</div>
-);
-
-export default Post;
+	);
+}
