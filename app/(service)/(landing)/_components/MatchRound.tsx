@@ -1,10 +1,9 @@
 "use client";
 
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
-import instance from "@/app/api/instance";
 import { DaysMatch } from "@/model/match";
 import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
 import { getMatchPredictionList } from "@/app/api/api";
@@ -38,11 +37,7 @@ export default function MatchRound() {
 
     return (
         <>
-            <WeekDropDown
-                currentWeek={currentWeek}
-                setCurrentWeek={setCurrentWeek}
-                weeklyArray={weeklyArray}
-            />
+            <WeekDropDown currentWeek={currentWeek} weeklyArray={weeklyArray} />
             <div className="flex flex-col gap-y-10">
                 {weeklyArrayFiltered.map((event: any, index: number) => (
                     <Fragment key={index}>

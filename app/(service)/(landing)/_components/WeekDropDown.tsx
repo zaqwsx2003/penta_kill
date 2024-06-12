@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 
 type DropsDownProps = {
     currentWeek: number;
-    setCurrentWeek: React.Dispatch<React.SetStateAction<number>>;
     weeklyArray: number[] | unknown[];
 };
 
@@ -14,22 +13,25 @@ const matchWeekVariant = cva(
     `flex flex-col justify-center items-center cursor-pointer py-1 px-2 hover:bg-blue-500 rounded `,
     {
         variants: {
-            selectWeek: { true: `border border-blue-500 px-2 rounded`, false: "" },
+            matchWeek: {
+                true: `border border-blue-500 px-2 rounded`,
+                false: "",
+            },
+            selectWeek: { true: "" },
         },
-    }
+    },
 );
 
-export default function WeekDropDown({ currentWeek, setCurrentWeek, weeklyArray }: DropsDownProps) {
+export default function WeekDropDown({
+    currentWeek,
+    weeklyArray,
+}: DropsDownProps) {
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
+    const [selectedWeek, setSelectedWeek] = useState<number>(0);
     const dropDownRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
 
-    const selectWeek = (index: number) => () => {
-        setCurrentWeek(index);
-        setIsDropDownOpen(false);
-    };
-
-    useEffect(() => {
+    const matchWeek = useEffect(() => {
         const handler = (event: MouseEvent) => {
             if (
                 dropDownRef.current &&
@@ -48,31 +50,45 @@ export default function WeekDropDown({ currentWeek, setCurrentWeek, weeklyArray 
 
     return (
         <>
-            <div className='relative flex items-center justify-center'>
+            <div className="relative flex items-center justify-center">
                 <div
-                    className='text-white absolute border border-white rounded-[10px] px-4 py-1'
-                    onClick={() => setIsDropDownOpen((prev) => !prev)}>
-                    <div className='flex items-center cursor-pointer' ref={triggerRef}>
+                    className="absolute rounded-[10px] border border-white px-4 py-1 text-white"
+                    onClick={() => setIsDropDownOpen((prev) => !prev)}
+                >
+                    <div
+                        className="flex cursor-pointer items-center"
+                        ref={triggerRef}
+                    >
                         <div>{currentWeek + 1}주차</div>
-                        <div className='pl-1'>
+                        <div className="pl-1">
                             <IoIosArrowDown />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className='flex justify-center relative z-50'>
+            <div className="relative z-50 flex justify-center">
                 <div
-                    className={`absolute transition-all duration-300 ease-in-out overflow-hidden ${
-                        isDropDownOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                    }`}>
-                    <div className=' bg-white p-4 rounded-[10px]' ref={dropDownRef}>
+                    className={`absolute overflow-hidden transition-all duration-300 ease-in-out ${
+                        isDropDownOpen
+                            ? "max-h-96 opacity-100"
+                            : "max-h-0 opacity-0"
+                    }`}
+                >
+                    <div
+                        className="rounded-[10px] bg-white p-4"
+                        ref={dropDownRef}
+                    >
                         {weeklyArray.map((_, index: number) => (
                             <div
                                 className={cn(
-                                    matchWeekVariant({ selectWeek: currentWeek === index })
+                                    matchWeekVariant({
+                                        matchWeek: currentWeek === index,
+                                        selectWeek: currentWeek === index,
+                                    }),
                                 )}
                                 key={index}
-                                onClick={selectWeek(index)}>
+                                onClick={() => {}}
+                            >
                                 {index + 1}주차
                             </div>
                         ))}

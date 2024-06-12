@@ -6,13 +6,7 @@ import { motion } from "framer-motion";
 
 import MenuItem from "@/app/(service)/_components/MenuItem";
 
-export default function UserModal({
-    isActivate,
-    onControl,
-}: {
-    isActivate: boolean;
-    onControl: () => void;
-}) {
+export default function UserModal() {
     const { data: session } = useSession();
     const route = useRouter();
 
@@ -24,10 +18,10 @@ export default function UserModal({
     return (
         <>
             <motion.div
-                initial={{ opacity: 0.5, y: 15 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 15 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.3 }}
                 className={`absolute right-[-30px] top-[55px] flex w-32 transform justify-center rounded bg-white transition duration-500 ease-in-out`}
             >
                 <div className="px-1">
