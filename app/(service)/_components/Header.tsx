@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
@@ -82,7 +82,11 @@ export default function Header() {
                                     />
                                 </div>
                             </div>
-                            <div className="relative" ref={userMenuRef}>
+                            <motion.div
+                                className="relative"
+                                ref={userMenuRef}
+                                whileTap={{ scale: 0.97 }}
+                            >
                                 <Image
                                     src="/blank-avatar.webp"
                                     width={40}
@@ -92,14 +96,9 @@ export default function Header() {
                                     onClick={userModalHandler}
                                 />
                                 <AnimatePresence>
-                                    {userMenu && (
-                                        <UserModal
-                                            isActivate={userMenu}
-                                            onControl={userModalHandler}
-                                        />
-                                    )}
+                                    {userMenu && <UserModal />}
                                 </AnimatePresence>
-                            </div>
+                            </motion.div>
                         </>
                     ) : loading ? (
                         <Spinner />
