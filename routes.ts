@@ -16,6 +16,10 @@ export const gnbRootList: GnbRootListItem[] = [
         path: "/schedule",
         route: "경기일정",
     },
+    {
+        path: "/board",
+        route: "펜타톡",
+    },
 ];
 
 /**
