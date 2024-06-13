@@ -17,13 +17,16 @@ export interface MatchLeague {
 }
 
 export interface MatchDetails {
-    flags?: string[] | null;
     id: string;
     strategy?: MatchStrategy;
-    teams?: MatchTeams[];
+    teams: MatchTeams[];
     startTime?: Date | string;
     state?: string;
     type?: string;
+    teamCode: string | null;
+    status: null | "unstarted" | "inprogress" | "win" | "loss";
+    betting: boolean;
+    amount: number;
 }
 
 export interface MatchStrategy {
@@ -35,13 +38,14 @@ export interface MatchTeams {
     code: string;
     image: string;
     name: string;
+    ratio: number;
     record: MatchRecord;
-    result: MatchResult | null;
+    result: MatchResult;
 }
 
 export interface MatchRecord {
-    win: number;
-    lose: number;
+    wins: number;
+    losses: number;
 }
 
 export interface MatchResult {

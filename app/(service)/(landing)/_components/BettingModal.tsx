@@ -1,53 +1,33 @@
 "use client";
 
-import { useSelectedGameStore } from "@/lib/gameSelectStore";
-import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import NextImage from "next/image";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
-import Image from "next/image";
 import { useBettingModalState } from "@/lib/bettingModalStore";
 import useKoreanDateFormat from "@/lib/useDate";
-import { postBettingPoint } from "@/app/api/api";
+import BettingPhaseOneModal from "./BettingPhaseOne";
+import { MatchDetails, MatchTeams } from "@/model/match";
+import BettingPhaseTwo from "./BettingPhaseTwo";
+import BettingPhaseThree from "./BettingPhaseThree";
+import Spinner from "@/app/(service)/_components/Spinner";
 
-export default function BettingModal({ match, team, matchTime }: any) {
+type BettingModalProps = {
+    match: MatchDetails;
+    team: MatchTeams;
+    matchTime: string;
+};
+
+export default function BettingModal({
+    match,
+    team,
+    matchTime,
+}: BettingModalProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
-    const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
-        useBettingModalState();
-    const { setBet, betInfo } = useSelectedGameStore();
-    const [inputOpen, setInputOpen] = useState<boolean>(false);
-    const [point, setPoint] = useState<number | null>(null);
-    const [inputValue, setInputValue] = useState<string>("");
-
-    const mutation = useMutation({
-        mutationKey: ["betting", "point"],
-        mutationFn: postBettingPoint,
-        onSuccess: () => {
-            BettingOnClose();
-        },
-        onError: (error) => {
-            console.log(error);
-            BettingOnClose();
-        },
-    });
-
-    const toggleBet = () => {
-        if (!inputOpen && betInfo?.teamCode === team.code && betInfo?.matchId === match.id) {
-            setBet(match.id, team.code, null);
-        } else {
-            const points = parseInt(inputValue, 10);
-            if (!isNaN(points)) {
-                setBet(match.id, team.code, points);
-                mutation.mutate({
-                    matchId: match.id,
-                    teamCode: team.code,
-                    point: points,
-                });
-            }
-        }
-        setInputOpen(false);
-        BettingOnClose();
-    };
-
+    const { bettingIsOpen, BettingOnClose } = useBettingModalState();
+    const [closing, setClosing] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [betPhase, setBetPhase] = useState<0 | 1 | 2 | 3>(0);
     const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
     };
@@ -56,86 +36,97 @@ export default function BettingModal({ match, team, matchTime }: any) {
         e.stopPropagation();
     };
 
-    const inputHandler = () => {
-        setInputOpen(true);
+    const handleClose = () => {
+        setClosing(true);
+        setBetPhase(0);
+        setTimeout(() => {
+            BettingOnClose();
+        }, 0);
     };
 
-    const setPointHandler = () => {
-        const value = parseInt(inputValue, 10);
-        if (!isNaN(value)) {
-            setPoint(value);
-            setInputOpen(false);
+    const handleImageLoad = () => {
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        if (team.image) {
+            const img = new Image();
+            img.src = team.image;
+            img.onload = handleImageLoad;
         }
-    };
+    }, [team.image]);
 
-    const setPointCancelHandler = () => {
-        setInputOpen(false);
-    };
+    useEffect(() => {
+        if (bettingIsOpen) {
+            setBetPhase(1);
+        } else if (!bettingIsOpen) {
+            setBetPhase(0);
+        }
+    }, [bettingIsOpen, closing]);
 
     return (
         <>
             <div
-                className='fixed inset-0 z-40 bg-black bg-opacity-50'
-                onClick={handleBackground}></div>
-            <div
-                className='fixed z-50 bottom-4 rounded-[10px] left-0 right-0 mx-auto w-full max-w-md p-4 bg-white shadow-lg '
-                onClick={handleModalClick}>
-                <form className='flex flex-col gap-y-4'>
-                    <p className='text-3xl font-bold text-center'>승리팀 예측</p>
-                    <div className='text-black bg-gray-300 text-center px-2 py-5 font-semibold'>
-                        {team.name}
-                        <span className='font-normal rounded'>팀 을 선택하셨습니다.</span>
-                        <p>{KoreanDateFormat(matchTime)}</p>
-                    </div>
-                    <div>
-                        {point ? (
-                            <div className='flex flex-row text-center font-bold items-center justify-center'>
-                                <span>{point}</span>
-                                <Image src='/pointbeed.png' width={30} height={30} alt='point' />
-                            </div>
-                        ) : inputOpen ? (
-                            <div className='flex flex-row justify-between gap-2 rounded-[10px] border-[2px] py-2 pl-4 pr-5'>
-                                <input
-                                    type='text'
-                                    placeholder='배팅 포인트를 입력하세요'
-                                    className='border rounded  flex-1 outline-none border-none text-right pr-3'
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                />
-                                <div className='flex gap-2 flex-row items-center justify-center'>
-                                    <div
-                                        className='text-white bg-blue-500 hover:bg-blue-300 p-1 rounded'
-                                        onClick={setPointHandler}>
-                                        확인
-                                    </div>
-                                    <div
-                                        className='text-white bg-red-500 hover:bg-red-300 p-1 rounded'
-                                        onClick={setPointCancelHandler}>
-                                        취소
-                                    </div>
-                                </div>
+                className="fixed inset-0 z-40 overflow-hidden bg-black bg-opacity-50"
+                onClick={handleBackground}
+            />
+            <motion.div
+                initial={{ opacity: 1, y: 500 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 1, y: 500 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 24,
+                    duration: 0.8,
+                }}
+                className="fixed bottom-20 left-0 right-0 z-50 mx-auto h-[450px] w-[450px] max-w-md overflow-hidden rounded-[10px] bg-blue-500 shadow-lg"
+                onClick={handleModalClick}
+            >
+                <div className="relative flex-col gap-y-4 p-5 text-white">
+                    <LayoutGroup>
+                        {isLoading ? (
+                            <div className="flex h-80 items-center justify-center">
+                                <Spinner />
                             </div>
                         ) : (
-                            <div onClick={inputHandler} className='text-center'>
-                                <p className='text-white inline-block bg-blue-500 py-2 px-2 rounded hover:font-semibold hover:bg-blue-300 ease-in-out my-2'>
-                                    포인트 입력하기
-                                </p>
-                            </div>
+                            <AnimatePresence mode="wait">
+                                {betPhase === 1 && (
+                                    <BettingPhaseOneModal
+                                        closing={closing}
+                                        setBetPhase={setBetPhase}
+                                        handleImageLoad={handleImageLoad}
+                                    />
+                                )}
+                            </AnimatePresence>
                         )}
-                    </div>
-                    <button
-                        type='button'
-                        onClick={toggleBet}
-                        className='bg-blue-500 text-white p-2 rounded inline-block px-5 '>
-                        확인
-                    </button>
-                    <button
-                        type='button'
-                        className='bg-red-500 text-white p-2 rounded inline-block px-5'
-                        onClick={BettingOnClose}>
-                        닫기
-                    </button>
-                </form>
-            </div>
+                        <AnimatePresence mode="wait">
+                            {betPhase === 2 && (
+                                <BettingPhaseTwo
+                                    match={match}
+                                    closing={closing}
+                                    setBetPhase={setBetPhase}
+                                />
+                            )}
+                        </AnimatePresence>
+                        <AnimatePresence mode="wait">
+                            {betPhase === 3 && <BettingPhaseThree />}
+                        </AnimatePresence>
+                        <button
+                            type="button"
+                            className="absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white duration-200 ease-in-out hover:bg-red-500"
+                            onClick={handleClose}
+                        >
+                            <NextImage
+                                src="/x.svg"
+                                width={20}
+                                height={20}
+                                alt="close"
+                            />
+                        </button>
+                    </LayoutGroup>
+                </div>
+            </motion.div>
         </>
     );
 }

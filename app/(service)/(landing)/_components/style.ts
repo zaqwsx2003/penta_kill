@@ -12,3 +12,16 @@ export const matchWeekVariant = cva(
         },
     },
 );
+
+export const panelVariants = cva(
+    `relative flex items-center rounded-[10px] px-5 py-3`,
+    {
+        variants: {
+            position: {
+                0: `rounded-r-none border-r-0 justify-start`,
+                1: `rounded-l-none border-l-0 justify-end`,
+            },
+
+        },
+    },
+);

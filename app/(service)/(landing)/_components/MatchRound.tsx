@@ -10,6 +10,8 @@ import { DaysMatch } from "@/model/match";
 import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
 import { getMatchPredictionList } from "@/app/api/api";
 import Spinner from "@/app/(service)/_components/Spinner";
+import ErrorPage from "@/app/(service)/_components/ErrorPage";
+import useModalRef from "@/app/(service)/_lib/useModalRef";
 
 export default function MatchRound() {
     const [matchWeek, setMatchWeek] = useState<number>(0);
@@ -22,15 +24,25 @@ export default function MatchRound() {
         isLoading,
         isError,
     } = useQuery({
-        queryKey: ["match"],
+        queryKey: ["match", "betting"],
         queryFn: getMatchPredictionList,
+        staleTime: 0,
     });
+
+    useModalRef({
+        refs: { triggerRef },
+        setState: setIsDropDownOpen,
+    });
+
+
 
     useEffect(() => {
         if (match?.data) {
             setMatchWeek(match.data.currentWeek);
         }
     }, [match]);
+
+    console.log(match);
 
     if (isLoading)
         return (
@@ -39,7 +51,7 @@ export default function MatchRound() {
             </div>
         );
 
-    if (isError) return <div>Error</div>;
+    if (isError) return <ErrorPage />;
 
     const weeklySchedules = match?.data?.weeklySchedules;
     const weeklyArray = Array.from({ length: weeklySchedules?.length || 0 });
@@ -49,14 +61,11 @@ export default function MatchRound() {
 
     return (
         <>
-            <div
-                className="flex cursor-pointer items-center justify-end pr-5"
-                onClick={() => setIsDropDownOpen((prev) => !prev)}
-            >
+            <div className="relative flex items-center justify-end pr-5">
                 <motion.div
-                    className="relative w-32 rounded-[10px] border border-white p-4 py-1 text-white"
+                    className="relative w-32 cursor-pointer rounded-[10px] border border-white p-4 py-1 text-white"
                     initial={false}
-                    animate={isDropDownOpen ? "open" : "closed"}
+                    onClick={() => setIsDropDownOpen((prev) => !prev)}
                 >
                     <div
                         className="flex items-center justify-between"
@@ -91,13 +100,14 @@ export default function MatchRound() {
                                 weeklyArray={weeklyArray}
                                 setSelectWeek={setSelectWeek}
                                 isOpen={isDropDownOpen}
+                                isClose={setIsDropDownOpen}
                             />
                         )}
                     </AnimatePresence>
                 </motion.div>
             </div>
             <div className="flex flex-col gap-y-10">
-                {weeklyArrayFiltered.map((event: any, index: number) => (
+                {weeklyArrayFiltered?.map((event: any, index: number) => (
                     <Fragment key={index}>
                         {event.map((match: DaysMatch, index: number) => (
                             <MatchCard key={index} matches={match} />

@@ -1,76 +1,113 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { cva } from "class-variance-authority";
-import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import BettingModal from "./BettingModal";
-import { useBettingModalState } from "@/lib/bettingModalStore";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import SessionModal from "./SessionModal";
+import { AnimatePresence } from "framer-motion";
+
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { useBettingModalState } from "@/lib/bettingModalStore";
+import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
+import BettingModal from "@/app/(service)/(landing)/_components/BettingModal";
+import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
+import { panelVariants } from "@/app/(service)/(landing)/_components/style";
+import { MatchDetails } from "@/model/match";
+import { useMatchState } from "@/lib/matchStore";
+import { useTeamState } from "@/lib/teamStore";
 
 type TeamPanelProps = {
-    match: any;
+    match: MatchDetails;
     position: 0 | 1;
-    matchState: string;
     matchTime: string;
+    matchState: string;
 };
 
-const panelVariants = cva(
-    `relative flex items-center light:border-none rounded-[10px] dark:border-gray-800 px-5 py-3`,
-    {
-        variants: {
-            position: {
-                0: `rounded-r-none border-r-0 justify-start`,
-                1: `rounded-l-none border-l-0 justify-end`,
-            },
-        },
-    }
-);
-
-export default function TeamPanel({ match, position, matchState, matchTime }: TeamPanelProps) {
+export default function TeamPanel({
+    match,
+    position,
+    matchTime,
+    matchState,
+}: TeamPanelProps) {
     const session = useSession();
-    const router = useRouter();
     const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
         useBettingModalState();
     const [sessionModal, setSessionModal] = useState<boolean>(false);
     const team = match.teams[position];
-    const panelColor = useMatchPanelColor({ team, matchState });
+    const chooseTeam = match.teamCode;
+    const betResult = match.status;
+    const isBetting = match.betting;
+    const panelColor = useMatchPanelColor({
+        team,
+        matchState,
+        chooseTeam,
+        betResult,
+        isBetting,
+        position,
+    });
+
+    const setTeamData = useTeamState((state) => state.setTeamData);
+    const setMatchData = useMatchState((state) => state.setMatchData);
 
     if (!team) {
         return null;
     }
 
     const handleOpenModal = () => {
+        if (
+            team.code === "TBD" ||
+            matchState !== "unstarted" ||
+            (matchState === "unstarted" && isBetting)
+        ) {
+            return;
+        }
         if (!session.data) {
             setSessionModal(true);
         } else if (matchId === match.id && teamCode === team.code) {
             BettingOnClose();
         } else {
+            setTeamData(team);
+            const matchData = {
+                ...match,
+                startTime: new Date(matchTime).toISOString(),
+            };
+            setMatchData(matchData);
             BettingOnOpen(match.id, team.code);
         }
     };
 
     return (
         <>
-            <div className='w-1/2' onClick={handleOpenModal}>
-                <Card className={`${cn(panelVariants({ position }))}, ${panelColor}`}>
+            <div className="w-1/2" onClick={handleOpenModal}>
+                <Card
+                    className={`${cn(panelVariants({ position }))}, ${panelColor} ${
+                        (matchState === "unstarted" && team.code !== "TBD") ||
+                        (matchState === "unstarted" && isBetting)
+                            ? "cursor-pointer"
+                            : "cursor-default"
+                    }`}
+                >
                     <CardContent
-                        className={`flex justify-between h-20 items-center w-full ${
+                        className={`flex h-20 w-full items-center justify-between ${
                             position === 1 ? "flex-row-reverse" : ""
-                        } `}>
-                        <div className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}>
-                            <div className='flex justify-center items-center min-w-[60px] min-h-[60px]'>
-                                <Image src={team.image} width={60} height={60} alt='team' />
+                        } `}
+                    >
+                        <div
+                            className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}
+                        >
+                            <div className="flex min-h-[60px] min-w-[60px] items-center justify-center">
+                                <Image
+                                    src={team.image}
+                                    width={60}
+                                    height={60}
+                                    alt="team"
+                                />
                             </div>
-                            <div className='font-bold'>{team.code}</div>
+                            <div className="font-bold">{team.code}</div>
                         </div>
-                        <div className='flex items-center justify-center'>
-                            <div className='bg-gray-800 flex items-center justify-center border rounded-[10px] w-12 h-12'>
-                                <div className='text-white text-4xl font-bold'>
+                        <div className="flex items-center justify-center">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-[10px] border bg-gray-800">
+                                <div className="text-4xl font-bold text-white">
                                     {team.result?.gameWins}
                                 </div>
                             </div>
@@ -78,9 +115,17 @@ export default function TeamPanel({ match, position, matchState, matchTime }: Te
                     </CardContent>
                 </Card>
                 {sessionModal && <SessionModal />}
-                {bettingIsOpen && matchId === match.id && teamCode === team.code && (
-                    <BettingModal match={match} team={team} matchTime={matchTime} />
-                )}
+                <AnimatePresence>
+                    {bettingIsOpen &&
+                        matchId === match.id &&
+                        teamCode === team.code && (
+                            <BettingModal
+                                match={match}
+                                team={team}
+                                matchTime={matchTime}
+                            />
+                        )}
+                </AnimatePresence>
             </div>
         </>
     );
