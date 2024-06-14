@@ -5,6 +5,8 @@ import Link from "next/link";
 import Post from "./_components/Post";
 import Pagination from "./_components/Pagination";
 import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/app/api/instance";
 
 export default function Page() {
     const mockPosts = Array.from({ length: 50 }, (_, i) => ({
@@ -28,6 +30,16 @@ export default function Page() {
     const pageChangeHandler = (page: number) => {
         setCurrentPage(page);
     };
+
+    const { data: post } = useQuery({
+        queryKey: ["post"],
+        queryFn: async () => {
+            const response = await instance.get(`posts?page=1&size=10`);
+            return response.data;
+        },
+    });
+
+    console.log(post);
 
     // Form handling (일단 레이아웃만)
     type SearchFormValues = {
