@@ -28,7 +28,7 @@ export default function TeamTitle({
                 alt="team"
                 onLoad={handleImageLoad}
             />
-            <div>{team.name}</div>
+            <div className="h-6">{team.name}</div>
         </div>
     );
 }

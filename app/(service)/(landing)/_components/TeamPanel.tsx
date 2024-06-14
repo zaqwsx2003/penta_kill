@@ -81,8 +81,9 @@ export default function TeamPanel({
             <div className="w-1/2" onClick={handleOpenModal}>
                 <Card
                     className={`${cn(panelVariants({ position }))}, ${panelColor} ${
-                        (matchState === "unstarted" && team.code !== "TBD") ||
-                        (matchState === "unstarted" && isBetting)
+                        matchState === "unstarted" &&
+                        team.code !== "TBD" &&
+                        !isBetting
                             ? "cursor-pointer"
                             : "cursor-default"
                     }`}

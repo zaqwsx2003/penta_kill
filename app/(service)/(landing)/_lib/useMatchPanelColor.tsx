@@ -29,13 +29,21 @@ export default function usePanelColor({
             if (chooseTeam === team.code) {
                 return "bg-blue-500 border-blue-500 border-4";
             } else if (chooseTeam !== team.code) {
-                return "bg-gray-900 border-gray-500 border-4 opacity-[0.2]";
+                return "bg-gray-900 border-gray-500 border-4 ";
             }
         }
     }
 
     if (matchState === "inProgress") {
-        return `border-4 border-gray-500 opacity-[0.2] ${position === 0 ? "rounded-r-none border-r-0" : "rounded-l-none border-l-0"}`;
+        if (!isBetting) {
+            return `border-4 border-gray-500 opacity-[0.2] ${position === 0 ? "rounded-r-none border-r-0" : "rounded-l-none border-l-0"}`;
+        } else if (isBetting) {
+            if (chooseTeam === team.code) {
+                return "bg-blue-500 border-blue-500 border-4";
+            } else if (chooseTeam !== team.code) {
+                return "bg-gray-900 border-gray-500 border-4 ";
+            }
+        }
     }
 
     if (matchState === "completed") {

@@ -10,7 +10,8 @@ interface User {
     // email: string;
     // name: string;
     // userInfo: UserInfo;
-    token: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export default {
@@ -35,14 +36,19 @@ export default {
                                 email: credentials.email,
                                 password: credentials.password,
                             }),
-                        }
+                        },
                     );
 
                     console.log("response", response);
 
                     if (response) {
                         const user: User = {
-                            token: response.headers.get("Authorization") as string,
+                            accessToken: response.headers.get(
+                                "Authorization",
+                            ) as string,
+                            refreshToken: response.headers.get(
+                                "Refresh-Token",
+                            ) as string,
                         };
 
                         return user;
@@ -51,22 +57,18 @@ export default {
                         throw new Error("Unexpected response format");
                     }
                 } catch (e: any) {
-                    const errorMessage = e.response?.data?.message || "Login failed";
+                    const errorMessage =
+                        e.response?.data?.message || "Login failed";
                     console.error("Error occurred:", errorMessage);
-                    throw new Error(errorMessage + "&email=" + credentials.email);
+                    throw new Error(
+                        errorMessage + "&email=" + credentials.email,
+                    );
                 }
             },
         }),
         GoogleProvider({
-            clientId: process.env.GOOGLE_ID,
-            clientSecret: process.env.GOOGLE_SECRET,
-            authorization: {
-                params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code",
-                },
-            },
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
         }),
     ],
 } satisfies NextAuthConfig;

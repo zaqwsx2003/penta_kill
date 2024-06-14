@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 
 import { useMatchState } from "@/lib/matchStore";
 import useKoreanDateFormat from "@/lib/useDate";
@@ -22,21 +24,61 @@ export default function BettingPhaseOne({
         setBetPhase(2);
     };
 
+    const [userWinCount, setUserWinCount] = useState(false);
+    const [aiWinCount, setAiWinCount] = useState(false);
+
     const match = useMatchState((state) => state);
     const teamRed = match.teams[0];
     const teamBlue = match.teams[1];
     const team = useTeamState((state) => state);
+    const winRatio =
+        teamRed.ratio > teamBlue.ratio
+            ? teamRed.ratio * 100
+            : teamBlue.ratio * 100;
+    const winTeam =
+        teamRed.ratio === teamBlue.ratio
+            ? "동률"
+            : teamRed.ratio > teamBlue.ratio
+              ? `${teamRed.code} 승리`
+              : `${teamBlue.code} 승리`;
+    const aiWinRatio = 58;
+
+    const count = useMotionValue(0);
+    const rounded = useTransform(count, (value) => `${Math.round(value)}%`);
+    const secondCount = useMotionValue(0);
+    const secondRounded = useTransform(
+        secondCount,
+        (value) => `${Math.round(value)}%`,
+    );
+
+    useEffect(() => {
+        setUserWinCount(false);
+        const animation = animate(count, winRatio, {
+            duration: 3,
+            onComplete: () => setUserWinCount(true),
+        });
+        return () => animation.stop();
+    }, [count, winRatio]);
+
+    useEffect(() => {
+        setAiWinCount(false);
+        const secondAnimation = animate(secondCount, aiWinRatio, {
+            duration: 3,
+            onComplete: () => setAiWinCount(true),
+        });
+        return () => secondAnimation.stop();
+    }, [secondCount, aiWinRatio]);
 
     return (
         <motion.div
             key="phaseOne"
             initial={{ opacity: 1, x: 0 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={closing ? { opacity: 1, x: 0 } : { opacity: 1, x: -400 }}
+            exit={{ opacity: 1, x: -400 }}
             transition={{ duration: 0.3 }}
             className="flex flex-col justify-center px-2 text-center font-semibold text-white"
         >
-            <div className="flex flex-col justify-center gap-8 py-5 text-center font-semibold text-white">
+            <div className="flex h-fit flex-col justify-center gap-8 py-5 text-center font-semibold text-white">
                 <div className="flex flex-col items-center justify-between">
                     <p>{KoreanDateFormat(match.startTime)}</p>
                     <div className="flex flex-row items-center justify-center">
@@ -45,7 +87,7 @@ export default function BettingPhaseOne({
                             selectTeam={team.code}
                             handleImageLoad={handleImageLoad}
                         />
-                        <p className="px-5">VS</p>
+                        <p className="px-10">VS</p>
                         <TeamTitle
                             team={teamBlue}
                             selectTeam={team.code}
@@ -55,48 +97,53 @@ export default function BettingPhaseOne({
                 </div>
 
                 <div className="flex w-full flex-row items-center justify-center text-white">
-                    <div className="flex flex-1 flex-col items-center justify-center">
+                    <div className="relative flex flex-1 flex-col items-center justify-center">
                         <p className="pb-3 text-sm">유저 예측</p>
-                        {teamRed.ratio === teamBlue.ratio ? (
-                            <div>
-                                <p className="text-3xl font-bold">
-                                    {`${teamRed.ratio * 100}%`}
-                                </p>
-                                <p>동률</p>
-                            </div>
-                        ) : teamRed.ratio > teamBlue.ratio ? (
-                            <div>
-                                <p className="text-3xl font-bold">
-                                    {`${teamRed.ratio * 100}%`}
-                                </p>
-                                <p>{teamRed.code} 승리</p>
-                            </div>
-                        ) : (
-                            <div>
-                                <p className="text-3xl font-bold">
-                                    {`${teamBlue.ratio * 100}%`}
-                                </p>
-                                <p>{teamBlue.code} 승리</p>
-                            </div>
-                        )}
+                        <div>
+                            <motion.p className="text-3xl font-bold">
+                                {rounded}
+                            </motion.p>
+                            {userWinCount && (
+                                <motion.p
+                                    key="userWinCount"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="absolute top-full mt-2 text-lg"
+                                >
+                                    {winTeam}
+                                </motion.p>
+                            )}
+                        </div>
                     </div>
                     <div className="my-[1%] w-[25%] rotate-90 border-[1px] border-white"></div>
-                    <div className="flex flex-1 flex-col items-center justify-center">
+                    <div className="relative flex flex-1 flex-col items-center justify-center">
                         <p className="pb-3 text-sm">AI 예측</p>
-                        <p className="text-3xl font-bold">57%</p>
-                        <p>KT 승리</p>
+                        <motion.p className="text-3xl font-bold">
+                            {secondRounded}
+                        </motion.p>
+                        {aiWinCount && (
+                            <motion.p
+                                key="aiWinCount"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute top-full mt-2 text-lg"
+                            >
+                                KT 승리
+                            </motion.p>
+                        )}
                     </div>
                 </div>
-                <div>
-                    <div className="flex items-center justify-center text-center text-base">
-                        <motion.p
-                            whileHover={{ scale: 1.1 }}
-                            className="mt-2 inline-block cursor-pointer rounded bg-blue-800 px-2 py-2 text-white ease-in-out hover:bg-blue-300 hover:font-semibold"
-                            onClick={phaseTwoHandler}
-                        >
-                            포인트 베팅하기
-                        </motion.p>
-                    </div>
+
+                <div className="flex w-full items-center justify-center text-center text-base">
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="mt-2 w-32 cursor-pointer rounded bg-blue-800 px-2 py-2 text-white ease-in-out hover:bg-blue-300 hover:font-semibold"
+                        onClick={phaseTwoHandler}
+                    >
+                        포인트 베팅하기
+                    </motion.div>
                 </div>
             </div>
         </motion.div>
