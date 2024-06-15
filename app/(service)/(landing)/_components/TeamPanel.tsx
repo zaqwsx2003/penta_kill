@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { AnimatePresence } from "framer-motion";
@@ -56,6 +56,7 @@ export default function TeamPanel({
     const handleOpenModal = () => {
         if (
             team.code === "TBD" ||
+            (matchState === "inProgress" && !isBetting) ||
             matchState !== "unstarted" ||
             (matchState === "unstarted" && isBetting)
         ) {
@@ -119,13 +120,7 @@ export default function TeamPanel({
                 <AnimatePresence>
                     {bettingIsOpen &&
                         matchId === match.id &&
-                        teamCode === team.code && (
-                            <BettingModal
-                                match={match}
-                                team={team}
-                                matchTime={matchTime}
-                            />
-                        )}
+                        teamCode === team.code && <BettingModal team={team} />}
                 </AnimatePresence>
             </div>
         </>

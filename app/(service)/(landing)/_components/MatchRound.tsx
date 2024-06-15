@@ -34,22 +34,13 @@ export default function MatchRound() {
         setState: setIsDropDownOpen,
     });
 
-
-
     useEffect(() => {
         if (match?.data) {
             setMatchWeek(match.data.currentWeek);
         }
     }, [match]);
 
-    console.log(match);
-
-    if (isLoading)
-        return (
-            <div className="flex items-center justify-center">
-                <Spinner />;
-            </div>
-        );
+    if (isLoading) return <Spinner />;
 
     if (isError) return <ErrorPage />;
 

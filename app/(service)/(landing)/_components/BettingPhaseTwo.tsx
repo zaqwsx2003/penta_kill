@@ -23,6 +23,7 @@ export default function BettingPhaseTwo({
 }: BettingPhaseTwoProps) {
     const session = useSession();
     const [point, setPoint] = useState<number>(100);
+    const [error, setError] = useState<string>("");
     const [pointAmountError, setPointAmountError] = useState<number>(0);
     const { setBet, betInfo } = useSelectedGameStore();
     const queryClient = useQueryClient();
@@ -39,8 +40,10 @@ export default function BettingPhaseTwo({
             });
             setBetPhase(3);
             fireCrackerEffect();
+            setError("");
         },
         onError: (error) => {
+            setError("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
             console.log(error);
         },
     });
@@ -69,12 +72,26 @@ export default function BettingPhaseTwo({
         setBetPhase(1);
     };
 
+    if (error) {
+        return (
+            <motion.div
+                initial={{ opacity: 1, x: 400 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 1, x: -800 }}
+                transition={{ duration: 0.7 }}
+                className="flex h-full w-full items-center justify-center"
+            >
+                {error}
+            </motion.div>
+        );
+    }
+
     return (
         <motion.div
             key="phaseTwo"
-            initial={{ opacity: 1, x: 400 }}
+            initial={{ opacity: 1, x: 700 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 1, x: -800 }}
+            exit={{ opacity: 1, x: -400 }}
             transition={{ duration: 0.7 }}
             className="flex flex-col justify-center px-2 text-center font-semibold text-white"
         >

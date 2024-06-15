@@ -43,7 +43,8 @@ export default function Header() {
             } left-0 top-0 z-50`}
         >
             <div className="flex h-20 flex-row items-center justify-between border-b bg-orange-400 px-14 py-0">
-                <div
+                <Link
+                    href="/"
                     className="max-w-[200px] cursor-pointer"
                     onClick={rootRoutePageHandler}
                 >
@@ -55,7 +56,7 @@ export default function Header() {
                         height={40}
                         priority={true}
                     />
-                </div>
+                </Link>
                 <div className="w-100 flex flex-grow justify-center gap-10">
                     {gnbRootList.map((item, i) => (
                         <GnbItem

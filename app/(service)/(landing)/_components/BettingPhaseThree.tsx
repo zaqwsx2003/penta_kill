@@ -11,9 +11,9 @@ export default function BettingPhaseThree({
     return (
         <motion.div
             key="phaseThree"
-            initial={{ opacity: 0, x: 400 }}
+            initial={{ opacity: 1, x: 700 }}
             animate={{ opacity: 1, x: 0, scale: 1.5 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.7 }}
             className="flex h-[300px] w-full flex-col items-center justify-center gap-4"
         >
             <motion.div className="text-3xl font-bold">베팅완료!</motion.div>

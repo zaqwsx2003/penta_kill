@@ -11,7 +11,7 @@ interface User {
     // name: string;
     // userInfo: UserInfo;
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string;
 }
 
 export default {
@@ -39,15 +39,10 @@ export default {
                         },
                     );
 
-                    console.log("response", response);
-
                     if (response) {
                         const user: User = {
                             accessToken: response.headers.get(
                                 "Authorization",
-                            ) as string,
-                            refreshToken: response.headers.get(
-                                "Refresh-Token",
                             ) as string,
                         };
 

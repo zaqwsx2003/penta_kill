@@ -25,12 +25,14 @@ const instance = axios.create({
 instance.interceptors.request.use(
     async (config) => {
         const session: SessionType | null = await getSession();
-        config.headers.authorization = session ? session?.accessToken : null;
+        config.headers.authorization = session
+            ? `Bearer ${session?.accessToken}`
+            : null;
         return config;
     },
     (error) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 instance.interceptors.response.use(
@@ -52,10 +54,12 @@ instance.interceptors.response.use(
                         headers: {
                             Authorization: `Bearer ${refreshToken}`,
                         },
-                    }
+                    },
                 );
                 const newAccessToken = response.data.accessToken;
-                Cookies.set("Access_Token", newAccessToken, { sameSite: "strict" });
+                Cookies.set("Access_Token", newAccessToken, {
+                    sameSite: "strict",
+                });
 
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -66,7 +70,7 @@ instance.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
 export default instance;

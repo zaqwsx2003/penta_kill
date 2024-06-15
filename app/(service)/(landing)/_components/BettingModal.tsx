@@ -53,6 +53,19 @@ export default function BettingModal({ team }: BettingModalProps) {
         }
     }, [bettingIsOpen]);
 
+    useEffect(() => {
+        document.body.style.cssText = `
+          position: fixed;
+          top: -${window.scrollY}px;
+          overflow-y: scroll;
+          width: 100%;`;
+        return () => {
+            const scrollY = document.body.style.top;
+            document.body.style.cssText = "";
+            window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+        };
+    }, []);
+
     return (
         <>
             <div
@@ -116,21 +129,6 @@ export default function BettingModal({ team }: BettingModalProps) {
                                 />
                             </button>
                         )}
-
-                        {/* {betPhase !== 1 && (
-                            <button
-                                type="button"
-                                className="absolute left-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white duration-200 ease-in-out hover:bg-red-500"
-                                onClick={beforPageHandler}
-                            >
-                                <NextImage
-                                    src="/arrow-left.svg"
-                                    width={40}
-                                    height={40}
-                                    alt="close"
-                                />
-                            </button>
-                        )} */}
                     </LayoutGroup>
                 </div>
             </motion.div>

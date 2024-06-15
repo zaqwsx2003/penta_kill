@@ -39,8 +39,6 @@ export default function Page() {
         },
     });
 
-    console.log(post);
-
     // Form handling (일단 레이아웃만)
     type SearchFormValues = {
         searchQuery: string;

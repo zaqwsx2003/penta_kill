@@ -3,7 +3,6 @@ import { jwtDecode } from "jwt-decode";
 import authConfig from "./auth.config";
 
 interface UserInfo {
-    userid: number;
     email: string;
     username: string;
     point: number;
@@ -20,12 +19,9 @@ const nextAuthOptions: NextAuthConfig = {
     session: { strategy: "jwt" },
     ...authConfig,
     callbacks: {
-        async jwt({ token, user, account }: any) {
-            console.log("account", account);
+        async jwt({ token, user }: any) {
             if (user) {
                 token.accessToken = user.token;
-            } else if (account) {
-                token.accessToken = account.access_Token;
             }
             return { ...token, ...user };
         },
@@ -42,9 +38,9 @@ const nextAuthOptions: NextAuthConfig = {
 
                 const userInfo = jwtDecode<UserInfo>(accessToken);
                 console.log(userInfo);
+                session.accessToken = accessToken;
                 session.expires = new Date(userInfo.exp * 1000).toISOString();
                 session.user = {
-                    id: userInfo.userid.toString(),
                     email: userInfo.email,
                     name: userInfo.username,
                     point: userInfo.point,
