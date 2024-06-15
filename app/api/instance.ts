@@ -30,7 +30,7 @@ instance.interceptors.request.use(
     },
     (error) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 instance.interceptors.response.use(
@@ -52,10 +52,12 @@ instance.interceptors.response.use(
                         headers: {
                             Authorization: `Bearer ${refreshToken}`,
                         },
-                    }
+                    },
                 );
                 const newAccessToken = response.data.accessToken;
-                Cookies.set("Access_Token", newAccessToken, { sameSite: "strict" });
+                Cookies.set("Access_Token", newAccessToken, {
+                    sameSite: "strict",
+                });
 
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -66,7 +68,7 @@ instance.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
 export default instance;

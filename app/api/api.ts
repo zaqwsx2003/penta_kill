@@ -15,7 +15,11 @@ export const userRegister = async ({
     password,
 }: RegisterParams): Promise<RegisterParams> => {
     try {
-        const response = await instance.post("/users/signup", { username, email, password });
+        const response = await instance.post("/users/signup", {
+            username,
+            email,
+            password,
+        });
         return response.data;
     } catch (error) {
         throw error;
@@ -27,7 +31,10 @@ type LoginParams = Pick<RegisterParams, "email" | "password">;
 
 export const userLogin = async ({ email, password }: LoginParams) => {
     try {
-        const response = await instance.post("/users/login", { email, password });
+        const response = await instance.post("/users/login", {
+            email,
+            password,
+        });
 
         // Extract the token from the Authorization header
         const authHeader = response.headers["authorization"];
@@ -73,6 +80,26 @@ export const getMatchList = async () => {
         const response = await instance.get("/schedules/leagues?league=lck");
         return response.data;
     } catch (error) {
+        throw error;
+    }
+};
+
+// 펜타톡
+export const fetchPosts = async ({
+    page,
+    size,
+}: {
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await instance.get(`/posts`, {
+            params: { page, size },
+        });
+        console.log("게시판 불러오기: ", response);
+        return response;
+    } catch (error) {
+        console.error("Error fetching posts:", error);
         throw error;
     }
 };
