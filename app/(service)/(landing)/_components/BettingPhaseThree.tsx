@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 
 type BettingPhaseThreeProps = {
@@ -8,6 +8,7 @@ type BettingPhaseThreeProps = {
 export default function BettingPhaseThree({
     handleClose,
 }: BettingPhaseThreeProps) {
+
     return (
         <motion.div
             key="phaseThree"

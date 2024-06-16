@@ -24,7 +24,6 @@ export default function BettingPhaseTwo({
     const session = useSession();
     const [point, setPoint] = useState<number>(100);
     const [error, setError] = useState<string>("");
-    const [pointAmountError, setPointAmountError] = useState<number>(0);
     const { setBet, betInfo } = useSelectedGameStore();
     const queryClient = useQueryClient();
     const match = useMatchState((state) => state);
@@ -67,11 +66,6 @@ export default function BettingPhaseTwo({
         );
     };
 
-    const setPointCancelHandler = () => {
-        setPoint(0);
-        setBetPhase(1);
-    };
-
     if (error) {
         return (
             <motion.div
@@ -79,7 +73,7 @@ export default function BettingPhaseTwo({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 1, x: -800 }}
                 transition={{ duration: 0.7 }}
-                className="flex h-full w-full items-center justify-center"
+                className="flex h-full w-full items-center justify-center font-semibold text-white"
             >
                 {error}
             </motion.div>
