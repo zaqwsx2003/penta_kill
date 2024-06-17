@@ -58,7 +58,7 @@ export const getMatchPredictionList = async () => {
     } catch (error) {
         throw error;
     }
-};
+};  
 
 // 베팅하기
 export const postBettingPoint = async (data: {

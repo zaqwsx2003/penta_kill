@@ -1,100 +1,59 @@
 import React, { useEffect, useRef, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
-import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import { matchWeekVariant } from "@/app/(service)/(landing)/_components/style";
+import { animate, motion } from "framer-motion";
 
 type DropsDownProps = {
-    currentWeek: number;
+    matchWeek: number;
+    selectWeek: number;
     weeklyArray: number[] | unknown[];
+    isOpen: boolean;
+    isClose: React.Dispatch<React.SetStateAction<boolean>>;
+    setSelectWeek: (value: number) => void;
 };
 
-const matchWeekVariant = cva(
-    `flex flex-col justify-center items-center cursor-pointer py-1 px-2 hover:bg-blue-500 rounded `,
-    {
-        variants: {
-            matchWeek: {
-                true: `border border-blue-500 px-2 rounded`,
-                false: "",
-            },
-            selectWeek: { true: "" },
-        },
-    },
-);
-
 export default function WeekDropDown({
-    currentWeek,
+    matchWeek,
+    selectWeek,
     weeklyArray,
+    isOpen,
+    isClose,
+    setSelectWeek,
 }: DropsDownProps) {
-    const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
-    const [selectedWeek, setSelectedWeek] = useState<number>(0);
-    const dropDownRef = useRef<HTMLDivElement>(null);
-    const triggerRef = useRef<HTMLDivElement>(null);
+    const selectWeekHandler = (index: number) => () => {
+        setSelectWeek(index);
+        isClose(false);
+    };
 
-    const matchWeek = useEffect(() => {
-        const handler = (event: MouseEvent) => {
-            if (
-                dropDownRef.current &&
-                !dropDownRef.current.contains(event.target as Node) &&
-                triggerRef.current &&
-                !triggerRef.current.contains(event.target as Node)
-            ) {
-                setIsDropDownOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handler);
-        return () => {
-            document.removeEventListener("mousedown", handler);
-        };
-    }, []);
+    const handleModalClick = (e: React.MouseEvent<HTMLUListElement>) => {
+        e.stopPropagation();
+    };
 
     return (
-        <>
-            <div className="relative flex items-center justify-center">
-                <div
-                    className="absolute rounded-[10px] border border-white px-4 py-1 text-white"
-                    onClick={() => setIsDropDownOpen((prev) => !prev)}
+        <motion.ul
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: 1, y: 15 }}
+            exit={{ opacity: 0, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute -left-0 top-8 z-40 flex w-32 flex-col gap-y-1 rounded-[10px] bg-white p-4"
+            onClick={handleModalClick}
+        >
+            {weeklyArray.map((_, index: number) => (
+                <motion.li
+                    whileHover={{ scale: 1.1, color: "#fff" }}
+                    className={cn(
+                        matchWeekVariant({
+                            matchWeek: matchWeek === index,
+                            selectWeek: selectWeek === index,
+                        }),
+                    )}
+                    key={index}
+                    onClick={selectWeekHandler(index)}
                 >
-                    <div
-                        className="flex cursor-pointer items-center"
-                        ref={triggerRef}
-                    >
-                        <div>{currentWeek + 1}주차</div>
-                        <div className="pl-1">
-                            <IoIosArrowDown />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="relative z-50 flex justify-center">
-                <div
-                    className={`absolute overflow-hidden transition-all duration-300 ease-in-out ${
-                        isDropDownOpen
-                            ? "max-h-96 opacity-100"
-                            : "max-h-0 opacity-0"
-                    }`}
-                >
-                    <div
-                        className="rounded-[10px] bg-white p-4"
-                        ref={dropDownRef}
-                    >
-                        {weeklyArray.map((_, index: number) => (
-                            <div
-                                className={cn(
-                                    matchWeekVariant({
-                                        matchWeek: currentWeek === index,
-                                        selectWeek: currentWeek === index,
-                                    }),
-                                )}
-                                key={index}
-                                onClick={() => {}}
-                            >
-                                {index + 1}주차
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </>
+                    {index + 1}주차
+                </motion.li>
+            ))}
+        </motion.ul>
     );
 }

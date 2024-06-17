@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
@@ -43,7 +43,8 @@ export default function Header() {
             } left-0 top-0 z-50`}
         >
             <div className="flex h-20 flex-row items-center justify-between border-b bg-orange-400 px-14 py-0">
-                <div
+                <Link
+                    href="/"
                     className="max-w-[200px] cursor-pointer"
                     onClick={rootRoutePageHandler}
                 >
@@ -55,7 +56,7 @@ export default function Header() {
                         height={40}
                         priority={true}
                     />
-                </div>
+                </Link>
                 <div className="w-100 flex flex-grow justify-center gap-10">
                     {gnbRootList.map((item, i) => (
                         <GnbItem
@@ -82,7 +83,11 @@ export default function Header() {
                                     />
                                 </div>
                             </div>
-                            <div className="relative" ref={userMenuRef}>
+                            <motion.div
+                                className="relative"
+                                ref={userMenuRef}
+                                whileTap={{ scale: 0.97 }}
+                            >
                                 <Image
                                     src="/blank-avatar.webp"
                                     width={40}
@@ -92,14 +97,9 @@ export default function Header() {
                                     onClick={userModalHandler}
                                 />
                                 <AnimatePresence>
-                                    {userMenu && (
-                                        <UserModal
-                                            isActivate={userMenu}
-                                            onControl={userModalHandler}
-                                        />
-                                    )}
+                                    {userMenu && <UserModal />}
                                 </AnimatePresence>
-                            </div>
+                            </motion.div>
                         </>
                     ) : loading ? (
                         <Spinner />

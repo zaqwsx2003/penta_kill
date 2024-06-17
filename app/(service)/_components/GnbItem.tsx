@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { menuActivate } from "@/app/(service)/_lib/style";
+import { menuActivate } from "@/app/(service)/_components/style";
 
 export default function GnbItem({
     route,

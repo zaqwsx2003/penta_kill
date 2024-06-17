@@ -73,6 +73,10 @@ const config = {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
             },
+            backgroundImage: {
+                "diagonal-stripes":
+                    "repeating-linear-gradient(45deg, #808080 0%, #808080 3%, transparent 3%, transparent 6%)",
+            },
         },
     },
     plugins: [require("tailwindcss-animated")],

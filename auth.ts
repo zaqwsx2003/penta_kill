@@ -3,7 +3,6 @@ import { jwtDecode } from "jwt-decode";
 import authConfig from "./auth.config";
 
 interface UserInfo {
-    userid: number;
     email: string;
     username: string;
     point: number;
@@ -27,21 +26,33 @@ const nextAuthOptions: NextAuthConfig = {
             return { ...token, ...user };
         },
         async session({ session, token }: any) {
-            session.accessToken = token.accessToken;
-            const userInfo = jwtDecode<UserInfo>(token.accessToken.split(" ")[1]);
-            console.log(userInfo);
-            session.expires = userInfo.exp;
-            session.user = {
-                id: userInfo.userid.toString(),
-                email: userInfo.email,
-                name: userInfo.username,
-                point: userInfo.point,
-            };
+            if (!token.accessToken) {
+                console.error("Access token is undefined");
+                throw new Error("Access token is undefined");
+            }
+
+            try {
+                const accessToken = token.accessToken.startsWith("Bearer ")
+                    ? token.accessToken.split(" ")[1]
+                    : token.accessToken;
+
+                const userInfo = jwtDecode<UserInfo>(accessToken);
+                console.log(userInfo);
+                session.accessToken = accessToken;
+                session.expires = new Date(userInfo.exp * 1000).toISOString();
+                session.user = {
+                    email: userInfo.email,
+                    name: userInfo.username,
+                    point: userInfo.point,
+                };
+            } catch (error) {
+                console.error("Error decoding JWT:", error);
+                throw new Error("Error decoding JWT");
+            }
             return session;
         },
     },
 };
-
 const {
     handlers: { GET, POST },
     signIn,

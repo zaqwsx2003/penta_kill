@@ -20,13 +20,15 @@ export default function RegisterForm() {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
-    const [registerParams, setRegisterParams] = useState<RegisterParams | null>(null);
+    const [emailMessage, setEmailMessage] = useState<string | undefined>("");
+    const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
+    const [registerParams, setRegisterParams] = useState<RegisterParams | null>(
+        null,
+    );
 
     const {
         register,
         handleSubmit,
-        getValues,
-        setValue,
         formState: { errors },
     } = useForm<RegisterParams>({
         mode: "onChange",
@@ -37,6 +39,35 @@ export default function RegisterForm() {
             username: "",
         },
     });
+
+    const checkEmailAvailability = async (email: string) => {
+        try {
+            const response = await fetch("/api/checkEmail", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+            const stauts = await response.status;
+            const data = await response.json();
+            console.log(data);
+            if (response.ok) {
+                if (response.status === 200) {
+                    setEmailMessage(data.message);
+                    setIsEmailValid(true);
+                }
+            } else {
+                setEmailMessage(data.message);
+                setIsEmailValid(false);
+                return false;
+            }
+        } catch (error) {
+            setError("잘못된 요청 입니다.");
+            setIsEmailValid(false);
+            return false;
+        }
+    };
 
     const mutation = useMutation({
         mutationFn: userRegister,
@@ -57,67 +88,96 @@ export default function RegisterForm() {
         },
     });
 
+    const handleEmailBlur = async (
+        event: React.FocusEvent<HTMLInputElement>,
+    ) => {
+        const email = event.target.value;
+        if (email) {
+            await checkEmailAvailability(email);
+        }
+    };
+
     const onSubmit: SubmitHandler<RegisterParams> = (values) => {
         setError("");
         setSuccess("");
         setRegisterParams(values);
 
-        startTransition(() => {
-            mutation.mutate(values);
+        startTransition(async () => {
+            if (isEmailValid) mutation.mutate(values);
         });
     };
 
     return (
         <FormWrapper
-            headerLabel='회원가입'
-            backButtonLabel='계정이 있으신가요?'
-            backButtonHref='/auth/login'>
+            headerLabel="회원가입"
+            backButtonLabel="계정이 있으신가요?"
+            backButtonHref="/auth/login"
+        >
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className='flex flex-col items-center justify-center flex-grow w-full'>
-                <div className='flex flex-col w-full mt-4 h-[5rem]'>
-                    <span className='dark:text-black'>이름</span>
+                className="flex w-full flex-grow flex-col items-center justify-center"
+            >
+                <div className="mt-4 flex h-[5rem] w-full flex-col">
+                    <span className="dark:text-black">이름</span>
                     <input
-                        type='text'
-                        {...register("username", { required: "Name is required" })}
-                        placeholder='홍길동'
-                        className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
+                        type="text"
+                        {...register("username", {
+                            required: "Name is required",
+                        })}
+                        placeholder="홍길동"
+                        className="rounded border border-gray-300 bg-white px-2 py-1 text-black"
                     />
                     {errors.username && (
-                        <span className='text-red-500'>{errors.username.message}</span>
+                        <span className="text-red-500">
+                            {errors.username.message}
+                        </span>
                     )}
                 </div>
-                <div className='flex flex-col w-full mt-4 h-[5rem]'>
-                    <span className='dark:text-black'>이메일</span>
+                <div className="mt-4 flex h-[5rem] w-full flex-col">
+                    <span className="dark:text-black">이메일</span>
                     <input
-                        type='email'
-                        {...register("email", { required: "Email is required" })}
-                        placeholder='gildong@gmail.com'
-                        className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
+                        type="email"
+                        {...register("email", {
+                            required: "Email is required",
+                        })}
+                        placeholder="gildong@gmail.com"
+                        className="rounded border border-gray-300 bg-white px-2 py-1 text-black"
+                        onBlur={handleEmailBlur}
                     />
-                    {errors.email && <span className='text-red-500'>{errors.email.message}</span>}
+                    {emailMessage ? (
+                        <span className="text-red-500">{emailMessage}</span>
+                    ) : (
+                        <span className="text-red-500">
+                            {errors?.email?.message}
+                        </span>
+                    )}
                 </div>
-                <div className='flex flex-col w-full mt-4 h-[5rem]'>
-                    <span className='dark:text-black'>비밀번호</span>
+                <div className="mt-4 flex h-[5rem] w-full flex-col">
+                    <span className="dark:text-black">비밀번호</span>
                     <input
-                        type='password'
-                        {...register("password", { required: "Password is required" })}
-                        placeholder='********'
-                        className='border bg-white border-gray-300 rounded px-2 py-1 text-black'
+                        type="password"
+                        {...register("password", {
+                            required: "Password is required",
+                        })}
+                        placeholder="********"
+                        className="rounded border border-gray-300 bg-white px-2 py-1 text-black"
                     />
                     {errors.password && (
-                        <span className='text-red-500'>{errors.password.message}</span>
+                        <span className="text-red-500">
+                            {errors.password.message}
+                        </span>
                     )}
-                    <div className='mt-3'>
+                    <div className="mt-3">
                         <FormError message={error} />
                         <FormSuccess message={success} />
                     </div>
                 </div>
                 <button
-                    type='submit'
-                    className='bg-black border w-full px-10 py-2 rounded-[10px] mt-12'
-                    disabled={isPending}>
-                    <span className='text-white'>회원가입</span>
+                    type="submit"
+                    className="mt-12 w-full rounded-[10px] border bg-black px-10 py-2"
+                    disabled={isPending || isEmailValid === false}
+                >
+                    <span className="text-white">회원가입</span>
                 </button>
             </form>
         </FormWrapper>
