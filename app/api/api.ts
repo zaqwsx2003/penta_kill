@@ -15,7 +15,11 @@ export const userRegister = async ({
     password,
 }: RegisterParams): Promise<RegisterParams> => {
     try {
-        const response = await instance.post("/users/signup", { username, email, password });
+        const response = await instance.post("/users/signup", {
+            username,
+            email,
+            password,
+        });
         return response.data;
     } catch (error) {
         throw error;
@@ -27,7 +31,10 @@ type LoginParams = Pick<RegisterParams, "email" | "password">;
 
 export const userLogin = async ({ email, password }: LoginParams) => {
     try {
-        const response = await instance.post("/users/login", { email, password });
+        const response = await instance.post("/users/login", {
+            email,
+            password,
+        });
 
         // Extract the token from the Authorization header
         const authHeader = response.headers["authorization"];
@@ -73,6 +80,52 @@ export const getMatchList = async () => {
         const response = await instance.get("/schedules/leagues?league=lck");
         return response.data;
     } catch (error) {
+        throw error;
+    }
+};
+
+// 펜타톡
+export const fetchPosts = async ({
+    page,
+    size,
+}: {
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await instance.get(`/posts`, {
+            params: { page, size },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 게시글 상세
+export const fetchPost = async (id: number) => {
+    try {
+        const response = await instance.get(`/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 댓글목록
+export const fetchComments = async (
+    postId: number,
+    page: number,
+    size: number,
+) => {
+    try {
+        const response = await instance.get(`/posts/${postId}/comments`, {
+            params: { page, size },
+        });
+        console.log("댓글통신", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("댓글에러", error);
         throw error;
     }
 };

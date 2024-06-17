@@ -1,43 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
-import Post from "./_components/Post";
+import BoardRow from "./_components/BoardRow";
 import Pagination from "./_components/Pagination";
 import { useForm } from "react-hook-form";
+import { fetchPosts } from "@/app/api/api";
+import { useBoardStore } from "@/lib/boardStore";
 import { useQuery } from "@tanstack/react-query";
-import instance from "@/app/api/instance";
 
 export default function Page() {
-    const mockPosts = Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
-        title: `Post ${i + 1}`,
-        author: `Author ${i + 1}`,
-        date: `2023-01-0${(i % 10) + 1}`,
-        views: 100 + i * 10,
-        comments: i * 2,
-        recommendation: i % 5,
-    }));
+    const {
+        posts,
+        setPosts,
+        page,
+        setPage,
+        size,
+        totalPages,
+        setTotalPages,
+        setTotalPosts,
+    } = useBoardStore();
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const postsPerPage = 10;
-    const totalPages = Math.ceil(mockPosts.length / postsPerPage);
-
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = mockPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-    const pageChangeHandler = (page: number) => {
-        setCurrentPage(page);
-    };
-
-    const { data: post } = useQuery({
-        queryKey: ["post"],
-        queryFn: async () => {
-            const response = await instance.get(`posts?page=1&size=10`);
-            return response.data;
-        },
+    const { data, isError, isLoading } = useQuery({
+        queryKey: ["board", page, size],
+        queryFn: () => fetchPosts({ page, size }),
     });
+
+    useEffect(() => {
+        if (data) {
+            setPosts(data.data);
+            setTotalPages(data.totalPages);
+            setTotalPosts(data.totalElements);
+        }
+    }, [data, setPosts, setTotalPages, setTotalPosts]);
+
+    function pageChangeHandler(newPage: number) {
+        setPage(newPage);
+    }
 
     // Form handling (일단 레이아웃만)
     type SearchFormValues = {
@@ -45,6 +44,9 @@ export default function Page() {
         searchType: string;
     };
     const { register, handleSubmit } = useForm<SearchFormValues>();
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error loading posts</div>;
 
     return (
         <div className="container mx-auto max-w-3xl p-4">
@@ -58,13 +60,13 @@ export default function Page() {
                 <div className="col-span-1">추천</div>
             </div>
             <div className="mt-2 grid grid-cols-1 gap-2 text-xs">
-                {currentPosts.map((post, index) => (
-                    <Post
-                        key={post.id}
-                        index={indexOfFirstPost + index + 1}
-                        {...post}
-                    />
-                ))}
+                {posts && posts.length > 0
+                    ? posts.map((post) => <BoardRow key={post.id} {...post} />)
+                    : !isLoading && (
+                          <div className="h-64 py-32 text-center text-white">
+                              등록된 게시물이 없습니다.
+                          </div>
+                      )}
             </div>
             <div className="mb-4 mt-2 flex justify-between">
                 <form
@@ -101,7 +103,7 @@ export default function Page() {
             </div>
 
             <Pagination
-                currentPage={currentPage}
+                currentPage={page}
                 totalPages={totalPages}
                 onPageChange={pageChangeHandler}
             />

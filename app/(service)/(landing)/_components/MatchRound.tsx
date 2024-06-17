@@ -4,7 +4,6 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import { DaysMatch } from "@/model/match";
 import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
