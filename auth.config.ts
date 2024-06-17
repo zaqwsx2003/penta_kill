@@ -1,9 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import instance from "@/app/api/instance";
 import { NextAuthConfig } from "next-auth";
-import cookie from "cookie";
-import axios from "axios";
 
 interface User {
     // id: string;
@@ -43,6 +40,9 @@ export default {
                         const user: User = {
                             accessToken: response.headers.get(
                                 "Authorization",
+                            ) as string,
+                            refreshToken: response.headers.get(
+                                "refresh-token",
                             ) as string,
                         };
 

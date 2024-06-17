@@ -9,9 +9,12 @@ export default function SessionModal() {
                     <div className="text-xl">
                         로그인 후 사용가능한 서비스입니다.
                     </div>
-                    <div className="mt-3 rounded-[10px] bg-blue-500 px-3 py-2 font-semibold text-white duration-200 ease-in-out hover:bg-blue-300">
-                        <Link href={`/auth/login`}>로그인하기</Link>
-                    </div>
+                    <Link
+                        href="/auth/login"
+                        className="mt-3 rounded-[10px] bg-blue-500 px-3 py-2 font-semibold text-white duration-200 ease-in-out hover:bg-blue-300"
+                    >
+                        <p>로그인하기</p>
+                    </Link>
                 </div>
             </div>
         </>

@@ -85,7 +85,7 @@ export default function TeamPanel({
                         matchState === "unstarted" &&
                         team.code !== "TBD" &&
                         !isBetting
-                            ? "cursor-pointer"
+                            ? "cursor-pointer duration-150 ease-in-out hover:bg-blue-500"
                             : "cursor-default"
                     }`}
                 >
