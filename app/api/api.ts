@@ -113,15 +113,13 @@ export const fetchPost = async (id: number) => {
 };
 
 // 댓글목록
-export const fetchComments = async ({
-    page,
-    size,
-}: {
-    page: number;
-    size: number;
-}) => {
+export const fetchComments = async (
+    postId: number,
+    page: number,
+    size: number,
+) => {
     try {
-        const response = await instance.get(`/comments`, {
+        const response = await instance.get(`/posts/${postId}/comments`, {
             params: { page, size },
         });
         console.log("댓글통신", response.data);

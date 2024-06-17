@@ -5,6 +5,7 @@ import Image from "next/image";
 import avatarImg from "@/public/mid.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPost } from "@/app/api/api";
+import CommentSection from "../_components/CommentSection";
 
 export default function Page() {
     const { id } = useParams();
@@ -51,6 +52,7 @@ export default function Page() {
                     </div>
                 </div>
             </div>
+            <CommentSection postId={Number(id)} />
         </div>
     );
 }

@@ -25,3 +25,23 @@ export interface BoardState {
     setTotalPosts: (totalPosts: number) => void;
     setTotalPages: (totalPages: number) => void;
 }
+
+export interface Comment {
+    id: number;
+    content: string;
+    createAt: string;
+    nickname: string;
+    replyCount: number;
+}
+
+export interface CommentState {
+    comments: Comment[];
+    page: number;
+    size: number;
+    hasMore: boolean;
+    setComments: (comment: Comment[]) => void;
+    setPage: (page: number) => void;
+    setSize: (size: number) => void;
+    setHasMore: (hasMore: boolean) => void;
+    addComments: (comments: Comment[]) => void;
+}
