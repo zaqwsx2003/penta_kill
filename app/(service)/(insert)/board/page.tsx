@@ -1,12 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import BoardRow from "./_components/BoardRow";
 import Pagination from "./_components/Pagination";
 import { useForm } from "react-hook-form";
 import { fetchPosts } from "@/app/api/api";
 import { useBoardStore } from "@/lib/boardStore";
-import { FetchPostsResponse, Post } from "@/model/board";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
@@ -21,14 +21,18 @@ export default function Page() {
         setTotalPosts,
     } = useBoardStore();
 
-    const {
-        data: boardInfo,
-        isError,
-        isLoading,
-    } = useQuery({
+    const { data, isError, isLoading } = useQuery({
         queryKey: ["board", page, size],
         queryFn: () => fetchPosts({ page, size }),
     });
+
+    useEffect(() => {
+        if (data) {
+            setPosts(data.data);
+            setTotalPages(data.totalPages);
+            setTotalPosts(data.totalElements);
+        }
+    }, [data, setPosts, setTotalPages, setTotalPosts]);
 
     function pageChangeHandler(newPage: number) {
         setPage(newPage);
@@ -56,15 +60,13 @@ export default function Page() {
                 <div className="col-span-1">추천</div>
             </div>
             <div className="mt-2 grid grid-cols-1 gap-2 text-xs">
-                {posts.length > 0 ? (
-                    posts.map((post, index) => (
-                        <BoardRow key={post.id} {...post} />
-                    ))
-                ) : (
-                    <div className="h-64 py-32 text-center text-white">
-                        등록된 게시물이 없습니다.
-                    </div>
-                )}
+                {posts && posts.length > 0
+                    ? posts.map((post) => <BoardRow key={post.id} {...post} />)
+                    : !isLoading && (
+                          <div className="h-64 py-32 text-center text-white">
+                              등록된 게시물이 없습니다.
+                          </div>
+                      )}
             </div>
             <div className="mb-4 mt-2 flex justify-between">
                 <form

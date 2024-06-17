@@ -12,16 +12,6 @@ export interface Post {
     nickname: string;
 }
 
-export interface FetchPostsResponse {
-    statusCode: number;
-    message: string;
-    data: Post[];
-    currentPage: number;
-    totalPages: number;
-    totalElements: number;
-    pageSize: number;
-}
-
 export interface BoardState {
     posts: Post[];
     page: number;

@@ -96,10 +96,38 @@ export const fetchPosts = async ({
         const response = await instance.get(`/posts`, {
             params: { page, size },
         });
-        console.log("게시판 불러오기: ", response);
-        return response;
+        return response.data;
     } catch (error) {
-        console.error("Error fetching posts:", error);
+        throw error;
+    }
+};
+
+// 게시글 상세
+export const fetchPost = async (id: number) => {
+    try {
+        const response = await instance.get(`/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 댓글목록
+export const fetchComments = async ({
+    page,
+    size,
+}: {
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await instance.get(`/comments`, {
+            params: { page, size },
+        });
+        console.log("댓글통신", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("댓글에러", error);
         throw error;
     }
 };
