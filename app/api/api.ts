@@ -1,5 +1,6 @@
-import instance from "@/app/api/instance";
-import { signIn } from "@/auth";
+"use client";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 // 회원가입
@@ -15,7 +16,7 @@ export const userRegister = async ({
     password,
 }: RegisterParams): Promise<RegisterParams> => {
     try {
-        const response = await instance.post("/users/signup", {
+        const response = await axios.post("/users/signup", {
             username,
             email,
             password,
@@ -31,7 +32,7 @@ type LoginParams = Pick<RegisterParams, "email" | "password">;
 
 export const userLogin = async ({ email, password }: LoginParams) => {
     try {
-        const response = await instance.post("/users/login", {
+        const response = await axios.post("/users/login", {
             email,
             password,
         });
@@ -53,12 +54,12 @@ export const userLogin = async ({ email, password }: LoginParams) => {
 // 승부예측(일정)
 export const getMatchPredictionList = async () => {
     try {
-        const response = await instance.get("/bets/recentTournament/schedules");
+        const response = await axios.get("/bets/recentTournament/schedules");
         return response.data;
     } catch (error) {
         throw error;
     }
-};  
+};
 
 // 베팅하기
 export const postBettingPoint = async (data: {
@@ -67,7 +68,7 @@ export const postBettingPoint = async (data: {
     point: number;
 }) => {
     try {
-        const response = await instance.post("/points/bettings", data);
+        const response = await axios.post("/points/bettings", data);
         return response.data;
     } catch (error) {
         throw error;
@@ -77,7 +78,7 @@ export const postBettingPoint = async (data: {
 // 경기일정 (수정해야함)
 export const getMatchList = async () => {
     try {
-        const response = await instance.get("/schedules/leagues?league=lck");
+        const response = await axios.get("/schedules/leagues?league=lck");
         return response.data;
     } catch (error) {
         throw error;
@@ -93,7 +94,7 @@ export const fetchPosts = async ({
     size: number;
 }) => {
     try {
-        const response = await instance.get(`/posts`, {
+        const response = await axios.get(`/posts`, {
             params: { page, size },
         });
         return response.data;
@@ -105,7 +106,7 @@ export const fetchPosts = async ({
 // 게시글 상세
 export const fetchPost = async (id: number) => {
     try {
-        const response = await instance.get(`/posts/${id}`);
+        const response = await axios.get(`/posts/${id}`);
         return response.data;
     } catch (error) {
         throw error;
@@ -119,7 +120,7 @@ export const fetchComments = async (
     size: number,
 ) => {
     try {
-        const response = await instance.get(`/posts/${postId}/comments`, {
+        const response = await axios.get(`/posts/${postId}/comments`, {
             params: { page, size },
         });
         console.log("댓글통신", response.data);

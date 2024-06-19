@@ -3,10 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import { NextAuthConfig } from "next-auth";
 
 interface User {
-    // id: string;
-    // email: string;
-    // name: string;
-    // userInfo: UserInfo;
     accessToken: string;
     refreshToken?: string;
 }
@@ -39,10 +35,10 @@ export default {
                     if (response) {
                         const user: User = {
                             accessToken: response.headers.get(
-                                "Authorization",
+                                "authorization",
                             ) as string,
                             refreshToken: response.headers.get(
-                                "refresh-token",
+                                "refreshToken",
                             ) as string,
                         };
 

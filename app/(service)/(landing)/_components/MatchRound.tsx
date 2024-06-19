@@ -4,19 +4,22 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import { DaysMatch } from "@/model/match";
 import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
-import { getMatchPredictionList } from "@/app/api/api";
 import Spinner from "@/app/(service)/_components/Spinner";
 import ErrorPage from "@/app/(service)/_components/ErrorPage";
 import useModalRef from "@/app/(service)/_lib/useModalRef";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
+import { useSession } from "next-auth/react";
 
 export default function MatchRound() {
     const [matchWeek, setMatchWeek] = useState<number>(0);
     const [selectWeek, setSelectWeek] = useState<number>(matchWeek);
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
     const triggerRef = useRef<HTMLDivElement>(null);
+    const axiosAuth = useAxiosAuth();
 
     const {
         data: match,
@@ -24,7 +27,17 @@ export default function MatchRound() {
         isError,
     } = useQuery({
         queryKey: ["match", "betting"],
-        queryFn: getMatchPredictionList,
+        queryFn: async () => {
+            try {
+                const response = await axiosAuth.get(
+                    `/bets/recentTournament/schedules`,
+                );
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
+
         staleTime: 0,
     });
 
@@ -48,8 +61,6 @@ export default function MatchRound() {
     const weeklyArrayFiltered = weeklySchedules?.filter(
         (data: any, index: number) => index === selectWeek,
     );
-
-    console.log(match);
 
     return (
         <>

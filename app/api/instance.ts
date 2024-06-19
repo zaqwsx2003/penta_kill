@@ -1,76 +1,57 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-import { getSession } from "next-auth/react";
+// import axios from "axios";
+// import { getSession, signIn } from "next-auth/react";
 
-type SessionType = {
-    accessToken?: string;
-    user: UserType;
-    expires: string;
-};
+// import RefreshAccess from "./refreshAccess";
 
-type UserType = {
-    id: string;
-    email: string;
-    name: string;
-};
+// type SessionType = {
+//     accessToken?: string;
+//     refreshToken?: string;
+//     user: UserType;
+//     expires: string;
+// };
 
-const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// type UserType = {
+//     id: string;
+//     email: string;
+//     name: string;
+// };
 
-instance.interceptors.request.use(
-    async (config) => {
-        const session: SessionType | null = await getSession();
-        config.headers.authorization = session
-            ? `Bearer ${session?.accessToken}`
-            : null;
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    },
-);
+// const instance = axios.create({
+//     baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
+//     withCredentials: true,
+//     headers: {
+//         "Content-Type": "application/json",
+//     },
+// });
 
-instance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    async (error) => {
-        const originalRequest = error.config;
+// instance.interceptors.request.use(
+//     async (config) => {
+//         const session: SessionType | null = await getSession();
+//         config.headers.authorization = session ? session?.accessToken : null;
+//         return config;
+//     },
+//     (error) => {
+//         return Promise.reject(error);
+//     },
+// );
 
-        if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+// instance.interceptors.response.use(
+//     (response) => {
+//         return response;
+//     },
+//     async (error) => {
+//         const originalRequest = error.config;
 
-            try {
-                const refreshToken = Cookies.get("Refresh_Token");
-                const response = await axios.post(
-                    "/api/refresh-token",
-                    {},
-                    {
-                        headers: {
-                            Authorization: `Bearer ${refreshToken}`,
-                        },
-                    },
-                );
-                const newAccessToken = response.data.accessToken;
-                Cookies.set("Access_Token", newAccessToken, {
-                    sameSite: "strict",
-                });
+//         if (error.response && error.response.status === 401) {
+//             try {
+//                 await RefreshAccess();
+//             } catch (err) {
+//                 await signIn();
+//             }
+//         }
 
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+//         return Promise.reject(error);
+//     },
+// );
 
-                return instance(originalRequest);
-            } catch (error) {
-                console.error("token error", error);
-            }
-        }
-
-        return Promise.reject(error);
-    },
-);
-
-export default instance;
+// export default instance;
