@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useScheduleStore } from "@/lib/scheduleStore";
 import YearMonthFilterDropdown from "./YearMonthFilterDropdown";
 
+// 데이터 보관 년도 ~ 올 해
 function getYears(startYear: number) {
     const currentYear = new Date().getFullYear();
     return Array.from({ length: currentYear - startYear + 1 }, (_, i) => ({
@@ -10,23 +11,16 @@ function getYears(startYear: number) {
         value: `${currentYear - i}`,
     }));
 }
-
+// 1월 ~ 12월 배열
 const months = Array.from({ length: 12 }, (_, i) => ({
     label: `${i + 1}월`,
     value: `${i + 1}`,
 }));
 
 export default function YearMonthFilter() {
+    const { selectedYear, selectedMonth, setSelectedYear, setSelectedMonth } =
+        useScheduleStore();
     const years = getYears(2022);
-    const [selectedYear, setSelectedYear] = useState<string>("");
-    const [selectedMonth, setSelectedMonth] = useState<string>("");
-
-    useEffect(() => {
-        const currentYear = new Date().getFullYear().toString();
-        const currentMonth = (new Date().getMonth() + 1).toString();
-        setSelectedYear(currentYear);
-        setSelectedMonth(currentMonth);
-    }, []);
 
     return (
         <div className="flex justify-start bg-gray-800 py-4">

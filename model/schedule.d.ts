@@ -45,11 +45,15 @@ export interface ScheduleResponse {
 }
 
 export interface ScheduleState {
+    matchDates: string[];
     schedules: Schedule[];
     currentPage: number;
     totalPages: number;
     totalElements: number;
     pageSize: number;
+    selectedYear: string;
+    selectedMonth: string;
+    setMatchDates: (matchDates: string[]) => void;
     setSchedules: (schedules: Schedule[]) => void;
     setPageInfo: (
         currentPage: number,
@@ -57,4 +61,6 @@ export interface ScheduleState {
         totalElements: number,
         pageSize: number,
     ) => void;
+    setSelectedYear: (selectedYear: string) => void;
+    setSelectedMonth: (selectedMonth: string) => void;
 }
