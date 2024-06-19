@@ -70,19 +70,7 @@ export default function Header() {
                 <div className="ml-10 flex flex-row items-center gap-5">
                     {!loading && session ? (
                         <>
-                            <div className="flex flex-row items-center justify-center">
-                                <div className="text-black">
-                                    {session?.user.point}
-                                </div>
-                                <div className="w-8">
-                                    <Image
-                                        src="/pointbeed.png"
-                                        width={30}
-                                        height={30}
-                                        alt="point"
-                                    />
-                                </div>
-                            </div>
+
                             <motion.div
                                 className="relative"
                                 ref={userMenuRef}

@@ -1,15 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import instance from "@/app/api/instance";
 import { NextAuthConfig } from "next-auth";
-import cookie from "cookie";
-import axios from "axios";
 
 interface User {
-    // id: string;
-    // email: string;
-    // name: string;
-    // userInfo: UserInfo;
     accessToken: string;
     refreshToken?: string;
 }
@@ -42,7 +35,10 @@ export default {
                     if (response) {
                         const user: User = {
                             accessToken: response.headers.get(
-                                "Authorization",
+                                "authorization",
+                            ) as string,
+                            refreshToken: response.headers.get(
+                                "refreshToken",
                             ) as string,
                         };
 

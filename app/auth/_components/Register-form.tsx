@@ -4,14 +4,15 @@ import React, { useState, useTransition } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { RegisterSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
-import { useMutation } from "@tanstack/react-query";
-import FormError from "./Form-Error";
-import FormSuccess from "./Form-Success";
+import FormError from "@/app/auth/_components/Form-Error";
+import FormSuccess from "@/app/auth/_components/Form-Success";
 import { userRegister } from "@/app/api/api";
-import { signIn } from "next-auth/react";
 
 type RegisterParams = z.infer<typeof RegisterSchema>;
 

@@ -11,6 +11,7 @@ import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 import { useSession } from "next-auth/react";
 import { useFirecracker } from "@/app/(service)/(landing)/_components/Firecracker";
+import { axiosAuth } from "@/lib/axiosHooks/axios";
 
 type BettingPhaseTwoProps = {
     closing: boolean;
@@ -32,7 +33,25 @@ export default function BettingPhaseTwo({
 
     const mutation = useMutation({
         mutationKey: ["betting"],
-        mutationFn: postBettingPoint,
+        mutationFn: async ({
+            matchId,
+            teamCode,
+            point,
+        }: {
+            matchId: string;
+            teamCode: string;
+            point: number;
+        }) => {
+            try {
+                const response = await axiosAuth.post(
+                    `${process.env.NEXT_PUBLIC_ENDPOINT}/points/bettings`,
+                    { matchId, teamCode, point },
+                );
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
                 queryKey: ["match", "betting"],

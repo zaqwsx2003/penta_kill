@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import pool from "@/lib/db";
 
 export async function POST(request: NextRequest) {
@@ -17,18 +18,8 @@ export async function POST(request: NextRequest) {
             [email],
         );
 
-        console.log(rows);
-
-        if (rows.length > 0) {
-            return NextResponse.json(
-                { message: "이미 가입된 이메일입니다." },
-                { status: 400 },
-            );
-        } else {
-            return NextResponse.json(
-                { message: "사용 가능한 이메일입니다." },
-                { status: 200 },
-            );
+        if (rows === null) {
+            return NextResponse.json({ message: "이메일 " }, { status: 400 });
         }
     } catch (error) {
         console.error(error);

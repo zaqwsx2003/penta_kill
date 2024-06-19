@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import { jwtDecode } from "jwt-decode";
-import authConfig from "./auth.config";
+
+import authConfig from "@/auth.config";
 
 interface UserInfo {
     email: string;
@@ -21,38 +22,35 @@ const nextAuthOptions: NextAuthConfig = {
     callbacks: {
         async jwt({ token, user }: any) {
             if (user) {
-                token.accessToken = user.token;
+                token.accessToken = user.accessToken;
+                token.refreshToken = user.refreshToken;
             }
+
+            console.log("token", token);
             return { ...token, ...user };
         },
+
         async session({ session, token }: any) {
-            if (!token.accessToken) {
-                console.error("Access token is undefined");
-                throw new Error("Access token is undefined");
-            }
+            session.accessToken = token.accessToken;
+            session.refreshToken = token.refreshToken;
 
-            try {
-                const accessToken = token.accessToken.startsWith("Bearer ")
-                    ? token.accessToken.split(" ")[1]
-                    : token.accessToken;
+            const accessToken = session.accessToken.startsWith("Bearer ")
+                ? session.accessToken.split(" ")[1]
+                : session.accessToken;
 
-                const userInfo = jwtDecode<UserInfo>(accessToken);
-                console.log(userInfo);
-                session.accessToken = accessToken;
-                session.expires = new Date(userInfo.exp * 1000).toISOString();
-                session.user = {
-                    email: userInfo.email,
-                    name: userInfo.username,
-                    point: userInfo.point,
-                };
-            } catch (error) {
-                console.error("Error decoding JWT:", error);
-                throw new Error("Error decoding JWT");
-            }
+            const userInfo = jwtDecode<UserInfo>(accessToken);
+            // session.expires = new Date(token.expires * 1000).toISOString();
+            session.user = {
+                email: userInfo.email,
+                name: userInfo.username,
+                point: userInfo.point,
+            };
+            console.log("session", session);
             return session;
         },
     },
 };
+
 const {
     handlers: { GET, POST },
     signIn,
