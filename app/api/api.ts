@@ -58,7 +58,7 @@ export const getMatchPredictionList = async () => {
     } catch (error) {
         throw error;
     }
-};  
+};
 
 // 베팅하기
 export const postBettingPoint = async (data: {
@@ -75,9 +75,17 @@ export const postBettingPoint = async (data: {
 };
 
 // 경기일정 (수정해야함)
-export const getMatchList = async () => {
+export const fetchMatchSchedule = async ({
+    page,
+    size,
+}: {
+    page: number;
+    size: number;
+}) => {
     try {
-        const response = await instance.get("/schedules/leagues?league=lck");
+        const response = await instance.get(`/schedules/leagues`, {
+            params: { page, size },
+        });
         return response.data;
     } catch (error) {
         throw error;
