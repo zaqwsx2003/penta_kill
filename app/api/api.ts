@@ -3,6 +3,12 @@ import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const API_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT;
+
+const PENTAAPI = axios.create({
+    baseURL: API_ENDPOINT,
+});
+
 // 회원가입
 export type RegisterParams = {
     username: string;
@@ -84,7 +90,7 @@ export const fetchMatchSchedule = async ({
     size: number;
 }) => {
     try {
-        const response = await instance.get(`/schedules/leagues`, {
+        const response = await PENTAAPI.get(`/schedules/leagues`, {
             params: { page, size },
         });
         return response.data;
@@ -102,7 +108,7 @@ export const fetchPosts = async ({
     size: number;
 }) => {
     try {
-        const response = await axios.get(`/posts`, {
+        const response = await PENTAAPI.get(`/posts`, {
             params: { page, size },
         });
         return response.data;
@@ -114,7 +120,7 @@ export const fetchPosts = async ({
 // 게시글 상세
 export const fetchPost = async (id: number) => {
     try {
-        const response = await axios.get(`/posts/${id}`);
+        const response = await PENTAAPI.get(`/posts/${id}`);
         return response.data;
     } catch (error) {
         throw error;
@@ -128,7 +134,7 @@ export const fetchComments = async (
     size: number,
 ) => {
     try {
-        const response = await axios.get(`/posts/${postId}/comments`, {
+        const response = await PENTAAPI.get(`/posts/${postId}/comments`, {
             params: { page, size },
         });
         console.log("댓글통신", response.data);
