@@ -5,8 +5,8 @@ import { matchWeekVariant } from "@/app/(service)/(landing)/_components/style";
 import { animate, motion } from "framer-motion";
 
 type DropsDownProps = {
-    matchWeek: number;
-    selectWeek: number;
+    matchWeek: number | undefined;
+    selectWeek: number | undefined;
     weeklyArray: number[] | unknown[];
     isOpen: boolean;
     isClose: React.Dispatch<React.SetStateAction<boolean>>;

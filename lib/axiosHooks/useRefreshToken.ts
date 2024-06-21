@@ -4,19 +4,36 @@ import { signIn, useSession } from "next-auth/react";
 import axios from "./axios";
 
 export const useRefreshToken = () => {
-    const { data: session } = useSession();
+    const { data: session, update } = useSession();
 
     const refreshToken = async () => {
-        const response = await axios.get("/users/refresh", {
-            headers: {
-                "Content-Type": "application/json",
-                RefreshToken: session?.refreshToken,
-            },
-        });
+        try {
+            const response = await axios.get("/users/refresh", {
+                headers: {
+                    "Content-Type": "application/json",
+                    RefreshToken: session?.user.refreshToken,
+                },
+            });
 
-        if (session) {
-            session.accessToken = response.headers.authorization;
-            session.refreshToken = response.headers.refreshtoken;
+            const newAccessToken = response.headers.authorization;
+            const newRefreshToken = response.headers.refreshtoken;
+
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken,
+                },
+            });
+
+            return {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+            };
+        } catch (error) {
+            console.log("error", error);
+            return null;
         }
     };
     return refreshToken;

@@ -8,13 +8,14 @@ export const gnbRootList: GnbRootListItem[] = [
         path: "/",
         route: "승부예측",
     },
+    {path: "/rating", route:"순위"},
     {
         path: "/schedule",
         route: "경기일정",
     },
     {
         path: "/board",
-        route: "펜타톡",
+        route: "커뮤니티",
     },
 ];
 

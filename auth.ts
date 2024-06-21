@@ -20,33 +20,25 @@ const nextAuthOptions: NextAuthConfig = {
     session: { strategy: "jwt" },
     ...authConfig,
     callbacks: {
-        async jwt({ token, user }: any) {
-            if (user) {
-                token.accessToken = user.accessToken;
-                token.refreshToken = user.refreshToken;
+        async jwt({ token, user, trigger, session }: any) {
+            if (trigger === "update") {
+                return { ...token, ...session.user };
             }
-
-            console.log("token", token);
             return { ...token, ...user };
         },
-
         async session({ session, token }: any) {
-            session.accessToken = token.accessToken;
-            session.refreshToken = token.refreshToken;
+            session.user = token as any;
 
-            const accessToken = session.accessToken.startsWith("Bearer ")
-                ? session.accessToken.split(" ")[1]
-                : session.accessToken;
-
-            const userInfo = jwtDecode<UserInfo>(accessToken);
-            // session.expires = new Date(token.expires * 1000).toISOString();
-            session.user = {
-                email: userInfo.email,
-                name: userInfo.username,
-                point: userInfo.point,
+            const decodedUser = jwtDecode<UserInfo>(token.accessToken);
+            session.userSession = {
+                email: decodedUser.email,
+                name: decodedUser.username,
+                point: decodedUser.point,
+                expires: decodedUser.exp,
             };
-            console.log("session", session);
-            return session;
+
+            console.log(session);
+            return { ...session };
         },
     },
 };

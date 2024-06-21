@@ -29,11 +29,13 @@ export default function UserModal() {
                     <div className="absolute -top-6 left-0 right-0 h-6 text-black" />
                     <div className="absolute right-[34px] top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white" />
                     <h3 className="line w-full pt-5 text-center text-lg font-semibold leading-5 text-black">
-                        {session?.user.name}
+                        {session?.userSession.name}
                         <span className="text-sm font-normal">님</span>
                     </h3>
                     <div className="flex flex-row items-center justify-center">
-                        <div className="text-black">{session?.user.point}</div>
+                        <div className="text-black">
+                            {session?.userSession.point}
+                        </div>
                         <div className="w-8">
                             <Image
                                 src="/pointbeed.png"

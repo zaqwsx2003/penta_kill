@@ -1,20 +1,63 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import axios, { axiosAuth } from "./axios";
 import { useRefreshToken } from "./useRefreshToken";
 
+type SessionType = {
+    user: UserType;
+    expires?: string;
+    userSession?: {
+        email: string;
+        name: string;
+        point: number;
+        expires: number;
+    };
+};
+
+type UserType = {
+    accessToken: string;
+    exp: string;
+    iat: string;
+    id: string;
+    jti: string;
+    refreshToken: string;
+    sub: string;
+};
+
 export default function useAxiosAuth() {
-    const { data: session } = useSession();
     const refreshToken = useRefreshToken();
+    const { data: session } = useSession();
 
     useEffect(() => {
-        const requestInterceptor = axiosAuth.interceptors.request.use(
-            (config) => {
-                if (!config.headers.Authorization) {
-                    config.headers.Authorization = session?.accessToken;
+        const refreshAccessTime = async () => {
+            const session = await getSession();
+            if (session) {
+                const now = Math.floor(new Date().getTime() / 1000);
+                const expire = session?.userSession?.expires;
+                const refreshTime = expire && expire - now - 5;
+
+                if (refreshTime && refreshTime < 0) {
+                    setTimeout(async () => {
+                        await refreshToken();
+                    }, refreshTime * 1000);
                 }
+            }
+        };
+
+        refreshAccessTime();
+
+        const requestInterceptor = axiosAuth.interceptors.request.use(
+            async (config) => {
+                const session = await getSession();
+                config.headers.Authorization = session
+                    ? session?.user.accessToken
+                    : null;
+                config.headers.RefreshToken = session
+                    ? session?.user.refreshToken
+                    : null;
+
                 return config;
             },
             (error) => Promise.reject(error),
@@ -26,12 +69,16 @@ export default function useAxiosAuth() {
                 const prevRequest = error.config;
                 if (error.response.status === 401 && !prevRequest.sent) {
                     prevRequest.sent = true;
-                    await refreshToken();
-                    console.log(session?.accessToken);
-                    prevRequest.headers.authorization = `${session?.accessToken}`;
-                    prevRequest.headers.refreshtoken = `${session?.refreshToken}`;
-                    return axiosAuth(prevRequest);
+                    const newTokens = await refreshToken();
+
+                    if (newTokens) {
+                        const session = await getSession();
+                        prevRequest.headers.Authorization =
+                            session?.user.accessToken;
+                        return axiosAuth(prevRequest);
+                    }
                 }
+
                 return Promise.reject(error);
             },
         );

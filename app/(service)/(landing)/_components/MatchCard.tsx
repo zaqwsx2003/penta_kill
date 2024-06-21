@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import useKoreanDateFormat from "@/lib/useDate";
 import TeamPanel from "@/app/(service)/(landing)/_components/TeamPanel";
 import { DaysMatch } from "@/model/match";
-import { useMatchState } from "@/lib/matchStore";
+import MatchState from "@/app/(service)/(landing)/_components/MatchState";
+import BettingResult from "@/app/(service)/(landing)/_components/BettingResult";
 
 type MatchCardProps = {
     matches: DaysMatch;
@@ -13,6 +14,8 @@ type MatchCardProps = {
 
 export default function MatchCard({ matches }: MatchCardProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
+
+    console.log(matches);
 
     return (
         <div
@@ -31,6 +34,12 @@ export default function MatchCard({ matches }: MatchCardProps) {
                 {!/주 차/.test(matches.blockName) && (
                     <span className="text-white">{matches.blockName}</span>
                 )}
+                <MatchState matchState={matches.state} />
+                <BettingResult
+                    matchState={matches.state}
+                    bettingState={matches.match.betting}
+                    bettingResult={matches.match.status}
+                />
             </div>
             <div className={`flex rounded-[10px]`}>
                 {matches.match.teams?.map((team, index) => (

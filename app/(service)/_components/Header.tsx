@@ -67,10 +67,9 @@ export default function Header() {
                         />
                     ))}
                 </div>
-                <div className="ml-10 flex flex-row items-center gap-5">
+                <div className="ml-10 flex flex-row items-center gap-5 pl-28">
                     {!loading && session ? (
                         <>
-
                             <motion.div
                                 className="relative"
                                 ref={userMenuRef}

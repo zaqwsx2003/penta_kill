@@ -79,7 +79,7 @@ export default function TeamPanel({
 
     return (
         <>
-            <div className="w-1/2" onClick={handleOpenModal}>
+            <div className="w-1/2 h-28" onClick={handleOpenModal}>
                 <Card
                     className={`${cn(panelVariants({ position }))}, ${panelColor} ${
                         matchState === "unstarted" &&
@@ -90,7 +90,7 @@ export default function TeamPanel({
                     }`}
                 >
                     <CardContent
-                        className={`flex h-20 w-full items-center justify-between ${
+                        className={`flex w-full items-center justify-between ${
                             position === 1 ? "flex-row-reverse" : ""
                         } `}
                     >

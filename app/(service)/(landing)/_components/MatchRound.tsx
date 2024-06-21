@@ -4,6 +4,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import { DaysMatch } from "@/model/match";
@@ -12,13 +13,11 @@ import Spinner from "@/app/(service)/_components/Spinner";
 import ErrorPage from "@/app/(service)/_components/ErrorPage";
 import useModalRef from "@/app/(service)/_lib/useModalRef";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
-import { useSession } from "next-auth/react";
 
 export default function MatchRound() {
-    const [matchWeek, setMatchWeek] = useState<number>(0);
-    const [selectWeek, setSelectWeek] = useState<number>(matchWeek);
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
     const triggerRef = useRef<HTMLDivElement>(null);
+    const { data: session, update } = useSession();
     const axiosAuth = useAxiosAuth();
 
     const {
@@ -41,6 +40,9 @@ export default function MatchRound() {
         staleTime: 0,
     });
 
+    const [matchWeek, setMatchWeek] = useState<number | undefined>(0);
+    const [selectWeek, setSelectWeek] = useState<number | undefined>(matchWeek);
+
     useModalRef({
         refs: { triggerRef },
         setState: setIsDropDownOpen,
@@ -49,6 +51,7 @@ export default function MatchRound() {
     useEffect(() => {
         if (match?.data) {
             setMatchWeek(match.data.currentWeek);
+            setSelectWeek(match.data.currentWeek);
         }
     }, [match]);
 
@@ -62,11 +65,12 @@ export default function MatchRound() {
         (data: any, index: number) => index === selectWeek,
     );
 
+    console.log(match);
     return (
         <>
             <div className="relative flex items-center justify-end pr-5">
                 <motion.div
-                    className="relative w-32 cursor-pointer rounded-[10px] border border-white p-4 py-1 text-white"
+                    className="translate relative w-32 cursor-pointer rounded-[10px] border border-white p-4 py-1 text-white duration-100 ease-in-out hover:outline hover:outline-2 hover:outline-white"
                     initial={false}
                     onClick={() => setIsDropDownOpen((prev) => !prev)}
                 >
@@ -75,7 +79,9 @@ export default function MatchRound() {
                         ref={triggerRef}
                     >
                         <div className="flex flex-grow justify-center font-bold">
-                            {selectWeek + 1}
+                            {selectWeek !== undefined
+                                ? selectWeek + 1
+                                : "주차 선택"}
                             <span className="font-normal">주차</span>
                         </div>
                         <motion.div
