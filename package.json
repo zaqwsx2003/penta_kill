@@ -50,6 +50,7 @@
         "react-quill": "^2.0.0",
         "react-youtube": "^10.1.0",
         "rimraf": "^5.0.7",
+        "sharp": "^0.33.4",
         "tailwind-merge": "^2.3.0",
         "tailwind-scrollbar-hide": "^1.1.7",
         "tailwindcss-animate": "^1.0.7",
