@@ -38,6 +38,7 @@ export interface MatchTeams {
     code: string;
     image: string;
     name: string;
+    probability: number;
     ratio: number;
     record: MatchRecord;
     result: MatchResult;

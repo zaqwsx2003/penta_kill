@@ -41,7 +41,14 @@ export default function BettingPhaseOne({
             : teamRed.ratio > teamBlue.ratio
               ? `${teamRed.code} 승리`
               : `${teamBlue.code} 승리`;
-    const aiWinRatio = 58;
+    const aiWinRatio =
+        match.teams[0].probability > match.teams[1].probability
+            ? match.teams[0].probability
+            : match.teams[1].probability;
+    const aiWinTeam =
+        match.teams[0].probability > match.teams[1].probability
+            ? match.teams[0].code
+            : match.teams[1].code;
 
     const count = useMotionValue(0);
     const rounded = useTransform(count, (value) => `${Math.round(value)}%`);
@@ -130,7 +137,7 @@ export default function BettingPhaseOne({
                                 transition={{ duration: 0.3 }}
                                 className="absolute top-full mt-2 text-lg"
                             >
-                                KT 승리
+                                {aiWinTeam}승리
                             </motion.p>
                         )}
                     </div>

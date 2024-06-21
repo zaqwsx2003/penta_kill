@@ -17,7 +17,6 @@ import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 export default function MatchRound() {
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
     const triggerRef = useRef<HTMLDivElement>(null);
-    const { data: session, update } = useSession();
     const axiosAuth = useAxiosAuth();
 
     const {

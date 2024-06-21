@@ -1,9 +1,8 @@
 "useClient";
 
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchComments } from "@/app/api/api";
-import { Comment } from "@/model/board";
 import { useCommentStore } from "@/lib/boardStore";
 
 interface CommentSectionProps {
@@ -85,7 +84,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                                     </span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    추천 {comment.likeCount}
+                                    추천
+                                    {/* {comment.likeCount} */}
                                 </div>
                             </div>
                             <div>{comment.content}</div>

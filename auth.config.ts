@@ -4,7 +4,7 @@ import { NextAuthConfig } from "next-auth";
 
 interface User {
     accessToken: string;
-    refreshToken?: string;
+    refreshToken: string;
 }
 
 export default {

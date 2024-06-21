@@ -77,9 +77,11 @@ export default function TeamPanel({
         }
     };
 
+    console.log(match);
+
     return (
         <>
-            <div className="w-1/2 h-28" onClick={handleOpenModal}>
+            <div className="max-h-28 w-1/2" onClick={handleOpenModal}>
                 <Card
                     className={`${cn(panelVariants({ position }))}, ${panelColor} ${
                         matchState === "unstarted" &&
@@ -97,7 +99,7 @@ export default function TeamPanel({
                         <div
                             className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}
                         >
-                            <div className="flex min-h-[60px] min-w-[60px] items-center justify-center">
+                            <div className="flex min-h-[62px] min-w-[62px] items-center justify-center">
                                 <Image
                                     src={team.image}
                                     width={60}

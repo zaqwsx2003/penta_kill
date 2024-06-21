@@ -17,12 +17,12 @@ declare module "next-auth" {
 
     interface User {
         accessToken: string;
-        exp: string;
-        iat: string;
+        exp?: string;
+        iat?: string;
         id: string;
-        jti: string;
+        jti?: string;
         refreshToken: string;
-        sub: string;
+        sub?: string;
     }
 
     interface JWT {
