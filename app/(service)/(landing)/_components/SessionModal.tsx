@@ -6,7 +6,7 @@ export default function SessionModal() {
         <>
             <div className="fixed inset-0 z-40 flex items-center justify-center overflow-hidden bg-black bg-opacity-50">
                 <div className="rounded-10 mx-aut z-50 flex h-60 w-[400px] flex-col items-center justify-center overflow-hidden rounded-[10px] bg-white">
-                    <div className="text-xl">
+                    <div className="text-xl text-black">
                         로그인 후 사용가능한 서비스입니다.
                     </div>
                     <Link
