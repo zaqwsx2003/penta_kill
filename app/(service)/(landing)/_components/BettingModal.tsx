@@ -96,6 +96,7 @@ export default function BettingModal({ team }: BettingModalProps) {
                                 {betPhase === 1 && (
                                     <BettingPhaseOneModal
                                         closing={closing}
+                                        handleClose={handleClose}
                                         setBetPhase={setBetPhase}
                                         handleImageLoad={handleImageLoad}
                                     />

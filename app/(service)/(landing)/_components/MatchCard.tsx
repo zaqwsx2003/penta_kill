@@ -15,8 +15,6 @@ type MatchCardProps = {
 export default function MatchCard({ matches }: MatchCardProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
 
-    console.log(matches);
-
     return (
         <div
             className="flex flex-col justify-between gap-2"

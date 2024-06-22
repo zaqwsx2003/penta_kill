@@ -8,7 +8,6 @@ import GnbItem from "@/app/(service)/_components/GnbItem";
 
 export default function Gnb() {
     const path = usePathname();
-    // const currentPath = path.split("/")[1];
 
     return (
         <aside className="fixed top-0 z-10 w-64 pt-20">

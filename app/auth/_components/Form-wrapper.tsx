@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
-import { Social } from "@/app/auth/_components/Social";
 import Link from "next/link";
 import Image from "next/image";
+
+import { Social } from "@/app/auth/_components/Social";
 
 type FormWrapperProps = {
     children: ReactNode;
@@ -19,25 +20,28 @@ export default function FormWrapper({
     showSocial,
 }: FormWrapperProps) {
     return (
-        <div className='flex flex-col items-center justify-center h-screen'>
-            <Link href={"/"} className='cursor-pointer'>
+        <div className="flex h-screen flex-col items-center justify-center">
+            <Link href={"/"} className="cursor-pointer">
                 <Image
-                    src='/dark_big_logo.png'
-                    className='block '
+                    src="/dark_big_logo.png"
+                    className="block"
                     width={500}
                     height={260}
-                    alt='logo'
+                    alt="logo"
                 />
             </Link>
-            <div className='w-[400px] h-[600px] bg-white rounded-[10px] flex flex-col justify-between items-center py-10 px-12'>
-                <div className='w-full'>
-                    <h1 className='text-black space-y-1.5 p-6 text-3xl font-bold text-center'>
+            <div className="flex h-[600px] w-[400px] flex-col items-center justify-between rounded-[10px] bg-white px-12 py-10">
+                <div className="w-full">
+                    <h1 className="space-y-1.5 p-6 text-center text-3xl font-bold text-black">
                         {headerLabel}
                     </h1>
                     {children}
                     {showSocial && <Social />}
                 </div>
-                <Link href={backButtonHref} className='text-black cursor-pointer'>
+                <Link
+                    href={backButtonHref}
+                    className="cursor-pointer text-black"
+                >
                     {backButtonLabel}
                 </Link>
             </div>

@@ -1,10 +1,10 @@
 import { Inter } from "next/font/google";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ThemeProvider } from "@/components/Theme-provider";
-import QueryClientProvider from "@/app/_components/QueryClientProvider";
-import { cn } from "@/lib/utils";
-import "@/app/globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+import "@/app/globals.css";
+import { cn } from "@/lib/utils";
+import QueryClientProvider from "@/app/_components/QueryClientProvider";
 import AuthProvider from "@/app/_components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });

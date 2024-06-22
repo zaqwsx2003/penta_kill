@@ -20,7 +20,6 @@ export default function Header() {
     const route = useRouter();
     const { data: session, status } = useSession();
     const [userMenu, setUserMenu] = useState(false);
-    const loading = status === "loading";
     const userMenuRef = useRef<HTMLDivElement>(null);
 
     const rootRoutePageHandler = () => {
@@ -68,7 +67,7 @@ export default function Header() {
                     ))}
                 </div>
                 <div className="ml-10 flex flex-row items-center gap-5 pl-28">
-                    {!loading && session ? (
+                    {status !== "loading" && session ? (
                         <>
                             <motion.div
                                 className="relative"
@@ -88,7 +87,7 @@ export default function Header() {
                                 </AnimatePresence>
                             </motion.div>
                         </>
-                    ) : loading ? (
+                    ) : status === "loading" ? (
                         <Spinner />
                     ) : (
                         <Link

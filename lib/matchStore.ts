@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type MatchState = {
+    matchState: string;
     startTime: string;
     amount: number;
     betting: boolean;
@@ -21,6 +22,7 @@ type MatchState = {
 };
 
 export const useMatchState = create<MatchState>((set) => ({
+    matchState: "",
     startTime: "",
     amount: 0,
     betting: false,

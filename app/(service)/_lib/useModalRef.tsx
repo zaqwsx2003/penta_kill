@@ -8,16 +8,17 @@ type ModalRefType = {
 };
 
 export default function useModalRef({ refs, setState }: ModalRefType) {
-    const modalOutsideClickHandler = useCallback((event: MouseEvent) => {
-        for (const key in refs) {
-            if (
-                refs[key].current?.contains(event.target as Node)
-            ) {
-                return;
+    const modalOutsideClickHandler = useCallback(
+        (event: MouseEvent) => {
+            for (const key in refs) {
+                if (refs[key].current?.contains(event.target as Node)) {
+                    return;
+                }
             }
-        }
-        setState(false);
-    }, [refs, setState]);
+            setState(false);
+        },
+        [refs, setState],
+    );
 
     useEffect(() => {
         document.addEventListener("mousedown", modalOutsideClickHandler);

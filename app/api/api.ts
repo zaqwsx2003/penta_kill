@@ -1,5 +1,5 @@
 "use client";
-import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
+
 import axios from "axios";
 import Cookies from "js-cookie";
 

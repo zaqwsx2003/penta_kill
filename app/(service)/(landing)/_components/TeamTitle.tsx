@@ -1,6 +1,9 @@
 import React from "react";
 import NextImage from "next/image";
+
 import { MatchTeams } from "@/model/match";
+import { useMatchState } from "@/lib/matchStore";
+import { useTeamState } from "@/lib/teamStore";
 
 export default function TeamTitle({
     team,
@@ -11,9 +14,17 @@ export default function TeamTitle({
     selectTeam: string;
     handleImageLoad: () => void;
 }) {
+    const match = useMatchState((state) => state);
+    const teamState = useTeamState((state) => state);
+
     return (
         <div className={`flex flex-1 flex-col items-center justify-center`}>
-            {selectTeam === team.code ? (
+            {match.matchState === "completed" &&
+            team.result?.outcome === "win" ? (
+                <div className="w-10 rounded-[5px] border border-red-500 bg-red-500 text-xs">
+                    승리
+                </div>
+            ) : match.matchState === "unstarted" && selectTeam === team.code ? (
                 <div className="w-10 rounded-[5px] border border-red-500 bg-red-500 text-xs">
                     선택
                 </div>

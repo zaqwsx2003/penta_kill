@@ -1,4 +1,4 @@
-import React, { useTransition } from "react";
+import React from "react";
 
 type FormButtonProps = {
     label: string;
@@ -8,8 +8,9 @@ type FormButtonProps = {
 export default function FormButton({ label, isPending }: FormButtonProps) {
     return (
         <button
-            className='bg-black border w-full px-10 py-2 rounded-[10px] mt-10 mb-5 text-white hover:bg-gray-500 ease-in-out transition-colors hover:font-bold transition-transforms'
-            disabled={isPending}>
+            className="transition-transforms mb-5 mt-10 w-full rounded-[10px] border bg-black px-10 py-2 text-white transition-colors ease-in-out hover:bg-gray-500 hover:font-bold"
+            disabled={isPending}
+        >
             {label}
         </button>
     );

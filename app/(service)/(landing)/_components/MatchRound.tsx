@@ -64,7 +64,6 @@ export default function MatchRound() {
         (data: any, index: number) => index === selectWeek,
     );
 
-    console.log(match);
     return (
         <>
             <div className="relative flex items-center justify-end pr-5">

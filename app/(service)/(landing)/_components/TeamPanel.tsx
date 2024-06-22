@@ -54,22 +54,18 @@ export default function TeamPanel({
     }
 
     const handleOpenModal = () => {
-        if (
-            team.code === "TBD" ||
-            (matchState === "inProgress" && !isBetting) ||
-            matchState !== "unstarted" ||
-            (matchState === "unstarted" && isBetting)
-        ) {
+        if (team.code === "TBD") {
             return;
         }
         if (!session.data) {
             setSessionModal(true);
         } else if (matchId === match.id && teamCode === team.code) {
-            BettingOnClose();
+            BettingOnOpen(match.id, team.code);
         } else {
-            setTeamData(team);
+            setTeamData({ ...team, position });
             const matchData = {
                 ...match,
+                matchState,
                 startTime: new Date(matchTime).toISOString(),
             };
             setMatchData(matchData);
@@ -77,16 +73,12 @@ export default function TeamPanel({
         }
     };
 
-    console.log(match);
-
     return (
         <>
             <div className="max-h-28 w-1/2" onClick={handleOpenModal}>
                 <Card
                     className={`${cn(panelVariants({ position }))}, ${panelColor} ${
-                        matchState === "unstarted" &&
-                        team.code !== "TBD" &&
-                        !isBetting
+                        team.code !== "TBD" && !isBetting
                             ? "cursor-pointer duration-150 ease-in-out hover:bg-blue-500"
                             : "cursor-default"
                     }`}

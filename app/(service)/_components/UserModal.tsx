@@ -1,8 +1,8 @@
 import React from "react";
 import { IoIosContact, IoIosLogOut } from "react-icons/io";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 
 import MenuItem from "@/app/(service)/_components/MenuItem";

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type TeamState = {
+    position: number;
     code: string;
     image: string;
     name: string;
@@ -12,6 +13,7 @@ type TeamState = {
 };
 
 export const useTeamState = create<TeamState>((set) => ({
+    position: 0,
     code: "",
     image: "",
     name: "",

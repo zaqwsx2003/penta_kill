@@ -1,10 +1,9 @@
 "use client";
 
 import { FcGoogle } from "react-icons/fc";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+
+import { Button } from "@/components/ui/button";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const Social = () => {

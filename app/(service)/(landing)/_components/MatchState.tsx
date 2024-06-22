@@ -27,7 +27,7 @@ export default function MatchState({ matchState }: { matchState: string }) {
                 </MatchStateLabel>
             )}
             {matchState === "inProgress" && (
-                <MatchStateLabel textColor="text-red-00">
+                <MatchStateLabel textColor="text-red-700">
                     경기중
                 </MatchStateLabel>
             )}

@@ -4,8 +4,8 @@ import React, { useState, useTransition } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
 import { signIn } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { RegisterSchema } from "@/schema";
