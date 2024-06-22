@@ -19,8 +19,8 @@ export const useBoardStore = create<BoardState>((set) => ({
 export const useCommentStore = create<CommentState>((set) => ({
     comments: [],
     page: 0,
-    size: 10,
-    hasMore: true,
+    size: 5,
+    hasMore: false,
     setComments: (comments) => set({ comments }),
     setPage: (page) => set({ page }),
     setSize: (size) => set({ size }),
