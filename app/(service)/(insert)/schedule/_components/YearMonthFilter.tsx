@@ -11,23 +11,37 @@ function getYears(startYear: number) {
         value: `${currentYear - i}`,
     }));
 }
-// 1월 ~ 12월 배열
-const months = Array.from({ length: 12 }, (_, i) => ({
-    label: `${i + 1}월`,
-    value: `${i + 1}`,
-}));
 
 export default function YearMonthFilter() {
     const { selectedYear, selectedMonth, setSelectedYear, setSelectedMonth } =
         useScheduleStore();
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
     const years = getYears(2022);
+    const months = Array.from({ length: 12 }, (_, i) => ({
+        label: `${i + 1}월`,
+        value: `${i + 1}`,
+        disabled:
+            parseInt(selectedYear) === currentYear && i + 1 > currentMonth,
+    }));
+
+    function yearChangeHandler(year: string) {
+        setSelectedYear(year);
+        if (
+            parseInt(year) === currentYear &&
+            parseInt(selectedMonth) > currentMonth
+        ) {
+            setSelectedMonth(`${currentMonth}`);
+        }
+    }
 
     return (
         <div className="flex justify-start bg-gray-800 py-4">
             <YearMonthFilterDropdown
                 options={years}
                 selectedValue={selectedYear}
-                onChange={setSelectedYear}
+                onChange={yearChangeHandler}
             />
             <div className="w-4"></div>
             <YearMonthFilterDropdown
