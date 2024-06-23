@@ -22,8 +22,6 @@ export default function YearMonthFilter() {
     const months = Array.from({ length: 12 }, (_, i) => ({
         label: `${i + 1}월`,
         value: `${i + 1}`,
-        disabled:
-            parseInt(selectedYear) === currentYear && i + 1 > currentMonth,
     }));
 
     function yearChangeHandler(year: string) {

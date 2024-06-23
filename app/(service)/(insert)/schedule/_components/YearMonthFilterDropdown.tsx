@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 interface DropdownOption {
     label: string;
     value: string;
-    disabled?: boolean;
 }
 
 interface CustomDropdownProps {
@@ -107,11 +106,8 @@ export default function CustomDropdown({
                                     option.value === selectedValue
                                         ? "bg-gray-600"
                                         : ""
-                                } ${option.disabled ? "cursor-not-allowed opacity-50" : ""}`}
-                                onClick={() =>
-                                    !option.disabled &&
-                                    selectHandler(option.value)
-                                }
+                                }`}
+                                onClick={() => selectHandler(option.value)}
                             >
                                 {option.label}
                             </li>
