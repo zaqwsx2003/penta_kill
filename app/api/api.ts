@@ -81,18 +81,23 @@ export const postBettingPoint = async (data: {
     }
 };
 
-// 경기일정 (수정해야함)
+// 경기일정
 export const fetchMatchSchedule = async ({
     page,
     size,
+    year,
+    month,
 }: {
     page: number;
     size: number;
+    year: number;
+    month: number;
 }) => {
     try {
         const response = await PENTAAPI.get(`/schedules/leagues`, {
-            params: { page, size },
+            params: { page, size, year, month },
         });
+        console.log("경기일정", response.data)
         return response.data;
     } catch (error) {
         throw error;
