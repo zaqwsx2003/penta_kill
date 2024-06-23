@@ -70,43 +70,41 @@ export default function MatchSchedule() {
 
     return (
         <div>
-            <div className="bg-white">
-                {isLoading && (
-                    <div className="text-center">
-                        <Spinner />
-                    </div>
-                )}
-                {isError && (
-                    <div className="text-center text-red-500">
-                        잠시 후 다시 시도해주십시오.
-                    </div>
-                )}
-                {matchDates.map((date) => (
-                    <div
-                        key={date}
-                        className="mb-4 rounded-lg bg-gray-800 p-4 shadow"
-                    >
-                        <h3 className="mb-2 text-lg font-bold text-gray-400">
-                            {new Date(date)
-                                .toLocaleDateString("ko-KR", {
-                                    year: "2-digit",
-                                    month: "2-digit",
-                                    day: "2-digit",
-                                    weekday: "short",
-                                })
-                                .replace(/\. \(|\)/g, " ")}
-                        </h3>
-                        <div className="rounded-lg bg-white py-1">
-                            {schedules[date]?.map((match) => (
-                                <MatchesPerDay
-                                    key={match.matchId}
-                                    match={match}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {isLoading && (
+                <div className="text-center">
+                    <Spinner />
+                </div>
+            )}
+            {isError && (
+                <div className="text-center text-red-500">
+                    잠시 후 다시 시도해주십시오.
+                </div>
+            )}
+            {!isLoading && matchDates.length === 0 && (
+                <div className="text-center text-gray-500">
+                    경기 일정이 없습니다.
+                </div>
+            )}
+            {matchDates.map((date) => (
+                <div
+                    key={date}
+                    className="mb-6 overflow-hidden rounded-[10px] bg-card"
+                >
+                    <h3 className="p-4 text-lg font-bold text-gray-300">
+                        {new Date(date)
+                            .toLocaleDateString("ko-KR", {
+                                year: "2-digit",
+                                month: "2-digit",
+                                day: "2-digit",
+                                weekday: "short",
+                            })
+                            .replace(/\. \(|\)/g, " ")}
+                    </h3>
+                    {schedules[date]?.map((match) => (
+                        <MatchesPerDay key={match.matchId} match={match} />
+                    ))}
+                </div>
+            ))}
         </div>
     );
 }
