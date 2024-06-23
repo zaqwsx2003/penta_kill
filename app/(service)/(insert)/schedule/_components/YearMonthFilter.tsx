@@ -35,7 +35,7 @@ export default function YearMonthFilter() {
     }
 
     return (
-        <div className="flex justify-start bg-gray-800 py-4">
+        <div className="flex justify-start">
             <YearMonthFilterDropdown
                 options={years}
                 selectedValue={selectedYear}

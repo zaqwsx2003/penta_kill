@@ -55,7 +55,7 @@ export default function CustomDropdown({
             <div>
                 <button
                     type="button"
-                    className={`inline-flex w-full justify-between rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 focus:bg-gray-600 focus:outline-none`}
+                    className={`inline-flex w-full justify-between rounded-[10px] bg-card px-4 py-3 text-xl font-medium text-white hover:bg-zinc-600 focus:outline-none`}
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {
@@ -64,7 +64,7 @@ export default function CustomDropdown({
                     }
                     {isOpen ? (
                         <svg
-                            className="-mr-1 ml-2 h-5 w-5"
+                            className="-mr-1 ml-2 mt-1 h-5 w-5"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -79,7 +79,7 @@ export default function CustomDropdown({
                         </svg>
                     ) : (
                         <svg
-                            className="-mr-1 ml-2 h-5 w-5"
+                            className="-mr-1 ml-2 mt-1 h-5 w-5"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -97,19 +97,22 @@ export default function CustomDropdown({
             </div>
 
             {isOpen && (
-                <div className="absolute left-0 z-10 mt-2 w-full rounded-md bg-gray-700 shadow-lg">
-                    <ul className="py-1">
+                <div className="absolute left-0 z-10 mt-2 w-full overflow-hidden rounded-[10px] bg-zinc-700 shadow-lg">
+                    <ul>
                         {options.map((option) => (
                             <li
                                 key={option.value}
-                                className={`cursor-pointer px-4 py-2 text-sm text-white hover:bg-gray-600 ${
-                                    option.value === selectedValue
-                                        ? "bg-gray-600"
-                                        : ""
-                                }`}
+                                className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-zinc-600"
                                 onClick={() => selectHandler(option.value)}
                             >
                                 {option.label}
+                                {option.value === selectedValue ? (
+                                    <span className="ml-4 text-lg font-bold">
+                                        ✓
+                                    </span>
+                                ) : (
+                                    ""
+                                )}
                             </li>
                         ))}
                     </ul>
