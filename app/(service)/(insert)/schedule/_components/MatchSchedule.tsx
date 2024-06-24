@@ -104,7 +104,7 @@ export default function MatchSchedule() {
 
     return (
         <div>
-            {isLoading && (
+            {(isLoading || (isFetching && matchDates.length === 0)) && (
                 <div className="text-center">
                     <Spinner />
                 </div>
@@ -135,16 +135,11 @@ export default function MatchSchedule() {
                             .replace(/\. \(|\)/g, " ")}
                     </h3>
                     {schedules[date]?.map((match) => (
-                        <MatchesPerDay key={match.matchId} match={match} />
+                        <MatchesPerDay key={match.match.id} match={match} />
                     ))}
                 </div>
             ))}
             <div ref={observerRef} className="h-10"></div>
-            {isFetching && matchDates.length === 0 && (
-                <div className="mt-4 text-center">
-                    <Spinner />
-                </div>
-            )}
         </div>
     );
 }
