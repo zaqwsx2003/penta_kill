@@ -12,7 +12,7 @@ interface UserInfo {
 }
 
 const nextAuthOptions: NextAuthConfig = {
-    // debug: true,
+    debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
@@ -27,10 +27,11 @@ const nextAuthOptions: NextAuthConfig = {
             return { ...token, ...user };
         },
         async session({ session, token }: any) {
-            session.user = token as any;
+            session.accessToken = token.accessToken;
+            session.refreshToken = token.refreshToken;
 
             const decodedUser = jwtDecode<UserInfo>(token.accessToken);
-            session.userSession = {
+            session.user = {
                 email: decodedUser.email,
                 name: decodedUser.username,
                 point: decodedUser.point,

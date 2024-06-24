@@ -15,6 +15,7 @@ import { panelVariants } from "@/app/(service)/(landing)/_components/style";
 import { MatchDetails } from "@/model/match";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 
 type TeamPanelProps = {
     match: MatchDetails;
@@ -45,7 +46,7 @@ export default function TeamPanel({
         isBetting,
         position,
     });
-
+    const refreshToken = useRefreshToken();
     const setTeamData = useTeamState((state) => state.setTeamData);
     const setMatchData = useMatchState((state) => state.setMatchData);
 
@@ -53,13 +54,14 @@ export default function TeamPanel({
         return null;
     }
 
-    const handleOpenModal = () => {
+    const handleOpenModal = async () => {
         if (team.code === "TBD") {
             return;
         }
         if (!session.data) {
             setSessionModal(true);
         } else if (matchId === match.id && teamCode === team.code) {
+            refreshToken();
             BettingOnOpen(match.id, team.code);
         } else {
             setTeamData({ ...team, position });
@@ -69,6 +71,7 @@ export default function TeamPanel({
                 startTime: new Date(matchTime).toISOString(),
             };
             setMatchData(matchData);
+            await refreshToken();
             BettingOnOpen(match.id, team.code);
         }
     };

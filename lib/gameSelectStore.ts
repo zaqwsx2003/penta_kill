@@ -3,7 +3,7 @@ import { create } from "zustand";
 type BetInfo = {
     matchId: string;
     teamCode: string;
-    points: number | null; // Points bet on the team
+    points: number | null;
 };
 
 type SelectedGameStore = {

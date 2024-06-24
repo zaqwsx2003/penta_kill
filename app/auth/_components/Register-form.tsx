@@ -5,16 +5,16 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { RegisterSchema } from "@/schema";
 import FormWrapper from "@/app/auth/_components/Form-wrapper";
 import FormError from "@/app/auth/_components/Form-Error";
 import FormSuccess from "@/app/auth/_components/Form-Success";
-import { userRegister } from "@/app/api/api";
+import useRegisterMutation from "@/app/auth/_lib/useRegisterMutation";
+import useCheckEmail from "@/app/auth/_lib/useRegisterCheckEmail";
 
-type RegisterParams = z.infer<typeof RegisterSchema>;
+export type RegisterParams = z.infer<typeof RegisterSchema>;
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -26,6 +26,16 @@ export default function RegisterForm() {
     const [registerParams, setRegisterParams] = useState<RegisterParams | null>(
         null,
     );
+    const { mutation } = useRegisterMutation({
+        registerParams,
+        setSuccess,
+        setError,
+    });
+    const { checkEmailAvailability } = useCheckEmail({
+        setEmailMessage,
+        setIsEmailValid,
+        setError,
+    });
 
     const {
         register,
@@ -38,54 +48,6 @@ export default function RegisterForm() {
             email: "",
             password: "",
             username: "",
-        },
-    });
-
-    const checkEmailAvailability = async (email: string) => {
-        try {
-            const response = await fetch("/api/checkEmail", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email }),
-            });
-            const stauts = await response.status;
-            const data = await response.json();
-            console.log(data);
-            if (response.ok) {
-                if (response.status === 200) {
-                    setEmailMessage(data.message);
-                    setIsEmailValid(true);
-                }
-            } else {
-                setEmailMessage(data.message);
-                setIsEmailValid(false);
-                return false;
-            }
-        } catch (error) {
-            setError("잘못된 요청 입니다.");
-            setIsEmailValid(false);
-            return false;
-        }
-    };
-
-    const mutation = useMutation({
-        mutationFn: userRegister,
-        onSuccess: () => {
-            if (registerParams) {
-                signIn("credentials", {
-                    redirect: false,
-                    email: registerParams.email,
-                    password: registerParams.password,
-                });
-            }
-            router.push("/");
-            setSuccess("");
-        },
-        onError: (error: Error) => {
-            console.log(error);
-            setError(error.message);
         },
     });
 
@@ -104,7 +66,17 @@ export default function RegisterForm() {
         setRegisterParams(values);
 
         startTransition(async () => {
-            if (isEmailValid) mutation.mutate(values);
+            if (isEmailValid) {
+                mutation.mutate(values);
+                if (registerParams) {
+                    signIn("credentials", {
+                        redirect: false,
+                        email: registerParams.email,
+                        password: registerParams.password,
+                    });
+                    router.push("/");
+                }
+            }
         });
     };
 

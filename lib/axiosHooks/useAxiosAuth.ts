@@ -35,7 +35,7 @@ export default function useAxiosAuth() {
             const session = await getSession();
             if (session) {
                 const now = Math.floor(new Date().getTime() / 1000);
-                const expire = session?.userSession?.expires;
+                const expire = session?.user?.expires;
                 const refreshTime = expire && expire - now - 5;
 
                 if (refreshTime && refreshTime < 0) {
@@ -46,16 +46,16 @@ export default function useAxiosAuth() {
             }
         };
 
-        refreshAccessTime();
+        // refreshAccessTime();
 
         const requestInterceptor = axiosAuth.interceptors.request.use(
             async (config) => {
                 const session = await getSession();
                 config.headers.Authorization = session
-                    ? session?.user.accessToken
+                    ? session?.accessToken
                     : null;
                 config.headers.RefreshToken = session
-                    ? session?.user.refreshToken
+                    ? session?.refreshToken
                     : null;
 
                 return config;
@@ -74,7 +74,7 @@ export default function useAxiosAuth() {
                     if (newTokens) {
                         const session = await getSession();
                         prevRequest.headers.Authorization =
-                            session?.user.accessToken;
+                            session?.accessToken;
                         return axiosAuth(prevRequest);
                     }
                 }

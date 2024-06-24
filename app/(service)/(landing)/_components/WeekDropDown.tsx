@@ -1,26 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import { animate, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { useSelectMatchStore } from "@/lib/selectMatchStore";
 import { matchWeekVariant } from "@/app/(service)/(landing)/_components/style";
-import { animate, motion } from "framer-motion";
 
 type DropsDownProps = {
     matchWeek: number | undefined;
-    selectWeek: number | undefined;
     weeklyArray: number[] | unknown[];
     isOpen: boolean;
     isClose: React.Dispatch<React.SetStateAction<boolean>>;
-    setSelectWeek: (value: number) => void;
 };
 
 export default function WeekDropDown({
     matchWeek,
-    selectWeek,
     weeklyArray,
     isOpen,
     isClose,
-    setSelectWeek,
 }: DropsDownProps) {
+    const { selectWeek, setSelectWeek } = useSelectMatchStore();
     const selectWeekHandler = (index: number) => () => {
         setSelectWeek(index);
         isClose(false);

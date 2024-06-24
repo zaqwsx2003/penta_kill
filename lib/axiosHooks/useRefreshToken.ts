@@ -11,7 +11,7 @@ export const useRefreshToken = () => {
             const response = await axios.get("/users/refresh", {
                 headers: {
                     "Content-Type": "application/json",
-                    RefreshToken: session?.user.refreshToken,
+                    RefreshToken: session?.refreshToken,
                 },
             });
 
@@ -20,10 +20,10 @@ export const useRefreshToken = () => {
 
             await update({
                 ...session,
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
                 user: {
                     ...session?.user,
-                    accessToken: newAccessToken,
-                    refreshToken: newRefreshToken,
                 },
             });
 
