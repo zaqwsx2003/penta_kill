@@ -1,28 +1,6 @@
-export interface Team {
-    name: string;
-    code: string;
-    image: string;
-    result: {
-        outcome: string | null;
-        gameWins: number;
-    };
-    record: {
-        wins: number;
-        losses: number;
-    };
-}
+// schedule.d.ts
 
 export interface Match {
-    id: string;
-    flags: string | null;
-    teams: Team[];
-    strategy: {
-        type: string;
-        count: number;
-    };
-}
-
-export interface Schedule {
     startTime: string;
     state: string;
     type: string;
@@ -31,13 +9,37 @@ export interface Schedule {
         name: string;
         slug: string;
     };
-    match: Match;
+    match: {
+        id: string;
+        flags: any;
+        teams: Team[];
+        strategy: {
+            type: string;
+            count: number;
+        };
+    };
+}
+
+export interface Team {
+    name: string;
+    code: string;
+    image: string;
+    result: {
+        outcome: string;
+        gameWins: number;
+    };
+    record: {
+        wins: number;
+        losses: number;
+    };
 }
 
 export interface ScheduleResponse {
     statusCode: number;
     message: string;
-    data: Schedule[];
+    data: Record<string, Match[]>;
+    year: number;
+    month: number;
     currentPage: number;
     totalPages: number;
     totalElements: number;
@@ -46,7 +48,7 @@ export interface ScheduleResponse {
 
 export interface ScheduleState {
     matchDates: string[];
-    schedules: Schedule[];
+    schedules: Record<string, Match[]>;
     currentPage: number;
     totalPages: number;
     totalElements: number;
@@ -54,13 +56,11 @@ export interface ScheduleState {
     selectedYear: string;
     selectedMonth: string;
     setMatchDates: (matchDates: string[]) => void;
-    setSchedules: (schedules: Schedule[]) => void;
-    setPageInfo: (
-        currentPage: number,
-        totalPages: number,
-        totalElements: number,
-        pageSize: number,
-    ) => void;
+    setSchedules: (schedules: Record<string, Match[]>) => void;
+    setCurrentPage: (currentPage: number) => void;
+    setTotalPages: (totalPages: number) => void;
+    setTotalElements: (totalElements: number) => void;
     setSelectedYear: (selectedYear: string) => void;
     setSelectedMonth: (selectedMonth: string) => void;
+    addMoreSchedules: (schedules: Record<string, Match[]>) => void;
 }
