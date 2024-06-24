@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ScheduleState } from "@/model/schedule";
+import { ScheduleState, Match } from "@/model/schedule";
 
 export const useScheduleStore = create<ScheduleState>((set) => ({
     matchDates: [],
@@ -20,4 +20,19 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
     setTotalElements: (totalElements) => set({ totalElements }),
     setSelectedYear: (selectedYear) => set({ selectedYear }),
     setSelectedMonth: (selectedMonth) => set({ selectedMonth }),
+    addMoreSchedules: (newSchedules) =>
+        set((state) => ({
+            schedules: {
+                ...state.schedules,
+                ...Object.entries(newSchedules).reduce(
+                    (acc, [key, value]) => ({
+                        ...acc,
+                        [key]: (state.schedules[key] || []).concat(
+                            value as Match[],
+                        ),
+                    }),
+                    {},
+                ),
+            },
+        })),
 }));

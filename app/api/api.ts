@@ -98,7 +98,7 @@ export const fetchMatchSchedule = async ({
         const response = await PENTAAPI.get(`/schedules/leagues`, {
             params: { page, size, year, month },
         });
-        console.log("경기일정", response.data);
+        console.log("경기일정", typeof response.data, response.data);
         return response.data;
     } catch (error) {
         throw error;

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchMatchSchedule } from "@/app/api/api";
 import { useScheduleStore } from "@/lib/scheduleStore";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import MatchesPerDay from "./MatchesPerDay";
 import Spinner from "@/app/(service)/_components/Spinner";
 
@@ -13,6 +13,7 @@ export default function MatchSchedule() {
         setMatchDates,
         schedules,
         setSchedules,
+        addMoreSchedules,
         currentPage,
         setCurrentPage,
         totalPages,
@@ -32,7 +33,9 @@ export default function MatchSchedule() {
         selectedMonth,
     );
 
-    const { data, isError, isLoading } = useQuery({
+    const observerRef = useRef<HTMLDivElement>(null);
+
+    const { data, isError, isLoading, isFetching } = useQuery({
         queryKey: [
             "schedules",
             currentPage,
@@ -53,8 +56,7 @@ export default function MatchSchedule() {
         if (data && data.data) {
             const dates = Object.keys(data.data);
             setMatchDates(dates);
-            setSchedules(data.data);
-            setCurrentPage(data.currentPage);
+            addMoreSchedules(data.data);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
             console.log("matchDates: " + dates);
@@ -62,11 +64,43 @@ export default function MatchSchedule() {
     }, [
         data,
         setMatchDates,
-        setSchedules,
-        setCurrentPage,
+        addMoreSchedules,
         setTotalPages,
         setTotalElements,
     ]);
+
+    const loadMoreHandler = useCallback(() => {
+        if (!isLoading && !isFetching && currentPage < totalPages - 1) {
+            console.log("Loading more data...");
+            setCurrentPage(currentPage + 1);
+        }
+    }, [isLoading, isFetching, currentPage, totalPages, setCurrentPage]);
+
+    useEffect(() => {
+        const currentObserverRef = observerRef.current;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    console.log("Intersection observed");
+                    loadMoreHandler();
+                }
+            },
+            { threshold: 0.1 },
+        );
+
+        if (currentObserverRef) {
+            console.log("Observer is observing:", currentObserverRef);
+
+            observer.observe(currentObserverRef);
+        }
+
+        return () => {
+            if (currentObserverRef) {
+                observer.unobserve(currentObserverRef);
+            }
+        };
+    }, [loadMoreHandler]);
 
     return (
         <div>
@@ -105,6 +139,12 @@ export default function MatchSchedule() {
                     ))}
                 </div>
             ))}
+            <div ref={observerRef} className="h-10"></div>
+            {isFetching && matchDates.length === 0 && (
+                <div className="mt-4 text-center">
+                    <Spinner />
+                </div>
+            )}
         </div>
     );
 }
