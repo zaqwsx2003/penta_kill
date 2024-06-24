@@ -13,8 +13,13 @@ function getYears(startYear: number) {
 }
 
 export default function YearMonthFilter() {
-    const { selectedYear, selectedMonth, setSelectedYear, setSelectedMonth } =
-        useScheduleStore();
+    const {
+        selectedYear,
+        selectedMonth,
+        setSelectedYear,
+        setSelectedMonth,
+        setCurrentPage,
+    } = useScheduleStore();
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
@@ -26,12 +31,18 @@ export default function YearMonthFilter() {
 
     function yearChangeHandler(year: string) {
         setSelectedYear(year);
+        setCurrentPage(0);
         if (
             parseInt(year) === currentYear &&
             parseInt(selectedMonth) > currentMonth
         ) {
             setSelectedMonth(`${currentMonth}`);
         }
+    }
+
+    function monthChangeHandler(month: string) {
+        setSelectedMonth(month);
+        setCurrentPage(0);
     }
 
     return (
@@ -45,7 +56,7 @@ export default function YearMonthFilter() {
             <YearMonthFilterDropdown
                 options={months}
                 selectedValue={selectedMonth}
-                onChange={setSelectedMonth}
+                onChange={monthChangeHandler}
             />
         </div>
     );

@@ -1,35 +1,45 @@
+// schedule.d.ts
+
 export interface Match {
     startTime: string;
     state: string;
     type: string;
     blockName: string;
-    leagueName: string;
-    leagueSlug: string;
-    matchId: string;
-    team1Name: string;
-    team1Code: string;
-    team1Image: string;
-    team1Outcome: string;
-    team1GameWins: number;
-    team1RecordWins: number;
-    team1RecordLosses: number;
-    team2Name: string;
-    team2Code: string;
-    team2Image: string;
-    team2Outcome: string;
-    team2GameWins: number;
-    team2RecordWins: number;
-    team2RecordLosses: number;
-    matchStrategyType: string;
-    matchStrategyCount: number;
-    pointLogList: any[];
-    probability: any;
+    league: {
+        name: string;
+        slug: string;
+    };
+    match: {
+        id: string;
+        flags: any;
+        teams: Team[];
+        strategy: {
+            type: string;
+            count: number;
+        };
+    };
+}
+
+export interface Team {
+    name: string;
+    code: string;
+    image: string;
+    result: {
+        outcome: string;
+        gameWins: number;
+    };
+    record: {
+        wins: number;
+        losses: number;
+    };
 }
 
 export interface ScheduleResponse {
     statusCode: number;
     message: string;
     data: Record<string, Match[]>;
+    year: number;
+    month: number;
     currentPage: number;
     totalPages: number;
     totalElements: number;
@@ -52,4 +62,5 @@ export interface ScheduleState {
     setTotalElements: (totalElements: number) => void;
     setSelectedYear: (selectedYear: string) => void;
     setSelectedMonth: (selectedMonth: string) => void;
+    addMoreSchedules: (schedules: Record<string, Match[]>) => void;
 }
