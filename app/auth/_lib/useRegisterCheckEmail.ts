@@ -11,13 +11,16 @@ export default function useRegisterCheckEmail({
 }: CheckEmailProps) {
     const checkEmailAvailability = async (email: string) => {
         try {
-            const response = await fetch("/api/registerCheckEmail", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                "actions/registerCheckEmail",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email }),
                 },
-                body: JSON.stringify({ email }),
-            });
+            );
             const data = await response.json();
             console.log(data);
             if (response.ok) {

@@ -42,7 +42,7 @@ export default function TeamTitle({
             <div>{team.code}</div>
             <NextImage
                 // loader={teamImageLoader}
-                src={`${team.image}`}
+                src={team.image}
                 width={60}
                 height={60}
                 alt="team"

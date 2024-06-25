@@ -9,7 +9,7 @@ export default function useSigninCheckEmail({
 }: CheckEmailProps) {
     const checkEmailAvailability = async (email: string) => {
         try {
-            const response = await fetch("/api/signinCheckEmail", {
+            const response = await fetch("actions/signinCheckEmail", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
