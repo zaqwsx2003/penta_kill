@@ -6,7 +6,6 @@ import * as z from "zod";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import { useEffect } from "react";
-import PostForm from "../_components/PostForm";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -51,6 +50,8 @@ export default function PostFOrm() {
         // API 연결하기
         console.log(data);
     };
+
+    // const imageUploadHandler = a;
 
     return (
         <div>

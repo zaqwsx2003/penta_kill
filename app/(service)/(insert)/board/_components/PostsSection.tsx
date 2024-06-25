@@ -26,9 +26,7 @@ export default function PostsSection() {
     const [sessionModal, setSessionModal] = useState<boolean>(false);
     const { data: session } = useSession();
 
-    function onClickHandler(
-        e: React.MouseEvent<HTMLButtonElement>,
-    ) {
+    function onClickHandler(e: React.MouseEvent<HTMLButtonElement>) {
         if (!session) {
             e.preventDefault();
             setSessionModal(true);
