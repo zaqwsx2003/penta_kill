@@ -13,7 +13,7 @@ interface UserInfo {
 }
 
 const nextAuthOptions: NextAuthConfig = {
-    debug: true,
+    // debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
