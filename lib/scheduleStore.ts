@@ -10,7 +10,12 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
     totalElements: 0,
     selectedYear: new Date().getFullYear().toString(),
     selectedMonth: (new Date().getMonth() + 1).toString(),
-    setMatchDates: (matchDates) => set({ matchDates }),
+    setMatchDates: (matchDates, reset = true) =>
+        set((state) => ({
+            matchDates: reset
+                ? matchDates
+                : Array.from(new Set([...state.matchDates, ...matchDates])), // Array로 변환하여 사용
+        })),
     setSchedules: (newSchedules) =>
         set((state) => ({
             schedules: { ...state.schedules, ...newSchedules },

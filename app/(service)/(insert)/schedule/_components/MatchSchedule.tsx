@@ -18,20 +18,11 @@ export default function MatchSchedule() {
         setCurrentPage,
         totalPages,
         setTotalPages,
-        totalElements,
         setTotalElements,
         pageSize,
         selectedYear,
         selectedMonth,
     } = useScheduleStore();
-
-    console.log(
-        "Query Params:",
-        currentPage,
-        pageSize,
-        selectedYear,
-        selectedMonth,
-    );
 
     const observerRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +46,7 @@ export default function MatchSchedule() {
     useEffect(() => {
         if (data && data.data) {
             const dates = Object.keys(data.data);
-            setMatchDates(dates);
+            setMatchDates(dates, false);
             addMoreSchedules(data.data);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
@@ -71,30 +62,23 @@ export default function MatchSchedule() {
 
     const loadMoreHandler = useCallback(() => {
         if (!isLoading && !isFetching && currentPage < totalPages - 1) {
-            console.log("Loading more data...");
             setCurrentPage(currentPage + 1);
         }
     }, [isLoading, isFetching, currentPage, totalPages, setCurrentPage]);
 
     useEffect(() => {
         const currentObserverRef = observerRef.current;
-
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
-                    console.log("Intersection observed");
                     loadMoreHandler();
                 }
             },
             { threshold: 0.1 },
         );
-
         if (currentObserverRef) {
-            console.log("Observer is observing:", currentObserverRef);
-
             observer.observe(currentObserverRef);
         }
-
         return () => {
             if (currentObserverRef) {
                 observer.unobserve(currentObserverRef);

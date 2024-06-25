@@ -55,7 +55,7 @@ export interface ScheduleState {
     pageSize: number;
     selectedYear: string;
     selectedMonth: string;
-    setMatchDates: (matchDates: string[]) => void;
+    setMatchDates: (matchDates: string[], reset?: boolean) => void;
     setSchedules: (schedules: Record<string, Match[]>) => void;
     setCurrentPage: (currentPage: number) => void;
     setTotalPages: (totalPages: number) => void;
