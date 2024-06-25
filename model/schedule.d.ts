@@ -55,7 +55,8 @@ export interface ScheduleState {
     pageSize: number;
     selectedYear: string;
     selectedMonth: string;
-    setMatchDates: (matchDates: string[]) => void;
+    showScrollToTop: boolean;
+    setMatchDates: (matchDates: string[], reset?: boolean) => void;
     setSchedules: (schedules: Record<string, Match[]>) => void;
     setCurrentPage: (currentPage: number) => void;
     setTotalPages: (totalPages: number) => void;
@@ -63,4 +64,5 @@ export interface ScheduleState {
     setSelectedYear: (selectedYear: string) => void;
     setSelectedMonth: (selectedMonth: string) => void;
     addMoreSchedules: (schedules: Record<string, Match[]>) => void;
+    setShowScrollToTop: (show: boolean) => void;
 }

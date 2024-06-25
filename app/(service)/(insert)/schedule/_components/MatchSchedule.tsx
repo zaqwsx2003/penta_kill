@@ -12,26 +12,18 @@ export default function MatchSchedule() {
         matchDates,
         setMatchDates,
         schedules,
-        setSchedules,
         addMoreSchedules,
         currentPage,
         setCurrentPage,
         totalPages,
         setTotalPages,
-        totalElements,
         setTotalElements,
         pageSize,
         selectedYear,
         selectedMonth,
+        showScrollToTop,
+        setShowScrollToTop,
     } = useScheduleStore();
-
-    console.log(
-        "Query Params:",
-        currentPage,
-        pageSize,
-        selectedYear,
-        selectedMonth,
-    );
 
     const observerRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +47,7 @@ export default function MatchSchedule() {
     useEffect(() => {
         if (data && data.data) {
             const dates = Object.keys(data.data);
-            setMatchDates(dates);
+            setMatchDates(dates, false);
             addMoreSchedules(data.data);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
@@ -71,30 +63,32 @@ export default function MatchSchedule() {
 
     const loadMoreHandler = useCallback(() => {
         if (!isLoading && !isFetching && currentPage < totalPages - 1) {
-            console.log("Loading more data...");
             setCurrentPage(currentPage + 1);
+        } else if (currentPage >= totalPages - 1) {
+            setShowScrollToTop(true);
         }
-    }, [isLoading, isFetching, currentPage, totalPages, setCurrentPage]);
+    }, [
+        isLoading,
+        isFetching,
+        currentPage,
+        totalPages,
+        setCurrentPage,
+        setShowScrollToTop,
+    ]);
 
     useEffect(() => {
         const currentObserverRef = observerRef.current;
-
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
-                    console.log("Intersection observed");
                     loadMoreHandler();
                 }
             },
             { threshold: 0.1 },
         );
-
         if (currentObserverRef) {
-            console.log("Observer is observing:", currentObserverRef);
-
             observer.observe(currentObserverRef);
         }
-
         return () => {
             if (currentObserverRef) {
                 observer.unobserve(currentObserverRef);
@@ -102,11 +96,13 @@ export default function MatchSchedule() {
         };
     }, [loadMoreHandler]);
 
-    console.log(schedules);
+    function scrollToTopHandler() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     return (
         <div>
-            {isLoading && (
+            {(isLoading || (isFetching && matchDates.length === 0)) && (
                 <div className="text-center">
                     <Spinner />
                 </div>
@@ -136,16 +132,33 @@ export default function MatchSchedule() {
                             })
                             .replace(/\. \(|\)/g, " ")}
                     </h3>
-                    {schedules[date]?.map((match, index) => ( // index: 에러 해결용 임시 코드
-                        <MatchesPerDay key={index} match={match} />
+                    {schedules[date]?.map((match) => (
+                        <MatchesPerDay key={match.match.id} match={match} />
                     ))}
                 </div>
             ))}
-            <div ref={observerRef} className="h-10"></div>
-            {isFetching && matchDates.length === 0 && (
-                <div className="mt-4 text-center">
-                    <Spinner />
-                </div>
+            <div ref={observerRef} className="h-1"></div>
+            {showScrollToTop && (
+                <button
+                    onClick={scrollToTopHandler}
+                    className="flex h-10 w-full items-center justify-center rounded-[10px] bg-zinc-800 text-center text-white hover:bg-zinc-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-arrow-up"
+                    >
+                        <path d="m5 12 7-7 7 7" />
+                        <path d="M12 19V5" />
+                    </svg>
+                </button>
             )}
         </div>
     );

@@ -19,6 +19,8 @@ export default function YearMonthFilter() {
         setSelectedYear,
         setSelectedMonth,
         setCurrentPage,
+        setMatchDates,
+        setSchedules,
     } = useScheduleStore();
 
     const currentYear = new Date().getFullYear();
@@ -32,6 +34,8 @@ export default function YearMonthFilter() {
     function yearChangeHandler(year: string) {
         setSelectedYear(year);
         setCurrentPage(0);
+        setMatchDates([]);
+        setSchedules({});
         if (
             parseInt(year) === currentYear &&
             parseInt(selectedMonth) > currentMonth
@@ -43,6 +47,8 @@ export default function YearMonthFilter() {
     function monthChangeHandler(month: string) {
         setSelectedMonth(month);
         setCurrentPage(0);
+        setMatchDates([]);
+        setSchedules({});
     }
 
     return (

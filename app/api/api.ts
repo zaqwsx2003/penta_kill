@@ -4,7 +4,7 @@ import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_URL;
+const API_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT_URL;
 
 const PENTAAPI = axios.create({
     baseURL: API_ENDPOINT,
