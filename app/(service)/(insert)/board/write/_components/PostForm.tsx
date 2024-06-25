@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
+import { useRouter } from "next/navigation";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -17,11 +19,16 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function PostFOrm() {
+    const axiosAuth = useAxiosAuth();
+    const router = useRouter();
+    const imgInputRef = useRef<HTMLInputElement>(null);
     const {
         register,
         handleSubmit,
         control,
         formState: { errors },
+        setValue,
+        getValues,
     } = useForm<FormData>({
         resolver: zodResolver(schema),
     });
@@ -46,12 +53,65 @@ export default function PostFOrm() {
         };
     }, []);
 
-    const onSubmitHandler: SubmitHandler<FormData> = (data) => {
-        // API 연결하기
-        console.log(data);
+    const imageUploadHandler = async (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            if (!file.type.startsWith("image/")) {
+                alert("이미지 파일만 업로드할 수 있습니다.");
+                return;
+            }
+            try {
+                const formData = new FormData();
+                formData.append("files", file);
+
+                const response = await axiosAuth.post<{
+                    statusCode: number;
+                    message: string;
+                    data: string[];
+                }>("/posts/images", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+
+                if (
+                    response.data &&
+                    response.data.data &&
+                    response.data.data.length > 0
+                ) {
+                    const imageUrl = response.data.data[0];
+                    const currentContent = getValues("content") || "";
+                    setValue(
+                        "content",
+                        `${currentContent}<img src="${imageUrl}" alt="Uploaded Image" />`,
+                    );
+                } else {
+                    throw new Error("Image upload failed");
+                }
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
     };
 
-    // const imageUploadHandler = a;
+    function imgInputBtnHandler() {
+        if (imgInputRef.current) {
+            imgInputRef.current.click();
+        }
+    }
+
+    const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
+        try {
+            const response = await axiosAuth.post("/posts", data);
+            console.log("게시물 등록 성공", response.data);
+            router.push("/board");
+        } catch (err) {
+            throw err;
+        }
+    };
 
     return (
         <div>
@@ -129,25 +189,23 @@ export default function PostFOrm() {
                     )}
                 </div>
                 <div className="mt-4">
-                    <label
-                        htmlFor="fileUpload"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        사진 선택
-                    </label>
                     <input
                         id="fileUpload"
                         type="file"
-                        className="mt-1 block w-full cursor-pointer rounded-md border border-gray-300 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                        accept="image/*"
+                        ref={imgInputRef}
+                        onChange={imageUploadHandler}
+                        className="hidden"
                     />
-                </div>
-                <div className="relative flex flex-1 justify-center space-x-4">
                     <button
                         type="button"
-                        className="w-24 rounded-md bg-gray-300 px-4 py-2 text-black hover:bg-gray-400"
+                        onClick={imgInputBtnHandler}
+                        className="mt-1 block w-full cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                     >
-                        미리 보기
+                        사진 선택
                     </button>
+                </div>
+                <div className="relative flex flex-1 justify-center space-x-4">
                     <button
                         type="submit"
                         className="w-24 rounded-md bg-black px-4 py-2 text-white hover:bg-gray-700"
