@@ -1,7 +1,7 @@
 // next.config.js
 
 const nextConfig = {
-    output: "standalone",
+    // output: "standalone",
     reactStrictMode: false,
     images: {
         // loader: "custom",

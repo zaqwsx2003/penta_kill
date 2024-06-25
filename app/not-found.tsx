@@ -11,7 +11,7 @@ const NotFound: NextPage = () => {
                 이 페이지는 존재하지 않습니다.
             </div>
             <div className="h-72 w-52">
-                <img
+                <Image
                     src="/light_big_logo.png"
                     className="dark:hidden"
                     alt="logo"

@@ -86,7 +86,7 @@ export default function TeamPanel({
     const imageURL = team.image.split("//");
 
     const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
-        return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${imageURL[1]}?w=${width}&q=${quality || 75}`;
+        return `${team.image}?w=${width}&q=${quality || 75}`;
     };
 
     return (
