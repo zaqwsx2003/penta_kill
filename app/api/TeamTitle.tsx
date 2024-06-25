@@ -17,13 +17,11 @@ export default function TeamTitle({
     const match = useMatchState((state) => state);
     const teamState = useTeamState((state) => state);
 
-    // const httpsURL = team.image.replace("http://", "https://");
+    const httpsURL = team.image.replace("http://", "https://");
 
-    // consol
-
-    // const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
-    //     return `${team.image}?w=${width}&q=${quality || 75}`;
-    // };
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${httpsURL}?w=${width}&q=${quality || 75}`;
+    };
 
     return (
         <div className={`flex flex-1 flex-col items-center justify-center`}>
@@ -41,8 +39,8 @@ export default function TeamTitle({
             )}
             <div>{team.code}</div>
             <NextImage
-                // loader={teamImageLoader}
-                src={team.image}
+                loader={teamImageLoader}
+                src={`${httpsURL}`}
                 width={60}
                 height={60}
                 alt="team"

@@ -6,10 +6,11 @@ import { motion } from "framer-motion";
 import { useMatchState } from "@/lib/matchStore";
 import useKoreanDateFormat from "@/lib/useDate";
 import { useTeamState } from "@/lib/teamStore";
-import TeamTitle from "@/app/(service)/(landing)/_components/TeamTitle";
+
 import UserPredict from "@/app/(service)/(landing)/_components/UserPredict";
 import AIPredict from "./AIPredict";
 import { useBettingModalState } from "@/lib/bettingModalStore";
+import TeamTitle from "@/app/api/TeamTitle";
 
 type BettingPhaseOneProps = {
     closing: boolean;
@@ -25,8 +26,6 @@ export default function BettingPhaseOne({
     const phaseTwoHandler = () => {
         setBettingPhase(2);
     };
-
-    
 
     const match = useMatchState((state) => state);
     const teamRed = match.teams[0];
