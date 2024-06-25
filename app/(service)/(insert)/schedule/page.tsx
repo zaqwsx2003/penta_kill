@@ -21,7 +21,7 @@ export default function page() {
                     경기일정
                 </h1>
             </div>
-            <div className="scrollbar-hide flex w-[1024px] flex-col gap-12">
+            <div className="scrollbar-hide flex min-w-[658px] flex-col gap-12">
                 <YearMonthFilter />
                 <MatchSchedule />
             </div>

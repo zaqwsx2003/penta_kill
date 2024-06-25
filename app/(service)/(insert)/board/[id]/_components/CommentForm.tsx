@@ -7,7 +7,6 @@ import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import { useSession } from "next-auth/react";
-import { use } from "react";
 import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
 
 const schema = z.object({
