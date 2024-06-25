@@ -88,12 +88,9 @@ export default function MatchRound() {
                             style={{ originY: 0.55 }}
                             className=""
                         >
-                            <Image
-                                src="/chevron-down.svg"
-                                alt="arrow"
-                                width={24}
-                                height={24}
-                            />
+                            <div className="h-6 w-6">
+                                <img src="/chevron-down.svg" alt="arrow" />
+                            </div>
                         </motion.div>
                     </div>
                     <AnimatePresence>
