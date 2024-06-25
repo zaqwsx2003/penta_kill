@@ -1,7 +1,7 @@
 import React from "react";
 import NextImage from "next/image";
 
-import { MatchTeams } from "@/model/match";
+import { ImageLoaderProps, MatchTeams } from "@/model/match";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 
@@ -16,6 +16,14 @@ export default function TeamTitle({
 }) {
     const match = useMatchState((state) => state);
     const teamState = useTeamState((state) => state);
+
+    // const httpsURL = team.image.replace("http://", "https://");
+
+    // consol
+
+    // const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+    //     return `${team.image}?w=${width}&q=${quality || 75}`;
+    // };
 
     return (
         <div className={`flex flex-1 flex-col items-center justify-center`}>
@@ -33,6 +41,7 @@ export default function TeamTitle({
             )}
             <div>{team.code}</div>
             <NextImage
+                // loader={teamImageLoader}
                 src={`${team.image}`}
                 width={60}
                 height={60}

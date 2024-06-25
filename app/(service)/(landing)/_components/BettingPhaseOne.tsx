@@ -26,6 +26,8 @@ export default function BettingPhaseOne({
         setBettingPhase(2);
     };
 
+    
+
     const match = useMatchState((state) => state);
     const teamRed = match.teams[0];
     const teamBlue = match.teams[1];

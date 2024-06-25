@@ -13,7 +13,7 @@ import { useBettingModalState } from "@/lib/bettingModalStore";
 
 export default function BettingPhaseTwo() {
     const { data: session } = useSession();
-    const [point, setPoint] = useState<number>(100);
+    const [point, setPoint] = useState<number>(0);
     const [error, setError] = useState<string>("");
     const { setBet, betInfo } = useSelectedGameStore();
     const { mutation } = useBettingMutation({ setError });
@@ -30,7 +30,10 @@ export default function BettingPhaseTwo() {
     }, [match.id, team.code, point, mutation, setBet]);
 
     const handleIncrement = () => {
-        setPoint((prevPoint) => prevPoint + 100);
+        setPoint((prevPoint) => {
+            const newPoint = prevPoint + 100;
+            return newPoint > session?.user?.point ? prevPoint : newPoint;
+        });
     };
 
     const handleDecrement = () => {
