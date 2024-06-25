@@ -18,7 +18,11 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function PostFOrm() {
+interface PostFormProps {
+    initialData?: FormData;
+}
+
+export default function PostForm({ initialData }: PostFormProps) {
     const axiosAuth = useAxiosAuth();
     const router = useRouter();
     const imgInputRef = useRef<HTMLInputElement>(null);
@@ -31,6 +35,7 @@ export default function PostFOrm() {
         getValues,
     } = useForm<FormData>({
         resolver: zodResolver(schema),
+        defaultValues: initialData,
     });
 
     useEffect(() => {
