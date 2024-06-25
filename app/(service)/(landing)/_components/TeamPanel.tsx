@@ -30,7 +30,7 @@ export default function TeamPanel({
     matchTime,
     matchState,
 }: TeamPanelProps) {
-    const session = useSession();
+    const { data: session } = useSession();
     const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
         useBettingModalState();
     const [sessionModal, setSessionModal] = useState<boolean>(false);
@@ -58,10 +58,10 @@ export default function TeamPanel({
         if (team.code === "TBD") {
             return;
         }
-        if (!session.data) {
+        if (!session) {
             setSessionModal(true);
         } else if (matchId === match.id && teamCode === team.code) {
-            refreshToken();
+            await refreshToken();
             BettingOnOpen(match.id, team.code);
         } else {
             setTeamData({ ...team, position });

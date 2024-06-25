@@ -30,11 +30,10 @@ export default function BettingModal({ team }: BettingModalProps) {
         e.stopPropagation();
     };
 
-    const handleClose = () => {
+    const handleClose = async () => {
         BettingOnClose();
-        // refreshToken();
+        refreshToken();
         setClosing(true);
-
     };
 
     const handleImageLoad = () => {

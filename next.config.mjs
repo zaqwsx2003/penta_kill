@@ -1,9 +1,7 @@
 // next.config.js
 
 const nextConfig = {
-    images: {
-        domains: ['static.lolesports.com'],
-    },
+  reactStrictMode: false,
     experimental: {
         // missingSuspenseWithCSRBailout: false,
         // serverActions:true

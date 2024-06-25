@@ -30,7 +30,18 @@ export default function RegisterForm() {
         registerParams,
         setSuccess,
         setError,
+        onSuccess: async () => {
+            if (registerParams) {
+                await signIn("credentials", {
+                    redirect: false,
+                    email: registerParams.email,
+                    password: registerParams.password,
+                });
+                router.push("/");
+            }
+        },
     });
+
     const { checkEmailAvailability } = useCheckEmail({
         setEmailMessage,
         setIsEmailValid,
@@ -68,18 +79,9 @@ export default function RegisterForm() {
         startTransition(async () => {
             if (isEmailValid) {
                 mutation.mutate(values);
-                if (registerParams) {
-                    signIn("credentials", {
-                        redirect: false,
-                        email: registerParams.email,
-                        password: registerParams.password,
-                    });
-                    router.push("/");
-                }
             }
         });
     };
-
     return (
         <FormWrapper
             headerLabel="회원가입"

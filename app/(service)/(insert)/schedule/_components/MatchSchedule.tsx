@@ -102,6 +102,8 @@ export default function MatchSchedule() {
         };
     }, [loadMoreHandler]);
 
+    console.log(schedules);
+
     return (
         <div>
             {isLoading && (
@@ -134,8 +136,8 @@ export default function MatchSchedule() {
                             })
                             .replace(/\. \(|\)/g, " ")}
                     </h3>
-                    {schedules[date]?.map((match) => (
-                        <MatchesPerDay key={match.matchId} match={match} />
+                    {schedules[date]?.map((match, index) => ( // index: 에러 해결용 임시 코드
+                        <MatchesPerDay key={index} match={match} />
                     ))}
                 </div>
             ))}

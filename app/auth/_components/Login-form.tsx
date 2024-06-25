@@ -28,8 +28,6 @@ export default function LoginForm() {
         setEmailMessage,
     });
 
-    console.log("111", emailError);
-    console.log("222", emailMessage);
     const {
         register,
         handleSubmit,
@@ -47,9 +45,7 @@ export default function LoginForm() {
     const onSubmit: SubmitHandler<LoginParams> = async (values) => {
         setError("");
         setSuccess("");
-
         const isEmailAvailable = await checkEmailAvailability(values.email);
-
         if (isEmailAvailable) {
             startTransition(async () => {
                 const result = await signIn("credentials", {
@@ -57,7 +53,6 @@ export default function LoginForm() {
                     email: values.email as string,
                     password: values.password,
                 });
-
                 if (result?.error) {
                     setError(result.error);
                 } else {

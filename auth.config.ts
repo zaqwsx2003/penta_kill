@@ -19,7 +19,7 @@ export default {
             async authorize(credentials, req) {
                 try {
                     const response = await fetch(
-                        `${process.env.NEXT_PUBLIC_URL}/users/login`,
+                        `${process.env.NEXT_PUBLIC_ENDPOINT}/users/login`,
                         {
                             method: "POST",
                             headers: {

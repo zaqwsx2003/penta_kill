@@ -17,12 +17,14 @@ type RegisterMutationProps = {
     registerParams: RegisterParams | null;
     setSuccess: React.Dispatch<React.SetStateAction<string | undefined>>;
     setError: React.Dispatch<React.SetStateAction<string | undefined>>;
+    onSuccess?: () => void;
 };
 
 export default function useRegisterMutation({
     registerParams,
     setSuccess,
     setError,
+    onSuccess,
 }: RegisterMutationProps) {
     const axiosAuth = useAxiosAuth();
     const router = useRouter();
@@ -41,6 +43,7 @@ export default function useRegisterMutation({
         },
         onSuccess: () => {
             setSuccess("");
+            if (onSuccess) onSuccess();
         },
         onError: (error: Error) => {
             console.log(error);

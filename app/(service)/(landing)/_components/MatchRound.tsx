@@ -16,7 +16,6 @@ import { useSelectMatchStore } from "@/lib/selectMatchStore";
 import { useSession } from "next-auth/react";
 
 export default function MatchRound() {
-    const { data: session } = useSession();
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
     const axiosAuth = useAxiosAuth();
     const { selectWeek, setSelectWeek } = useSelectMatchStore();
@@ -77,9 +76,7 @@ export default function MatchRound() {
                         ref={triggerRef}
                     >
                         <div className="flex flex-grow justify-center font-bold">
-                            {selectWeek !== undefined
-                                ? selectWeek + 1
-                                : "주차 선택"}
+                            {selectWeek !== undefined && selectWeek + 1}
                             <span className="font-normal">주차</span>
                         </div>
                         <motion.div

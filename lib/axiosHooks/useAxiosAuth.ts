@@ -32,7 +32,6 @@ export default function useAxiosAuth() {
 
     useEffect(() => {
         const refreshAccessTime = async () => {
-            const session = await getSession();
             if (session) {
                 const now = Math.floor(new Date().getTime() / 1000);
                 const expire = session?.user?.expires;
@@ -46,7 +45,7 @@ export default function useAxiosAuth() {
             }
         };
 
-        // refreshAccessTime();
+        refreshAccessTime();
 
         const requestInterceptor = axiosAuth.interceptors.request.use(
             async (config) => {
