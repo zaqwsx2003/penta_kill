@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
-import useAnimated from "../_lib/useAnimated";
+import useAnimated from "@/app/(service)/(landing)/_lib/useAnimated";
 
 export default function UserPredictComponent({
     winRatio,

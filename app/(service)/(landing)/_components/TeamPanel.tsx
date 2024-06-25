@@ -15,6 +15,8 @@ import { panelVariants } from "@/app/(service)/(landing)/_components/style";
 import { MatchDetails } from "@/model/match";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
+import customLoader from "@/lib/customLoader";
 
 type TeamPanelProps = {
     match: MatchDetails;
@@ -23,13 +25,19 @@ type TeamPanelProps = {
     matchState: string;
 };
 
+type ImageLoaderProps = {
+    src: string;
+    width: number;
+    quality?: number;
+};
+
 export default function TeamPanel({
     match,
     position,
     matchTime,
     matchState,
 }: TeamPanelProps) {
-    const session = useSession();
+    const { data: session } = useSession();
     const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
         useBettingModalState();
     const [sessionModal, setSessionModal] = useState<boolean>(false);
@@ -45,7 +53,7 @@ export default function TeamPanel({
         isBetting,
         position,
     });
-
+    const refreshToken = useRefreshToken();
     const setTeamData = useTeamState((state) => state.setTeamData);
     const setMatchData = useMatchState((state) => state.setMatchData);
 
@@ -53,13 +61,14 @@ export default function TeamPanel({
         return null;
     }
 
-    const handleOpenModal = () => {
+    const handleOpenModal = async () => {
         if (team.code === "TBD") {
             return;
         }
-        if (!session.data) {
+        if (!session) {
             setSessionModal(true);
         } else if (matchId === match.id && teamCode === team.code) {
+            await refreshToken();
             BettingOnOpen(match.id, team.code);
         } else {
             setTeamData({ ...team, position });
@@ -69,8 +78,15 @@ export default function TeamPanel({
                 startTime: new Date(matchTime).toISOString(),
             };
             setMatchData(matchData);
+            await refreshToken();
             BettingOnOpen(match.id, team.code);
         }
+    };
+
+    const imageURL = team.image.split("//");
+
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${team.image}?w=${width}&q=${quality || 75}`;
     };
 
     return (
@@ -93,6 +109,7 @@ export default function TeamPanel({
                         >
                             <div className="flex min-h-[62px] min-w-[62px] items-center justify-center">
                                 <Image
+                                    loader={teamImageLoader}
                                     src={team.image}
                                     width={60}
                                     height={60}

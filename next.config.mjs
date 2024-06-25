@@ -1,8 +1,13 @@
 // next.config.js
 
 const nextConfig = {
+    // output: "standalone",
+    reactStrictMode: false,
     images: {
-        domains: ['static.lolesports.com'],
+        // loader: "custom",
+        // loaderFile: "./lib/customLoader.ts",
+        domains: ['static.lolesports.com', "3.34.67.203:3000", "penta-kill.store"],
+        // format: ["image/png", "image/webp", "image/jpeg"],
     },
     experimental: {
         // missingSuspenseWithCSRBailout: false,

@@ -2,6 +2,7 @@ import NextAuth, { NextAuthConfig } from "next-auth";
 import { jwtDecode } from "jwt-decode";
 
 import authConfig from "@/auth.config";
+import { access } from "fs";
 
 interface UserInfo {
     email: string;
@@ -27,15 +28,15 @@ const nextAuthOptions: NextAuthConfig = {
             return { ...token, ...user };
         },
         async session({ session, token }: any) {
-            session.user = token as any;
-
             const decodedUser = jwtDecode<UserInfo>(token.accessToken);
-            session.userSession = {
-                email: decodedUser.email,
-                name: decodedUser.username,
-                point: decodedUser.point,
-                expires: decodedUser.exp,
-            };
+            (session.accessToken = token.accessToken),
+                (session.refreshToken = token.refreshToken),
+                (session.user = {
+                    email: decodedUser.email,
+                    name: decodedUser.username,
+                    point: decodedUser.point,
+                    expires: decodedUser.exp,
+                });
 
             console.log(session);
             return { ...session };

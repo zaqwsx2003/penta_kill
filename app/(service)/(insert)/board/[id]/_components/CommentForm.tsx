@@ -26,7 +26,7 @@ interface CommentFormProps {
 export default function CommentForm({ postId }: CommentFormProps) {
     const [sessionModal, setSessionModal] = useState<boolean>(false);
     const axiosAuth = useAxiosAuth();
-    const session = useSession();
+    const { data: session } = useSession();
     const queryClient = useQueryClient();
 
     const {
@@ -55,7 +55,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
     });
 
     const onSubmitHandler: SubmitHandler<FormData> = (data) => {
-        if (!session.data) {
+        if (!session) {
             setSessionModal(true);
             return;
         }

@@ -6,20 +6,22 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { useBettingModalState } from "@/lib/bettingModalStore";
 import BettingPhaseOneModal from "./BettingPhaseOne";
-import { MatchDetails, MatchTeams } from "@/model/match";
+import { MatchTeams } from "@/model/match";
 import BettingPhaseTwo from "./BettingPhaseTwo";
 import BettingPhaseThree from "./BettingPhaseThree";
 import Spinner from "@/app/(service)/_components/Spinner";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 
 type BettingModalProps = {
     team: MatchTeams;
 };
 
 export default function BettingModal({ team }: BettingModalProps) {
-    const { bettingIsOpen, BettingOnClose } = useBettingModalState();
+    const { bettingPhase, setBettingPhase, bettingIsOpen, BettingOnClose } =
+        useBettingModalState();
     const [closing, setClosing] = useState(false);
+    const refreshToken = useRefreshToken();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [betPhase, setBetPhase] = useState<0 | 1 | 2 | 3>(1);
     const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
     };
@@ -28,11 +30,10 @@ export default function BettingModal({ team }: BettingModalProps) {
         e.stopPropagation();
     };
 
-    const handleClose = () => {
+    const handleClose = async () => {
+        BettingOnClose();
+        refreshToken();
         setClosing(true);
-        setTimeout(() => {
-            BettingOnClose();
-        }, 300);
     };
 
     const handleImageLoad = () => {
@@ -93,30 +94,23 @@ export default function BettingModal({ team }: BettingModalProps) {
                             </div>
                         ) : (
                             <AnimatePresence mode="wait">
-                                {betPhase === 1 && (
+                                {bettingPhase === 1 && (
                                     <BettingPhaseOneModal
                                         closing={closing}
-                                        handleClose={handleClose}
-                                        setBetPhase={setBetPhase}
                                         handleImageLoad={handleImageLoad}
                                     />
                                 )}
                             </AnimatePresence>
                         )}
                         <AnimatePresence mode="wait">
-                            {betPhase === 2 && (
-                                <BettingPhaseTwo
-                                    closing={closing}
-                                    setBetPhase={setBetPhase}
-                                />
-                            )}
+                            {bettingPhase === 2 && <BettingPhaseTwo />}
                         </AnimatePresence>
                         <AnimatePresence mode="wait">
-                            {betPhase === 3 && (
+                            {bettingPhase === 3 && (
                                 <BettingPhaseThree handleClose={handleClose} />
                             )}
                         </AnimatePresence>
-                        {betPhase !== 3 && (
+                        {bettingPhase !== 3 && (
                             <button
                                 type="button"
                                 className="absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white duration-200 ease-in-out hover:bg-red-500"

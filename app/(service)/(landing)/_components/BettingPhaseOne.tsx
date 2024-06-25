@@ -9,23 +9,21 @@ import { useTeamState } from "@/lib/teamStore";
 import TeamTitle from "@/app/(service)/(landing)/_components/TeamTitle";
 import UserPredict from "@/app/(service)/(landing)/_components/UserPredict";
 import AIPredict from "./AIPredict";
+import { useBettingModalState } from "@/lib/bettingModalStore";
 
 type BettingPhaseOneProps = {
     closing: boolean;
-    handleClose: () => void;
-    setBetPhase: React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3>>;
     handleImageLoad: () => void;
 };
 
 export default function BettingPhaseOne({
     closing,
-    handleClose,
-    setBetPhase,
     handleImageLoad,
 }: BettingPhaseOneProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
+    const { setBettingPhase, BettingOnClose } = useBettingModalState();
     const phaseTwoHandler = () => {
-        setBetPhase(2);
+        setBettingPhase(2);
     };
 
     const match = useMatchState((state) => state);
@@ -83,7 +81,7 @@ export default function BettingPhaseOne({
                     <div className="my-[1%] w-[25%] rotate-90 border-[1px] border-white"></div>
                     <AIPredict aiWinTeam={aiWinTeam} aiWinRatio={aiWinRatio} />
                 </div>
-                {match.matchState === "unstarted" ? (
+                {match.matchState === "unstarted" && !match.betting ? (
                     <div className="flex w-full items-center justify-center text-center text-base">
                         <motion.div
                             whileHover={{ scale: 1.1 }}
@@ -98,7 +96,7 @@ export default function BettingPhaseOne({
                         <motion.div
                             whileHover={{ scale: 1.1 }}
                             className="mt-8 w-32 cursor-pointer rounded bg-blue-800 px-2 py-2 text-white ease-in-out hover:bg-blue-300 hover:font-semibold"
-                            onClick={handleClose}
+                            onClick={BettingOnClose}
                         >
                             확인
                         </motion.div>
