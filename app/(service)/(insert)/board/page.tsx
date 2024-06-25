@@ -1,6 +1,6 @@
 import { Do_Hyeon } from "next/font/google";
 import { cn } from "@/lib/utils";
-import PostsSection from "./_components/PostsSection.1";
+import PostsSection from "./_components/PostsSection";
 
 const font = Do_Hyeon({
     subsets: ["latin"],
