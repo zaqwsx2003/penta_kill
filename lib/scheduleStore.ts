@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { ScheduleState, Match } from "@/model/schedule";
+import * as z from "zod";
 
 export const useScheduleStore = create<ScheduleState>((set) => ({
     matchDates: [],
@@ -10,6 +11,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
     totalElements: 0,
     selectedYear: new Date().getFullYear().toString(),
     selectedMonth: (new Date().getMonth() + 1).toString(),
+    showScrollToTop: false,
     setMatchDates: (matchDates, reset = true) =>
         set((state) => ({
             matchDates: reset
@@ -40,4 +42,5 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
                 ),
             },
         })),
+    setShowScrollToTop: (show) => set({ showScrollToTop: show }),
 }));

@@ -12,7 +12,6 @@ export default function MatchSchedule() {
         matchDates,
         setMatchDates,
         schedules,
-        setSchedules,
         addMoreSchedules,
         currentPage,
         setCurrentPage,
@@ -22,6 +21,8 @@ export default function MatchSchedule() {
         pageSize,
         selectedYear,
         selectedMonth,
+        showScrollToTop,
+        setShowScrollToTop,
     } = useScheduleStore();
 
     const observerRef = useRef<HTMLDivElement>(null);
@@ -63,8 +64,17 @@ export default function MatchSchedule() {
     const loadMoreHandler = useCallback(() => {
         if (!isLoading && !isFetching && currentPage < totalPages - 1) {
             setCurrentPage(currentPage + 1);
+        } else if (currentPage >= totalPages - 1) {
+            setShowScrollToTop(true);
         }
-    }, [isLoading, isFetching, currentPage, totalPages, setCurrentPage]);
+    }, [
+        isLoading,
+        isFetching,
+        currentPage,
+        totalPages,
+        setCurrentPage,
+        setShowScrollToTop,
+    ]);
 
     useEffect(() => {
         const currentObserverRef = observerRef.current;
@@ -85,6 +95,10 @@ export default function MatchSchedule() {
             }
         };
     }, [loadMoreHandler]);
+
+    function scrollToTopHandler() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     return (
         <div>
@@ -123,7 +137,29 @@ export default function MatchSchedule() {
                     ))}
                 </div>
             ))}
-            <div ref={observerRef} className="h-10"></div>
+            <div ref={observerRef} className="h-1"></div>
+            {showScrollToTop && (
+                <button
+                    onClick={scrollToTopHandler}
+                    className="flex h-10 w-full items-center justify-center rounded-[10px] bg-zinc-800 text-center text-white hover:bg-zinc-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-arrow-up"
+                    >
+                        <path d="m5 12 7-7 7 7" />
+                        <path d="M12 19V5" />
+                    </svg>
+                </button>
+            )}
         </div>
     );
 }
