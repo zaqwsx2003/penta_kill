@@ -12,23 +12,16 @@ import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColo
 import BettingModal from "@/app/(service)/(landing)/_components/BettingModal";
 import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
 import { panelVariants } from "@/app/(service)/(landing)/_components/style";
-import { MatchDetails } from "@/model/match";
+import { ImageLoaderProps, MatchDetails } from "@/model/match";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
-import customLoader from "@/lib/customLoader";
 
 type TeamPanelProps = {
     match: MatchDetails;
     position: 0 | 1;
     matchTime: string;
     matchState: string;
-};
-
-type ImageLoaderProps = {
-    src: string;
-    width: number;
-    quality?: number;
 };
 
 export default function TeamPanel({
@@ -82,8 +75,6 @@ export default function TeamPanel({
             BettingOnOpen(match.id, team.code);
         }
     };
-
-    const imageURL = team.image.split("//");
 
     const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
         return `${team.image}?w=${width}&q=${quality || 75}`;

@@ -53,3 +53,9 @@ export interface MatchResult {
     gameWins: number;
     outcome: string | null;
 }
+
+export interface ImageLoaderProps {
+    src: string;
+    width: number;
+    quality?: number;
+}

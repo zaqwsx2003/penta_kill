@@ -13,7 +13,7 @@ interface UserInfo {
 }
 
 const nextAuthOptions: NextAuthConfig = {
-    // debug: true,
+    debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
@@ -21,24 +21,41 @@ const nextAuthOptions: NextAuthConfig = {
     session: { strategy: "jwt" },
     ...authConfig,
     callbacks: {
-        async jwt({ token, user, trigger, session }: any) {
+        async jwt({ token, user, account, trigger, session }: any) {
             if (trigger === "update") {
-                return { ...token, ...session.user };
+                return { ...token, ...session.user, ...account };
             }
-            return { ...token, ...user };
-        },
-        async session({ session, token }: any) {
-            const decodedUser = jwtDecode<UserInfo>(token.accessToken);
-            (session.accessToken = token.accessToken),
-                (session.refreshToken = token.refreshToken),
-                (session.user = {
-                    email: decodedUser.email,
-                    name: decodedUser.username,
-                    point: decodedUser.point,
-                    expires: decodedUser.exp,
-                });
 
-            console.log(session);
+            return { ...token, ...user, ...account };
+        },
+        async session({ session, token, account }: any) {
+            console.log("account", account);
+            console.log("token", token);
+
+            if (token.provider === "google") {
+                if (token) {
+                    session.accessToken = token.access_token;
+                    session.user = {
+                        email: token.email,
+                        name: token.name,
+                        expires: token.expires_in,
+                    };
+                }
+            }
+            if (token.provider === "credentials") {
+                if (token) {
+                    session.accessToken = token.accessToken;
+                    session.refreshToken = token.refreshToken;
+                    const decodedUser = jwtDecode<UserInfo>(token.accessToken);
+                    session.user = {
+                        email: decodedUser.email,
+                        name: decodedUser.username,
+                        point: decodedUser.point,
+                        expires: decodedUser.exp,
+                    };
+                }
+            }
+            console.log("session", session);
             return { ...session };
         },
     },

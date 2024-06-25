@@ -12,8 +12,7 @@ export default function UserModal() {
     const route = useRouter();
 
     const logoutHandler = () => {
-        signOut();
-        route.push("/");
+        signOut({ callbackUrl: "/" });
     };
 
     return (
@@ -33,9 +32,7 @@ export default function UserModal() {
                         <span className="text-sm font-normal">님</span>
                     </h3>
                     <div className="flex flex-row items-center justify-center">
-                        <div className="text-black">
-                            {session?.user.point}
-                        </div>
+                        <div className="text-black">{session?.user.point}</div>
                         <div className="w-8">
                             <Image
                                 src="/pointbeed.png"
