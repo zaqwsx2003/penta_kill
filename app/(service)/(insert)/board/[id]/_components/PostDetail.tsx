@@ -38,7 +38,10 @@ export default function PostDetail() {
                     </div>
                     <span>{new Date(post.createAt).toLocaleString()}</span>
                 </div>
-                <div className="mb-4">{post.content}</div>
+                <div
+                    className="mb-4"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                ></div>
                 <div className="flex items-center justify-between">
                     <div>조회수 {post.views}</div>
                     <div className="flex space-x-4">
