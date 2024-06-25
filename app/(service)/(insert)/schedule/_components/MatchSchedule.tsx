@@ -101,7 +101,7 @@ export default function MatchSchedule() {
     }
 
     return (
-        <div>
+        <div className="mx-auto w-full">
             {(isLoading || (isFetching && matchDates.length === 0)) && (
                 <div className="text-center">
                     <Spinner />
