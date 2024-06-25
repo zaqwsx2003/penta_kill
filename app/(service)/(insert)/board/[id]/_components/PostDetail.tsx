@@ -20,7 +20,7 @@ export default function PostDetail() {
     });
 
     const post = data?.data;
-    const isAuthor = session?.user?.name === post?.nickname;
+    const isAuthor = session?.user?.email === post?.email;
 
     const deletePostMutation = useMutation({
         mutationFn: async (postId: number) => {
@@ -29,6 +29,28 @@ export default function PostDetail() {
         },
         onSuccess: () => {
             router.push("/board");
+        },
+    });
+
+    const likeOrDislikeMutation = useMutation({
+        mutationFn: async ({
+            postId,
+            isLike,
+        }: {
+            postId: number;
+            isLike: boolean;
+        }) => {
+            const response = await axiosAuth.post(
+                `/posts/${postId}/likes`,
+                null,
+                {
+                    params: { isLike },
+                },
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            router.refresh();
         },
     });
 
@@ -46,6 +68,14 @@ export default function PostDetail() {
         }
     }
 
+    function likePostHandler() {
+        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: true });
+    }
+
+    function dislikePostHandler() {
+        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: false });
+    }
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error loading post</div>;
 
@@ -60,21 +90,52 @@ export default function PostDetail() {
                     <span>{new Date(post.createAt).toLocaleString()}</span>
                 </div>
                 <div
-                    className="mb-4 min-h-[100px]"
+                    className="mb-4 min-h-[100px] break-words"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 ></div>
-                <div className="flex items-center justify-between">
-                    <div>조회수 {post.views}</div>
-                    <div className="flex space-x-4">
-                        <button className="flex items-center space-x-1 rounded-md border border-gray-600 p-2">
-                            <span>추천</span>
-                            <span>{post.likeCount}</span>
-                        </button>
-                        <button className="flex items-center space-x-1 rounded-md border border-gray-600 p-2">
-                            <span>비추천</span>
-                            <span>{post.dislikeCount}</span>
-                        </button>
-                    </div>
+                <div className="flex items-center justify-center">
+                    <button
+                        className="flex items-center space-x-1 rounded-md border border-gray-600 p-2"
+                        onClick={likePostHandler}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill={post.isLike === true ? "#ffffff" : "none"}
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-thumbs-up"
+                        >
+                            <path d="M7 10v12" />
+                            <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+                        </svg>
+                        <span>{post.likeCount}</span>
+                    </button>
+                    <button
+                        onClick={dislikePostHandler}
+                        className="flex items-center space-x-1 rounded-md border border-gray-600 p-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill={post.isLike === false ? "#ffffff" : "none"}
+                            stroke="#ffffff"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-thumbs-down"
+                        >
+                            <path d="M17 14V2" />
+                            <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
+                        </svg>
+                        <span>{post.dislikeCount}</span>
+                    </button>
                 </div>
             </div>
             <div className="mt-3 flex justify-between font-bold">

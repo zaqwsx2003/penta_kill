@@ -57,6 +57,7 @@ export const fetchPosts = async ({
 export const fetchPost = async (id: number) => {
     try {
         const response = await PENTAAPI.get(`/posts/${id}`);
+        console.log("게시글 정보", response.data);
         return response.data;
     } catch (error) {
         throw error;
