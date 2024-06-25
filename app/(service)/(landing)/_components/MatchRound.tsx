@@ -89,7 +89,12 @@ export default function MatchRound() {
                             className=""
                         >
                             <div className="h-6 w-6">
-                                <img src="/chevron-down.svg" alt="arrow" />
+                                <Image
+                                    src="/chevron-down.svg"
+                                    alt="arrow"
+                                    width={24}
+                                    height={24}
+                                />
                             </div>
                         </motion.div>
                     </div>

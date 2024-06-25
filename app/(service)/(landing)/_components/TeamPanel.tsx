@@ -16,12 +16,19 @@ import { MatchDetails } from "@/model/match";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
+import customLoader from "@/lib/customLoader";
 
 type TeamPanelProps = {
     match: MatchDetails;
     position: 0 | 1;
     matchTime: string;
     matchState: string;
+};
+
+type ImageLoaderProps = {
+    src: string;
+    width: number;
+    quality?: number;
 };
 
 export default function TeamPanel({
@@ -76,6 +83,12 @@ export default function TeamPanel({
         }
     };
 
+    const imageURL = team.image.split("//");
+
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${imageURL[1]}?w=${width}&q=${quality || 75}`;
+    };
+
     return (
         <>
             <div className="max-h-28 w-1/2" onClick={handleOpenModal}>
@@ -96,6 +109,7 @@ export default function TeamPanel({
                         >
                             <div className="flex min-h-[62px] min-w-[62px] items-center justify-center">
                                 <Image
+                                    loader={teamImageLoader}
                                     src={team.image}
                                     width={60}
                                     height={60}
