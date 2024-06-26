@@ -64,7 +64,7 @@ export default function MatchSchedule() {
     const loadMoreHandler = useCallback(() => {
         if (!isLoading && !isFetching && currentPage < totalPages - 1) {
             setCurrentPage(currentPage + 1);
-        } else if (currentPage >= totalPages - 1) {
+        } else if (totalPages > 0 && currentPage === totalPages - 1) {
             setShowScrollToTop(true);
         }
     }, [
