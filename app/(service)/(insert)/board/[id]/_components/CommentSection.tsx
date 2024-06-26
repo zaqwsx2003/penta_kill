@@ -49,16 +49,11 @@ export default function CommentSection({ postId }: CommentSectionProps) {
 
     return (
         <div className="mt-8 text-white">
-            <h2 className="mb-4 text-xl font-bold">댓글</h2>
+            <h2 className="mb-4 text-xl font-bold">
+                댓글
+                <span className="ml-5">{data.data.totalElements}</span>
+            </h2>
             <CommentForm postId={postId} />
-            <div className="mb-4 flex">
-                <button className="mr-2 rounded-md bg-gray-700 px-3 py-1">
-                    최신순
-                </button>
-                <button className="rounded-md bg-gray-700 px-3 py-1">
-                    포인트
-                </button>
-            </div>
             {isLoading && page === 0 ? (
                 <div className="text-center text-gray-400">로딩 중...</div>
             ) : isError ? (
@@ -73,7 +68,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                                 return (
                                     <div
                                         key={comment.id}
-                                        className="mb-4 rounded-md bg-gray-700 p-4"
+                                        className="mb-4 rounded-[10px] bg-zinc-700 p-4"
                                     >
                                         <div className="mb-2 flex items-center justify-between">
                                             <div className="flex items-center">
