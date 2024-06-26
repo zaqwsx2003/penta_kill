@@ -66,9 +66,9 @@ export default function CommentForm({ postId }: CommentFormProps) {
             {sessionModal && <SessionModal />}
             <form
                 onSubmit={handleSubmit(onSubmitHandler)}
-                className="mb-4 flex items-center rounded-md bg-gray-800"
+                className="mb-4 flex items-center rounded-[10px] bg-card"
             >
-                <div className="bg-gray-850 flex flex-grow flex-col rounded-l rounded-r px-3 py-2 lg:rounded-r-none">
+                <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
                     <textarea
                         {...register("content")}
                         className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none bg-transparent placeholder:text-gray-400 focus:outline-none"
