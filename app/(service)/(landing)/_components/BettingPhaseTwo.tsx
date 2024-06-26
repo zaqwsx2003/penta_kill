@@ -9,7 +9,6 @@ import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 import { useSession } from "next-auth/react";
 import useBettingMutation from "@/app/(service)/(landing)/_lib/useBettingMutation";
-import { useBettingModalState } from "@/lib/bettingModalStore";
 
 export default function BettingPhaseTwo() {
     const { data: session } = useSession();

@@ -53,13 +53,19 @@ export default function LoginForm() {
                     email: values.email as string,
                     password: values.password,
                 });
+
+                console.log(result);
                 if (result?.error) {
-                    setError(result.error);
+                    setError(
+                        "로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.",
+                    );
                 } else {
                     setSuccess("로그인 성공");
                     router.push("/");
                 }
             });
+        } else {
+            setError("해당 이메일이 존재하지 않습니다.");
         }
     };
 
@@ -109,10 +115,8 @@ export default function LoginForm() {
                             </span>
                         )}
                         <div className="mt-5">
-                            <FormSuccess
-                                message={success}
-                                emailError={emailError}
-                            />
+                            <FormError message={error} />
+                            <FormSuccess message={success} />
                         </div>
                     </div>
                 </div>

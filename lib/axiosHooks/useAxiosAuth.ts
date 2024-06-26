@@ -51,10 +51,10 @@ export default function useAxiosAuth() {
             async (config) => {
                 const session = await getSession();
                 config.headers.Authorization = session
-                    ? session?.accessToken
+                    ? session?.token.accessToken
                     : null;
                 config.headers.RefreshToken = session
-                    ? session?.refreshToken
+                    ? session?.token.refreshToken
                     : null;
 
                 return config;
@@ -73,7 +73,7 @@ export default function useAxiosAuth() {
                     if (newTokens) {
                         const session = await getSession();
                         prevRequest.headers.Authorization =
-                            session?.accessToken;
+                            session?.token.accessToken;
                         return axiosAuth(prevRequest);
                     }
                 }

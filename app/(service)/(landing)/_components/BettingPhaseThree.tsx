@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
+import { useFirecracker } from "./Firecracker";
 
 type BettingPhaseThreeProps = {
     handleClose: () => void;

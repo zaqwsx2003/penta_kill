@@ -26,10 +26,11 @@ export default function useBettingMutation({ setError }: BettingMutationProps) {
             point: number;
         }) => {
             try {
-                const response = await axiosAuth.post(
-                    `${process.env.NEXT_PUBLIC_ENDPOINT}/points/bettings`,
-                    { matchId, teamCode, point },
-                );
+                const response = await axiosAuth.post(`points/bettings`, {
+                    matchId,
+                    teamCode,
+                    point,
+                });
                 return response.data;
             } catch (error) {
                 throw error;
