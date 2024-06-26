@@ -44,7 +44,6 @@ export default {
 
                         return user;
                     } else {
-                        console.error("Unexpected response format:", response);
                         throw new Error("Unexpected response format");
                     }
                 } catch (e: any) {

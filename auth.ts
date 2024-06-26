@@ -22,8 +22,6 @@ const nextAuthOptions: NextAuthConfig = {
     ...authConfig,
     callbacks: {
         async signIn({ user, account }: any) {
-            console.log("asdadfafasf", user.id);
-            console.log("asdadfafasf", account.access_token);
             if (account.provider === "google") {
                 try {
                     const response = await fetch(
@@ -35,29 +33,34 @@ const nextAuthOptions: NextAuthConfig = {
                             },
                             body: JSON.stringify({
                                 userId: user.id,
-                                googleAccessToken: `Bearer ${account.access_token}`,
+                                googleAccessToken: account.access_token,
                             }),
                         },
                     );
 
                     if (response) {
-                        account.accessToken = response.headers.get(
-                            "authorization",
+                        user.accessToken = response.headers.get(
+                            "Authorization",
                         ) as string;
-                        account.refreshToken = response.headers.get(
-                            "refreshToken",
+                        user.refreshToken = response.headers.get(
+                            "RefreshToken",
                         ) as string;
 
-                        return account;
+                        return { ...user };
                     }
                 } catch (error) {
                     throw new Error("Unexpected response format");
                 }
             }
 
-            return { ...user, ...account };
+            return { ...user };
         },
         async jwt({ token, user, account, trigger, session }: any) {
+            if (user) {
+                token.accessToken = user.accessToken;
+                token.refreshToken = user.refreshToken;
+            }
+
             if (trigger === "update") {
                 return {
                     ...token,
@@ -70,12 +73,18 @@ const nextAuthOptions: NextAuthConfig = {
 
             return { ...token, ...user, ...account };
         },
-        async session({ session, token, account }: any) {
+        // token에서는 Bearer를 제거하고 accessToken을 저장
+        async session({ session, user, token }: any) {
             if (token.provider === "google") {
-                console.log("goopoooooooooooooooooooooogle");
-                const decodedUser = jwtDecode<UserInfo>(account.accessToken);
-                session.accessToken = account.accessToken;
-                session.refreshToken = account.refreshToken;
+                const accessToken = token.accessToken.startsWith("Bearer ")
+                    ? token.accessToken.split(" ")[1]
+                    : token.accessToken;
+
+                const decodedUser = jwtDecode<UserInfo>(accessToken);
+                session.token = {
+                    accessToken: token.accessToken,
+                    refreshToken: token.refreshToken,
+                };
                 session.user = {
                     email: token.email,
                     name: token.name,
@@ -83,7 +92,10 @@ const nextAuthOptions: NextAuthConfig = {
                     expires: decodedUser.exp,
                 };
             } else if (token.provider === "credentials") {
-                const decodedUser = jwtDecode<UserInfo>(token.accessToken);
+                const accessToken = token.accessToken.startsWith("Bearer ")
+                    ? token.accessToken.split(" ")[1]
+                    : token.accessToken;
+                const decodedUser = jwtDecode<UserInfo>(accessToken);
                 session.token = {
                     accessToken: token.accessToken,
                     refreshToken: token.refreshToken,
