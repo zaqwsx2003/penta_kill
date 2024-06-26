@@ -40,7 +40,7 @@ export default function PostDetail() {
             postId: number;
             isLike: boolean;
         }) => {
-            const response = await axiosAuth.post(
+            const response = await axiosAuth.put(
                 `/posts/${postId}/likes`,
                 null,
                 {

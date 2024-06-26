@@ -19,8 +19,8 @@ export default function EditPost() {
     if (isError) return <div>Error loading post</div>;
 
     return (
-      <>
-        <PostForm initialData={post} />
-      </>
+        <>
+            <PostForm initialData={post} postId={Number(id)} />
+        </>
     );
 }

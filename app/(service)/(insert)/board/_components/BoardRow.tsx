@@ -9,15 +9,16 @@ export default function BoardRow({
     likeCount,
     dislikeCount,
     commentCount,
-    createdAt,
+    createAt,
     nickname,
 }: Post) {
-    const date = new Date(createdAt).toLocaleDateString("ko-KR", {
+    const date = new Date(createAt).toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
+        weekday: "long",
     });
-    console.log("날짜 확인", createdAt, date);
+
     return (
         <div className="grid grid-cols-12 gap-4 border-b border-zinc-700 p-4 text-xs text-white">
             <div className="col-span-1">{id}</div>

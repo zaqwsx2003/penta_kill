@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchComments } from "@/app/api/api";
 import { useCommentStore } from "@/lib/boardStore";
 import CommentForm from "../_components/CommentForm";
+import Spinner from "@/app/(service)/_components/Spinner";
 
 interface CommentSectionProps {
     postId: number;
@@ -51,11 +52,11 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         <div className="mt-8 text-white">
             <h2 className="mb-4 text-xl font-bold">
                 댓글
-                <span className="ml-5">{data.data.totalElements}</span>
+                <span className="ml-5">{comments.length}</span>
             </h2>
             <CommentForm postId={postId} />
             {isLoading && page === 0 ? (
-                <div className="text-center text-gray-400">로딩 중...</div>
+                <Spinner />
             ) : isError ? (
                 <div className="text-center text-gray-400">
                     댓글을 불러오는 중 오류가 발생했습니다.
@@ -108,7 +109,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-center text-gray-400">
+                        <div className="my-4 text-center text-gray-400">
                             등록된 댓글이 없습니다.
                         </div>
                     )}

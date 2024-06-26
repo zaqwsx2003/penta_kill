@@ -11,12 +11,12 @@ export default function Pagination({
 }: PaginationProps) {
     const pageNumbers = [];
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 0; i < totalPages; i++) {
         pageNumbers.push(i);
     }
 
     return (
-        <div className="mt-4 flex justify-center text-xs">
+        <div className="flex justify-center text-xs">
             {pageNumbers.map((number) => (
                 <button
                     key={number}
@@ -27,7 +27,7 @@ export default function Pagination({
                             : "bg-transparent"
                     }`}
                 >
-                    {number}
+                    {number + 1}
                 </button>
             ))}
         </div>
