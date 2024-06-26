@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Match } from "@/model/schedule";
+import { ImageLoaderProps } from "@/model/match";
 
 interface MatchesPerDayProps {
     match: Match;
@@ -8,6 +9,10 @@ interface MatchesPerDayProps {
 export default function MatchesPerDay({ match }: MatchesPerDayProps) {
     const team1 = match.match.teams[0];
     const team2 = match.match.teams[1];
+
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${src}?w=${width}&q=${quality || 75}`;
+    };
 
     return (
         <div className="mt-1 flex items-center justify-between bg-zinc-800 px-4 py-2 text-white">
@@ -33,6 +38,7 @@ export default function MatchesPerDay({ match }: MatchesPerDayProps) {
                 <div className="flex w-32 items-center justify-end">
                     <span className="mr-3">{team1.code}</span>
                     <Image
+                        loader={teamImageLoader}
                         src={team1.image}
                         alt={team1.name}
                         width={50}
@@ -54,6 +60,7 @@ export default function MatchesPerDay({ match }: MatchesPerDayProps) {
                 {/* Team 2 */}
                 <div className="flex w-32 items-center justify-start">
                     <Image
+                        loader={teamImageLoader}
                         src={team2.image}
                         alt={team2.name}
                         width={50}
