@@ -20,9 +20,10 @@ type FormData = z.infer<typeof schema>;
 
 interface PostFormProps {
     initialData?: FormData;
+    postId?: number;
 }
 
-export default function PostForm({ initialData }: PostFormProps) {
+export default function PostForm({ initialData, postId }: PostFormProps) {
     const axiosAuth = useAxiosAuth();
     const router = useRouter();
     const imgInputRef = useRef<HTMLInputElement>(null);
@@ -110,9 +111,16 @@ export default function PostForm({ initialData }: PostFormProps) {
 
     const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
         try {
-            const response = await axiosAuth.post("/posts", data);
-            console.log("게시물 등록 성공", response.data);
-            router.push("/board");
+            if (initialData) {
+                console.log("게시물 수정 요청", postId, data);
+                const response = await axiosAuth.put(`/posts/${postId}`, data);
+                console.log("게시글 수정 성공", response.data);
+                router.push(`/board/${postId}`);
+            } else {
+                const response = await axiosAuth.post("/posts", data);
+                console.log("게시물 등록 성공", response.data);
+                router.push("/board");
+            }
         } catch (err) {
             throw err;
         }
@@ -210,18 +218,18 @@ export default function PostForm({ initialData }: PostFormProps) {
                         사진 선택
                     </button>
                 </div>
-                <div className="relative flex flex-1 justify-center space-x-4">
-                    <button
-                        type="submit"
-                        className="w-24 rounded-md bg-black px-4 py-2 text-white hover:bg-gray-700"
-                    >
-                        등록
-                    </button>
+                <div className="flex justify-center">
                     <button
                         type="button"
-                        className="absolute right-0 w-24 rounded-md bg-gray-300 px-4 py-2 text-black hover:bg-gray-400"
+                        className="mr-4 w-24 rounded bg-gray-300 px-4 py-2 font-bold text-black hover:bg-gray-400"
                     >
                         돌아가기
+                    </button>
+                    <button
+                        type="submit"
+                        className="w-24 rounded bg-orange-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+                    >
+                        {initialData ? "수정" : "등록"}
                     </button>
                 </div>
             </form>

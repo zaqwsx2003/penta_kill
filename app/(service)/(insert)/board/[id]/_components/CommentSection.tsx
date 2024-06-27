@@ -1,16 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchComments } from "@/app/api/api";
 import { useCommentStore } from "@/lib/boardStore";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentForm from "../_components/CommentForm";
+import Spinner from "@/app/(service)/_components/Spinner";
 
 interface CommentSectionProps {
     postId: number;
+    isAuthor: boolean;
 }
 
-export default function CommentSection({ postId }: CommentSectionProps) {
+export default function CommentSection({
+    postId,
+    isAuthor,
+}: CommentSectionProps) {
     const {
         comments,
         page,
@@ -23,6 +29,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     } = useCommentStore();
 
     const queryClient = useQueryClient();
+    const axiosAuth = useAxiosAuth();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["comments", postId, page],
@@ -43,22 +50,79 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     function loadMoreCommentsHandler() {
         if (hasMore) {
             setPage(page + 1);
-            // queryClient.invalidateQueries(["comment", postId, page + 1]);
         }
     }
+
+    const deleteCommentMutation = useMutation({
+        mutationFn: async (commentId: number) => {
+            const response = await axiosAuth.delete(
+                `/posts/${postId}/comments/${commentId}`,
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        },
+    });
+
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(
+        null,
+    );
+    const [editedContent, setEditedContent] = useState<string>("");
+
+    const editCommentMutation = useMutation({
+        mutationFn: async ({
+            commentId,
+            content,
+        }: {
+            commentId: number;
+            content: string;
+        }) => {
+            const response = await axiosAuth.put(
+                `/posts/${postId}/comments/${commentId}`,
+                { content },
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        },
+    });
+
+    function deleteCommentHandler(commentId: number) {
+        if (confirm("삭제 후에는 복구할 수 없습니다.")) {
+            deleteCommentMutation.mutate(commentId);
+        }
+    }
+
+    function editCommentHandler(commetId: number, content: string) {
+        setEditingCommentId(commetId);
+        setEditedContent(content);
+    }
+
+    const saveEditCommentHandler = () => {
+        if (editingCommentId !== null) {
+            editCommentMutation.mutate({
+                commentId: editingCommentId,
+                content: editedContent,
+            });
+            setEditingCommentId(null);
+            setEditedContent("");
+        }
+    };
 
     return (
         <div className="mt-8 text-white">
             <h2 className="mb-4 text-xl font-bold">
                 댓글
-                <span className="ml-5">{data.data.totalElements}</span>
+                <span className="ml-5">{comments.length}</span>
             </h2>
             <CommentForm postId={postId} />
             {isLoading && page === 0 ? (
-                <div className="text-center text-gray-400">로딩 중...</div>
+                <Spinner />
             ) : isError ? (
                 <div className="text-center text-gray-400">
-                    댓글을 불러오는 중 오류가 발생했습니다.
+                    잠시 후 다시 시도해주세요.
                 </div>
             ) : (
                 <>
@@ -81,11 +145,61 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                                                     ).toLocaleString()}
                                                 </span>
                                             </div>
-                                            <div className="text-xs text-gray-400">
-                                                추천
-                                            </div>
+                                            {isAuthor && (
+                                                <div className="flex space-x-3 text-xs">
+                                                    <button
+                                                        onClick={() =>
+                                                            editCommentHandler(
+                                                                comment.id,
+                                                                comment.content,
+                                                            )
+                                                        }
+                                                        className="text-orange-400"
+                                                    >
+                                                        수정
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteCommentHandler(
+                                                                comment.id,
+                                                            )
+                                                        }
+                                                        className="text-red-500"
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                        <div>{comment.content}</div>
+                                        {editingCommentId === comment.id ? (
+                                            <div className="mb-4 flex items-center rounded-[10px] bg-card">
+                                                <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
+                                                    <textarea
+                                                        value={editedContent}
+                                                        onChange={(e) =>
+                                                            setEditedContent(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none rounded-[10px] bg-card placeholder:text-gray-400 focus:outline-none"
+                                                    />
+                                                </div>
+                                                <div className="lg:bg-gray-850 flex-shrink-0 lg:mt-0 lg:rounded-r lg:p-2">
+                                                    <button
+                                                        onClick={
+                                                            saveEditCommentHandler
+                                                        }
+                                                        className="w-30 my-auto mr-2 h-full select-none rounded border border-none bg-orange-500 px-5 py-4 text-center outline-none hover:bg-orange-400 active:bg-orange-400"
+                                                    >
+                                                        저장
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="min-h-10">
+                                                {comment.content}
+                                            </div>
+                                        )}
                                         <button className="mt-2 text-xs text-blue-400">
                                             댓글
                                         </button>
@@ -108,7 +222,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-center text-gray-400">
+                        <div className="my-4 text-center text-gray-400">
                             등록된 댓글이 없습니다.
                         </div>
                     )}
