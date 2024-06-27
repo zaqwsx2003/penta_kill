@@ -108,7 +108,6 @@ const nextAuthOptions: NextAuthConfig = {
                 };
             }
 
-            console.log("session", session);
             return { ...session };
         },
     },

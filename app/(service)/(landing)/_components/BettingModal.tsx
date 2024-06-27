@@ -7,8 +7,8 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useBettingModalState } from "@/lib/bettingModalStore";
 import BettingPhaseOneModal from "./BettingPhaseOne";
 import { MatchTeams } from "@/model/match";
-import BettingPhaseTwo from "./BettingPhaseTwo";
-import BettingPhaseThree from "./BettingPhaseThree";
+import BettingPhaseTwo from "@/app/(service)/(landing)/_components/BettingPhaseTwo";
+import BettingPhaseThree from "@/app/(service)/(landing)/_components/BettingPhaseThree";
 import Spinner from "@/app/(service)/_components/Spinner";
 import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 
@@ -34,6 +34,9 @@ export default function BettingModal({ team }: BettingModalProps) {
         BettingOnClose();
         refreshToken();
         setClosing(true);
+        setTimeout(() => {
+            setBettingPhase(1);
+        }, 1000);
     };
 
     const handleImageLoad = () => {

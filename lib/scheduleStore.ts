@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { ScheduleState, Match } from "@/model/schedule";
-import * as z from "zod";
 
 export const useScheduleStore = create<ScheduleState>((set) => ({
     matchDates: [],

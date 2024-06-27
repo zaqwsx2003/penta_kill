@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { getSession, useSession } from "next-auth/react";
-import axios, { axiosAuth } from "./axios";
-import { useRefreshToken } from "./useRefreshToken";
+
+import { axiosAuth } from "@/lib/axiosHooks/axios";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 
 type SessionType = {
     user: UserType;

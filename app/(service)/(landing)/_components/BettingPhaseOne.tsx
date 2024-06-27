@@ -6,9 +6,8 @@ import { motion } from "framer-motion";
 import { useMatchState } from "@/lib/matchStore";
 import useKoreanDateFormat from "@/lib/useDate";
 import { useTeamState } from "@/lib/teamStore";
-
 import UserPredict from "@/app/(service)/(landing)/_components/UserPredict";
-import AIPredict from "./AIPredict";
+import AIPredict from "@/app/(service)/(landing)/_components/AIPredict";
 import { useBettingModalState } from "@/lib/bettingModalStore";
 import TeamTitle from "@/app/api/TeamTitle";
 

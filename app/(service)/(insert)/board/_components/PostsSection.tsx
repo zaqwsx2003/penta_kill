@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchPosts } from "@/app/api/api";
 import { useBoardStore } from "@/lib/boardStore";
@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import BoardRow from "./BoardRow";
 import Pagination from "./Pagination";
-import Spinner from "@/app/(service)/_components/Spinner";
+import BoardRowSkeleton from "./BoardRowSkeleton";
 
 export default function PostsSection() {
     const {
@@ -40,6 +40,25 @@ export default function PostsSection() {
     function pageChangeHandler(newPage: number) {
         setPage(newPage);
     }
+
+    //Loading 상태 진입시 최소 2초 동안 실행
+    const [isLoadingTime, setIsLoadingTime] = useState(false);
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isLoading) {
+            setIsLoadingTime(true);
+            timer = setTimeout(() => {
+                setIsLoadingTime(false);
+            }, 2000);
+        } else {
+            if (isLoadingTime) {
+                timer = setTimeout(() => {
+                    setIsLoadingTime(false);
+                }, 1000);
+            }
+        }
+        return () => clearTimeout(timer);
+    }, [isLoading]);
 
     console.log(data);
     return (
@@ -90,11 +109,10 @@ export default function PostsSection() {
                             </svg>
                         </div>
                     </div>
+
                     <div className="mt-2 grid grid-cols-1 gap-2 overflow-hidden rounded-[10px] bg-zinc-800 text-sm shadow-inner">
-                        {isLoading ? (
-                            <div className="flex h-64 items-center justify-center">
-                                <Spinner />
-                            </div>
+                        {isLoadingTime ? (
+                            <BoardRowSkeleton />
                         ) : posts && posts.length > 0 ? (
                             posts.map((post, idx) => (
                                 <BoardRow

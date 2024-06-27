@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
-import MatchRound from "./_components/MatchRound";
 import { Do_Hyeon } from "next/font/google";
+
+import MatchRound from "@/app/(service)/(landing)/_components/MatchRound";
+import PredictPercent from "@/app/(service)/(landing)/_components/PredictPercent";
 
 const font = Do_Hyeon({
     subsets: ["latin"],
@@ -20,6 +22,7 @@ export default function Home() {
                     승부예측
                 </h1>
             </div>
+            <PredictPercent />
             <div className="scrollbar-hide flex w-[1024px] flex-col gap-12">
                 <MatchRound />
             </div>

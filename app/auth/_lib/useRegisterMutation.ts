@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
-import { RegisterParams } from "../_components/Register-form";
+import { RegisterParams } from "@/app/auth/_components/Register-form";
 
 // export type RegisterParams = {
 //     username: string;

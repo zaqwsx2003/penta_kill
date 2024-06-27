@@ -1,9 +1,6 @@
 "use client";
 
-import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import axios from "axios";
-import Cookies from "js-cookie";
-import { axiosAuth } from "../../lib/axiosHooks/axios";
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT_URL;
 
