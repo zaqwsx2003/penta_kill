@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchPost } from "@/app/api/api";
 import { useSession } from "next-auth/react";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentSection from "./CommentSection";
@@ -20,7 +19,15 @@ export default function PostDetail() {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["post", id],
-        queryFn: () => fetchPost(Number(id)),
+        queryFn: async () => {
+            try {
+                const response = await axiosAuth.get(`/posts/${id}`);
+                console.log("게시글 정보", response.data);
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
     });
 
     const post = data?.data;
@@ -54,7 +61,6 @@ export default function PostDetail() {
             return response.data;
         },
         onSuccess: () => {
-            // router.refresh();
             queryClient.invalidateQueries({ queryKey: ["post", id] });
         },
     });
@@ -83,9 +89,9 @@ export default function PostDetail() {
 
     function dislikePostHandler() {
         if (!session) {
-            return setSessionModal(true);
+            return setSessionModal(false);
         }
-        const newIsLike = post.isLike === false ? null : true;
+        const newIsLike = post.isLike === false ? null : false;
         likeOrDislikeMutation.mutate({ postId: Number(id), isLike: newIsLike });
     }
 

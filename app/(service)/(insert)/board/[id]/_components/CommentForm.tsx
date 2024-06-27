@@ -53,7 +53,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
         },
     });
 
-    const onSubmitHandler: SubmitHandler<FormData> = (data) => {
+    const submitHandler: SubmitHandler<FormData> = (data) => {
         if (!session) {
             setSessionModal(true);
             return;
@@ -61,11 +61,18 @@ export default function CommentForm({ postId }: CommentFormProps) {
         mutation.mutate(data);
     };
 
+    function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(submitHandler)();
+        }
+    }
+
     return (
         <>
             {sessionModal && <SessionModal />}
             <form
-                onSubmit={handleSubmit(onSubmitHandler)}
+                onSubmit={handleSubmit(submitHandler)}
                 className="mb-4 flex items-center rounded-[10px] bg-card"
             >
                 <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
@@ -74,6 +81,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
                         className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none bg-transparent placeholder:text-gray-400 focus:outline-none"
                         placeholder="바람직한 Esports 문화 정착을 위해 욕설, 과도한 비난을 지양합시다."
                         name="content"
+                        onKeyDown={keyDownHandler}
                     ></textarea>
                     {errors.content && (
                         <span className="text-xs text-red-500">
