@@ -7,7 +7,7 @@ export interface Post {
     dislikeCount: number;
     commentCount: number;
     views: number;
-    createAt: string;
+    createdAt: string;
     modifiedAt: string;
     nickname: string;
 }

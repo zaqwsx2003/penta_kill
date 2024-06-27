@@ -96,8 +96,12 @@ export default function PostsSection() {
                                 <Spinner />
                             </div>
                         ) : posts && posts.length > 0 ? (
-                            posts.map((post) => (
-                                <BoardRow key={post.id} {...post} />
+                            posts.map((post, idx) => (
+                                <BoardRow
+                                    key={post.id}
+                                    {...post}
+                                    isLast={idx === posts.length - 1}
+                                />
                             ))
                         ) : (
                             <div className="h-64 py-32 text-center text-white">

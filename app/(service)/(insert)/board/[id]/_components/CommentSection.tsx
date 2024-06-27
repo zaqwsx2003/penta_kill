@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchComments } from "@/app/api/api";
 import { useCommentStore } from "@/lib/boardStore";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentForm from "../_components/CommentForm";
 import Spinner from "@/app/(service)/_components/Spinner";
 
 interface CommentSectionProps {
     postId: number;
+    isAuthor: boolean;
 }
 
-export default function CommentSection({ postId }: CommentSectionProps) {
+export default function CommentSection({
+    postId,
+    isAuthor,
+}: CommentSectionProps) {
     const {
         comments,
         page,
@@ -24,6 +29,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     } = useCommentStore();
 
     const queryClient = useQueryClient();
+    const axiosAuth = useAxiosAuth();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["comments", postId, page],
@@ -44,9 +50,28 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     function loadMoreCommentsHandler() {
         if (hasMore) {
             setPage(page + 1);
-            // queryClient.invalidateQueries(["comment", postId, page + 1]);
         }
     }
+
+    const deleteCommentMutation = useMutation({
+        mutationFn: async (commentId: number) => {
+            const response = await axiosAuth.delete(
+                `/posts/${postId}/comments/${commentId}`,
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        },
+    });
+
+    function deleteCommentHandler(commentId: number) {
+        if (confirm("삭제 후에는 복구할 수 없습니다.")) {
+            deleteCommentMutation.mutate(commentId);
+        }
+    }
+
+    function editCommentHandler(commetId: number) {}
 
     return (
         <div className="mt-8 text-white">
@@ -59,7 +84,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                 <Spinner />
             ) : isError ? (
                 <div className="text-center text-gray-400">
-                    댓글을 불러오는 중 오류가 발생했습니다.
+                    잠시 후 다시 시도해주세요.
                 </div>
             ) : (
                 <>
@@ -82,9 +107,30 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                                                     ).toLocaleString()}
                                                 </span>
                                             </div>
-                                            <div className="text-xs text-gray-400">
-                                                추천
-                                            </div>
+                                            {isAuthor && (
+                                                <div className="flex space-x-3 text-xs">
+                                                    <button
+                                                        onClick={() =>
+                                                            editCommentHandler(
+                                                                comment.id,
+                                                            )
+                                                        }
+                                                        className="text-orange-400"
+                                                    >
+                                                        수정
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteCommentHandler(
+                                                                comment.id,
+                                                            )
+                                                        }
+                                                        className="text-red-500"
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                         <div>{comment.content}</div>
                                         <button className="mt-2 text-xs text-blue-400">

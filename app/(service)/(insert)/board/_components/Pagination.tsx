@@ -21,7 +21,7 @@ export default function Pagination({
                 <button
                     key={number}
                     onClick={() => onPageChange(number)}
-                    className={`mx-1 rounded-full border px-4 py-2 text-white ${
+                    className={`mx-1 rounded-full border px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-neutral-700 ${
                         currentPage === number
                             ? "bg-neutral-600"
                             : "bg-transparent"
