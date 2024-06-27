@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { BoardState, Post, CommentState } from "@/model/board";
+import { BoardState, CommentState, ReplyState } from "@/model/board";
 
 export const useBoardStore = create<BoardState>((set) => ({
     posts: [],
@@ -23,8 +23,21 @@ export const useCommentStore = create<CommentState>((set) => ({
     hasMore: false,
     setComments: (comments) => set({ comments }),
     setPage: (page) => set({ page }),
-    setSize: (size) => set({ size }),
     setHasMore: (hasMore) => set({ hasMore }),
     addComments: (newComments) =>
         set((state) => ({ comments: [...state.comments, ...newComments] })),
+}));
+
+export const useReplyStore = create<ReplyState>((set) => ({
+    replies: [],
+    page: 0,
+    size: 5,
+    hasMore: false,
+    setReplies: (replies) => set({ replies }),
+    setPage: (page) => set({ page }),
+    setHasMore: (hasMore) => set({ hasMore }),
+    addReplies: (newReplies) =>
+        set((state) => ({
+            replies: [...state.replies, ...newReplies],
+        })),
 }));

@@ -32,6 +32,7 @@ export interface Comment {
     createAt: string;
     nickname: string;
     replyCount: number;
+    email: string;
 }
 
 export interface CommentState {
@@ -39,9 +40,28 @@ export interface CommentState {
     page: number;
     size: number;
     hasMore: boolean;
-    setComments: (comment: Comment[]) => void;
+    setComments: (comments: Comment[]) => void;
     setPage: (page: number) => void;
-    setSize: (size: number) => void;
     setHasMore: (hasMore: boolean) => void;
     addComments: (comments: Comment[]) => void;
+}
+
+// types.ts
+export interface Reply {
+    id: number;
+    content: string;
+    createAt: string;
+    modifiedAt: string;
+    nickname: string;
+}
+
+export interface ReplyState {
+    replies: Reply[];
+    page: number;
+    size: number;
+    hasMore: boolean;
+    setReplies: (replies: Reply[], reset?: boolean) => void;
+    addReplies: (replies: Reply[]) => void;
+    setPage: (page: number) => void;
+    setHasMore: (hasMore: boolean) => void;
 }

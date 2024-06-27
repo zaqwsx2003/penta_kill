@@ -22,7 +22,6 @@ export default function PostDetail() {
         queryFn: async () => {
             try {
                 const response = await axiosAuth.get(`/posts/${id}`);
-                console.log("게시글 정보", response.data);
                 return response.data;
             } catch (error) {
                 throw error;
@@ -101,7 +100,7 @@ export default function PostDetail() {
     return (
         <div className="mx-auto max-w-4xl p-4 text-white">
             {sessionModal && <SessionModal />}
-            <div className="rounded-[10px] bg-zinc-700 p-6">
+            <div className="rounded-[10px] bg-zinc-800 p-6">
                 <h1 className="mb-4 text-2xl font-bold">{post.title}</h1>
                 <div className="mb-4 flex items-center justify-between">
                     <div className="mr-4 flex items-center">
@@ -184,7 +183,7 @@ export default function PostDetail() {
                     목록
                 </button>
             </div>
-            <CommentSection postId={Number(id)} isAuthor={isAuthor} />
+            <CommentSection postId={Number(id)} session={session} />
         </div>
     );
 }
