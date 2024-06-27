@@ -6,6 +6,8 @@ import { Do_Hyeon } from "next/font/google";
 import { cn } from "@/lib/utils";
 import useAnimated from "../_lib/useAnimated";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 
 const font = Do_Hyeon({
     subsets: ["latin"],
@@ -13,7 +15,21 @@ const font = Do_Hyeon({
 });
 
 export default function PredictPercent() {
-    const { isCompleted, rounded } = useAnimated({ targetRatio: 74 });
+    const { data, isLoading, isSuccess, isError } = useQuery({
+        queryKey: ["AI"],
+        queryFn: async () => {
+            const response = await axiosAuth.get(`/bets/accuracy`);
+            return response.data;
+        },
+    });
+
+    const accuracy = data?.data?.accuracy;
+    const AIRatio = accuracy ? Math.round(accuracy * 100) : 0;
+    const { isCompleted, rounded } = useAnimated({ targetRatio: AIRatio });
+    const axiosAuth = useAxiosAuth();
+
+    console.log(AIRatio);
+
     return (
         <div
             className={cn(
