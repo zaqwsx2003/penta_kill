@@ -11,23 +11,23 @@ export default function Pagination({
 }: PaginationProps) {
     const pageNumbers = [];
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 0; i < totalPages; i++) {
         pageNumbers.push(i);
     }
 
     return (
-        <div className="mt-4 flex justify-center text-xs">
+        <div className="flex justify-center text-xs">
             {pageNumbers.map((number) => (
                 <button
                     key={number}
                     onClick={() => onPageChange(number)}
-                    className={`mx-1 rounded-full border px-4 py-2 text-white ${
+                    className={`mx-1 rounded-full border px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-neutral-700 ${
                         currentPage === number
                             ? "bg-neutral-600"
                             : "bg-transparent"
                     }`}
                 >
-                    {number}
+                    {number + 1}
                 </button>
             ))}
         </div>

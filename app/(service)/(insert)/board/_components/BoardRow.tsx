@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Post } from "@/model/board";
 
+interface BoardRowProps extends Post {
+    isLast: boolean;
+}
+
 export default function BoardRow({
     id,
     title,
@@ -11,15 +15,21 @@ export default function BoardRow({
     commentCount,
     createdAt,
     nickname,
-}: Post) {
+    isLast,
+}: BoardRowProps) {
     const date = new Date(createdAt).toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
+        weekday: "long",
     });
-    console.log("날짜 확인", createdAt, date);
+
     return (
-        <div className="grid grid-cols-12 gap-4 border-b border-zinc-700 p-4 text-xs text-white">
+        <div
+            className={`grid grid-cols-12 gap-4 p-4 text-sm ${
+                isLast ? "border-none" : "border-b border-zinc-900"
+            }`}
+        >
             <div className="col-span-1">{id}</div>
             <div className="col-span-4">
                 <Link href={`/board/${id}`}>

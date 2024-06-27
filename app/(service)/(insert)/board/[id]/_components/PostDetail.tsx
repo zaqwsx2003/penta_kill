@@ -1,18 +1,22 @@
-// PostDetail.tsx
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchPost } from "@/app/api/api";
 import { useSession } from "next-auth/react";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentSection from "./CommentSection";
+import Spinner from "@/app/(service)/_components/Spinner";
+import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
 
 export default function PostDetail() {
+    const [sessionModal, setSessionModal] = useState<boolean>(false);
     const { id } = useParams();
     const router = useRouter();
     const { data: session } = useSession();
     const axiosAuth = useAxiosAuth();
+    const queryClient = useQueryClient();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["post", id],
@@ -38,9 +42,9 @@ export default function PostDetail() {
             isLike,
         }: {
             postId: number;
-            isLike: boolean;
+            isLike: boolean | null;
         }) => {
-            const response = await axiosAuth.post(
+            const response = await axiosAuth.put(
                 `/posts/${postId}/likes`,
                 null,
                 {
@@ -50,7 +54,8 @@ export default function PostDetail() {
             return response.data;
         },
         onSuccess: () => {
-            router.refresh();
+            // router.refresh();
+            queryClient.invalidateQueries({ queryKey: ["post", id] });
         },
     });
 
@@ -69,25 +74,34 @@ export default function PostDetail() {
     }
 
     function likePostHandler() {
-        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: true });
+        if (!session) {
+            return setSessionModal(true);
+        }
+        const newIsLike = post.isLike === true ? null : true;
+        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: newIsLike });
     }
 
     function dislikePostHandler() {
-        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: false });
+        if (!session) {
+            return setSessionModal(true);
+        }
+        const newIsLike = post.isLike === false ? null : true;
+        likeOrDislikeMutation.mutate({ postId: Number(id), isLike: newIsLike });
     }
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading post</div>;
+    if (isLoading) return <Spinner />;
+    if (isError) return <div>잠시 후 다시 시도해주세요.</div>;
 
     return (
         <div className="mx-auto max-w-4xl p-4 text-white">
+            {sessionModal && <SessionModal />}
             <div className="rounded-[10px] bg-zinc-700 p-6">
                 <h1 className="mb-4 text-2xl font-bold">{post.title}</h1>
                 <div className="mb-4 flex items-center justify-between">
                     <div className="mr-4 flex items-center">
                         {post.nickname}
                     </div>
-                    <span>{new Date(post.createAt).toLocaleString()}</span>
+                    <span>{new Date(post.createdAt).toLocaleString()}</span>
                 </div>
                 <div
                     className="mb-4 min-h-[100px] break-words"
@@ -95,7 +109,7 @@ export default function PostDetail() {
                 ></div>
                 <div className="flex items-center justify-center">
                     <button
-                        className="flex items-center space-x-1 rounded-md border border-gray-600 p-2"
+                        className="flex items-center space-x-1 rounded-md p-2"
                         onClick={likePostHandler}
                     >
                         <svg
@@ -103,7 +117,7 @@ export default function PostDetail() {
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
-                            fill={post.isLike === true ? "#ffffff" : "none"}
+                            fill={post.isLike === true ? "#de542a" : "none"}
                             stroke="currentColor"
                             strokeWidth="2"
                             strokeLinecap="round"
@@ -117,14 +131,15 @@ export default function PostDetail() {
                     </button>
                     <button
                         onClick={dislikePostHandler}
-                        className="flex items-center space-x-1 rounded-md border border-gray-600 p-2"
+                        className="flex items-center space-x-1 p-2"
                     >
+                        <span>{post.dislikeCount}</span>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
-                            fill={post.isLike === false ? "#ffffff" : "none"}
+                            fill={post.isLike === false ? "#3b55ff" : "none"}
                             stroke="#ffffff"
                             strokeWidth="2"
                             strokeLinecap="round"
@@ -134,7 +149,6 @@ export default function PostDetail() {
                             <path d="M17 14V2" />
                             <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
                         </svg>
-                        <span>{post.dislikeCount}</span>
                     </button>
                 </div>
             </div>
@@ -164,7 +178,7 @@ export default function PostDetail() {
                     목록
                 </button>
             </div>
-            <CommentSection postId={Number(id)} />
+            <CommentSection postId={Number(id)} isAuthor={isAuthor} />
         </div>
     );
 }
