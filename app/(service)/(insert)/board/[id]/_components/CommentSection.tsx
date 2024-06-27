@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchComments } from "@/app/api/api";
 import { useCommentStore } from "@/lib/boardStore";
@@ -65,13 +65,51 @@ export default function CommentSection({
         },
     });
 
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(
+        null,
+    );
+    const [editedContent, setEditedContent] = useState<string>("");
+
+    const editCommentMutation = useMutation({
+        mutationFn: async ({
+            commentId,
+            content,
+        }: {
+            commentId: number;
+            content: string;
+        }) => {
+            const response = await axiosAuth.put(
+                `/posts/${postId}/comments/${commentId}`,
+                { content },
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        },
+    });
+
     function deleteCommentHandler(commentId: number) {
         if (confirm("삭제 후에는 복구할 수 없습니다.")) {
             deleteCommentMutation.mutate(commentId);
         }
     }
 
-    function editCommentHandler(commetId: number) {}
+    function editCommentHandler(commetId: number, content: string) {
+        setEditingCommentId(commetId);
+        setEditedContent(content);
+    }
+
+    const saveEditCommentHandler = () => {
+        if (editingCommentId !== null) {
+            editCommentMutation.mutate({
+                commentId: editingCommentId,
+                content: editedContent,
+            });
+            setEditingCommentId(null);
+            setEditedContent("");
+        }
+    };
 
     return (
         <div className="mt-8 text-white">
@@ -113,6 +151,7 @@ export default function CommentSection({
                                                         onClick={() =>
                                                             editCommentHandler(
                                                                 comment.id,
+                                                                comment.content,
                                                             )
                                                         }
                                                         className="text-orange-400"
@@ -132,7 +171,35 @@ export default function CommentSection({
                                                 </div>
                                             )}
                                         </div>
-                                        <div>{comment.content}</div>
+                                        {editingCommentId === comment.id ? (
+                                            <div className="mb-4 flex items-center rounded-[10px] bg-card">
+                                                <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
+                                                    <textarea
+                                                        value={editedContent}
+                                                        onChange={(e) =>
+                                                            setEditedContent(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none rounded-[10px] bg-card placeholder:text-gray-400 focus:outline-none"
+                                                    />
+                                                </div>
+                                                <div className="lg:bg-gray-850 flex-shrink-0 lg:mt-0 lg:rounded-r lg:p-2">
+                                                    <button
+                                                        onClick={
+                                                            saveEditCommentHandler
+                                                        }
+                                                        className="w-30 my-auto mr-2 h-full select-none rounded border border-none bg-orange-500 px-5 py-4 text-center outline-none hover:bg-orange-400 active:bg-orange-400"
+                                                    >
+                                                        저장
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="min-h-10">
+                                                {comment.content}
+                                            </div>
+                                        )}
                                         <button className="mt-2 text-xs text-blue-400">
                                             댓글
                                         </button>
