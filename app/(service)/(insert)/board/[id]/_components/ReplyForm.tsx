@@ -6,8 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
-import { useSession } from "next-auth/react";
-import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
+import { Session } from "next-auth";
 
 const schema = z.object({
     content: z
@@ -21,12 +20,15 @@ type FormData = z.infer<typeof schema>;
 interface ReplyFormProps {
     postId: number;
     commentId: number;
+    session: Session | null;
 }
 
-export default function ReplyForm({ postId, commentId }: ReplyFormProps) {
-    const [sessionModal, setSessionModal] = useState<boolean>(false);
+export default function ReplyForm({
+    postId,
+    commentId,
+    session,
+}: ReplyFormProps) {
     const axiosAuth = useAxiosAuth();
-    const { data: session } = useSession();
     const queryClient = useQueryClient();
 
     const {
@@ -38,8 +40,9 @@ export default function ReplyForm({ postId, commentId }: ReplyFormProps) {
         resolver: zodResolver(schema),
     });
 
-    const mutation = useMutation({
+    const addReplyMutation = useMutation({
         mutationFn: async (data: { content: string }) => {
+            console.log("대댓글 등록", data, postId, commentId);
             const response = await axiosAuth.post(
                 `/posts/${postId}/comments/${commentId}/replies`,
                 {
@@ -58,19 +61,14 @@ export default function ReplyForm({ postId, commentId }: ReplyFormProps) {
     });
 
     const onSubmitHandler: SubmitHandler<FormData> = (data) => {
-        if (!session) {
-            setSessionModal(true);
-            return;
-        }
-        mutation.mutate(data);
+        addReplyMutation.mutate(data);
     };
 
     return (
         <>
-            {sessionModal && <SessionModal />}
             <form
                 onSubmit={handleSubmit(onSubmitHandler)}
-                className="mb-4 flex items-center rounded-[10px] bg-card"
+                className="mt-4 flex items-center rounded-[10px] bg-card"
             >
                 <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
                     <textarea

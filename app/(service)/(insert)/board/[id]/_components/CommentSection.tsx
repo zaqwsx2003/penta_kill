@@ -9,6 +9,7 @@ import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentForm from "../_components/CommentForm";
 import Spinner from "@/app/(service)/_components/Spinner";
 import ReplySection from "./ReplySection";
+import ReplyForm from "./ReplyForm";
 
 interface CommentSectionProps {
     postId: number;
@@ -29,7 +30,13 @@ export default function CommentSection({
         setHasMore,
         addComments,
     } = useCommentStore();
-
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(
+        null,
+    );
+    const [editedContent, setEditedContent] = useState<string>("");
+    const [replyingToCommentId, setReplyingToCommentId] = useState<
+        number | null
+    >(null);
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
@@ -66,11 +73,6 @@ export default function CommentSection({
             queryClient.invalidateQueries({ queryKey: ["comments", postId] });
         },
     });
-
-    const [editingCommentId, setEditingCommentId] = useState<number | null>(
-        null,
-    );
-    const [editedContent, setEditedContent] = useState<string>("");
 
     const editCommentMutation = useMutation({
         mutationFn: async ({
@@ -187,6 +189,14 @@ export default function CommentSection({
                                                 )}
                                                 {/* 대댓글 작성 버튼 */}
                                                 <button
+                                                    onClick={() =>
+                                                        setReplyingToCommentId(
+                                                            replyingToCommentId ===
+                                                                comment.id
+                                                                ? null
+                                                                : comment.id,
+                                                        )
+                                                    }
                                                     className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover:opacity-100`}
                                                 >
                                                     <svg
@@ -236,6 +246,13 @@ export default function CommentSection({
                                             </div>
                                         ) : (
                                             <div>{comment.content}</div>
+                                        )}
+                                        {replyingToCommentId === comment.id && (
+                                            <ReplyForm
+                                                postId={postId}
+                                                commentId={comment.id}
+                                                session={session}
+                                            />
                                         )}
                                         <ReplySection
                                             postId={postId}
