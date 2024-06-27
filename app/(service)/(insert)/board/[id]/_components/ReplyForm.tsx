@@ -6,8 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
-import { useSession } from "next-auth/react";
-import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
+import { Session } from "next-auth";
 
 const schema = z.object({
     content: z
@@ -18,14 +17,18 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-interface CommentFormProps {
+interface ReplyFormProps {
     postId: number;
+    commentId: number;
+    session: Session | null;
 }
 
-export default function CommentForm({ postId }: CommentFormProps) {
-    const [sessionModal, setSessionModal] = useState<boolean>(false);
+export default function ReplyForm({
+    postId,
+    commentId,
+    session,
+}: ReplyFormProps) {
     const axiosAuth = useAxiosAuth();
-    const { data: session } = useSession();
     const queryClient = useQueryClient();
 
     const {
@@ -37,15 +40,19 @@ export default function CommentForm({ postId }: CommentFormProps) {
         resolver: zodResolver(schema),
     });
 
-    const mutation = useMutation({
+    const addReplyMutation = useMutation({
         mutationFn: async (data: { content: string }) => {
-            const response = await axiosAuth.post(`/posts/${postId}/comments`, {
-                content: data.content,
-            });
+            console.log("대댓글 등록", data, postId, commentId);
+            const response = await axiosAuth.post(
+                `/posts/${postId}/comments/${commentId}/replies`,
+                {
+                    content: data.content,
+                },
+            );
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+            queryClient.invalidateQueries({ queryKey: ["replies", commentId] });
             reset();
         },
         onError: (error) => {
@@ -53,35 +60,22 @@ export default function CommentForm({ postId }: CommentFormProps) {
         },
     });
 
-    const submitHandler: SubmitHandler<FormData> = (data) => {
-        if (!session) {
-            setSessionModal(true);
-            return;
-        }
-        mutation.mutate(data);
+    const onSubmitHandler: SubmitHandler<FormData> = (data) => {
+        addReplyMutation.mutate(data);
     };
-
-    function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit(submitHandler)();
-        }
-    }
 
     return (
         <>
-            {sessionModal && <SessionModal />}
             <form
-                onSubmit={handleSubmit(submitHandler)}
-                className="mb-4 flex items-center rounded-[10px] bg-card"
+                onSubmit={handleSubmit(onSubmitHandler)}
+                className="mt-4 flex items-center rounded-[10px] bg-card"
             >
                 <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
                     <textarea
                         {...register("content")}
                         className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none bg-transparent placeholder:text-gray-400 focus:outline-none"
-                        placeholder="바람직한 Esports 문화 정착을 위해 욕설, 과도한 비난을 지양합시다."
+                        placeholder="대댓글을 입력하세요."
                         name="content"
-                        onKeyDown={keyDownHandler}
                     ></textarea>
                     {errors.content && (
                         <span className="text-xs text-red-500">

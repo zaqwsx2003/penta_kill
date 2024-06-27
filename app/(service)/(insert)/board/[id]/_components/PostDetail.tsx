@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchPost } from "@/app/api/api";
 import { useSession } from "next-auth/react";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentSection from "./CommentSection";
@@ -20,7 +19,14 @@ export default function PostDetail() {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["post", id],
-        queryFn: () => fetchPost(Number(id)),
+        queryFn: async () => {
+            try {
+                const response = await axiosAuth.get(`/posts/${id}`);
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
     });
 
     const post = data?.data;
@@ -54,7 +60,6 @@ export default function PostDetail() {
             return response.data;
         },
         onSuccess: () => {
-            // router.refresh();
             queryClient.invalidateQueries({ queryKey: ["post", id] });
         },
     });
@@ -83,9 +88,9 @@ export default function PostDetail() {
 
     function dislikePostHandler() {
         if (!session) {
-            return setSessionModal(true);
+            return setSessionModal(false);
         }
-        const newIsLike = post.isLike === false ? null : true;
+        const newIsLike = post.isLike === false ? null : false;
         likeOrDislikeMutation.mutate({ postId: Number(id), isLike: newIsLike });
     }
 
@@ -95,7 +100,7 @@ export default function PostDetail() {
     return (
         <div className="mx-auto max-w-4xl p-4 text-white">
             {sessionModal && <SessionModal />}
-            <div className="rounded-[10px] bg-zinc-700 p-6">
+            <div className="rounded-[10px] bg-zinc-800 p-6">
                 <h1 className="mb-4 text-2xl font-bold">{post.title}</h1>
                 <div className="mb-4 flex items-center justify-between">
                     <div className="mr-4 flex items-center">
@@ -178,7 +183,7 @@ export default function PostDetail() {
                     목록
                 </button>
             </div>
-            <CommentSection postId={Number(id)} isAuthor={isAuthor} />
+            <CommentSection postId={Number(id)} session={session} />
         </div>
     );
 }
