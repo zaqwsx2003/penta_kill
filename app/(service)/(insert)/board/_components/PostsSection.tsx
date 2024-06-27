@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import BoardRow from "./BoardRow";
 import Pagination from "./Pagination";
-import Spinner from "@/app/(service)/_components/Spinner";
 import BoardRowSkeleton from "./BoardRowSkeleton";
 
 export default function PostsSection() {

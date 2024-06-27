@@ -9,6 +9,7 @@ import { useSelectedGameStore } from "@/lib/gameSelectStore";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
 import useBettingMutation from "@/app/(service)/(landing)/_lib/useBettingMutation";
+import { ImageLoaderProps } from "@/model/match";
 
 export default function BettingPhaseTwo() {
     const { data: session } = useSession();
@@ -55,6 +56,12 @@ export default function BettingPhaseTwo() {
         );
     }
 
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${team.image}?w=${width}&q=${quality || 75}`;
+    };
+
+    console.log(team);
+
     return (
         <>
             <motion.div
@@ -70,6 +77,7 @@ export default function BettingPhaseTwo() {
                         <div>{team.code}</div>
                         <div className="flex justify-center">
                             <Image
+                                loader={teamImageLoader}
                                 src={team.image}
                                 alt={team.name}
                                 width={100}
