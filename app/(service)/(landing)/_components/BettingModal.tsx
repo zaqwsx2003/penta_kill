@@ -34,6 +34,9 @@ export default function BettingModal({ team }: BettingModalProps) {
         BettingOnClose();
         refreshToken();
         setClosing(true);
+        setTimeout(() => {
+            setBettingPhase(1);
+        }, 1000);
     };
 
     const handleImageLoad = () => {

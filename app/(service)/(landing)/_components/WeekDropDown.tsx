@@ -7,20 +7,20 @@ import { matchWeekVariant } from "@/app/(service)/(landing)/_components/style";
 
 type DropsDownProps = {
     matchWeek: number | undefined;
-    weeklyArray: number[] | unknown[];
+    weeklyLength: number;
     isOpen: boolean;
     isClose: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function WeekDropDown({
     matchWeek,
-    weeklyArray,
+    weeklyLength,
     isOpen,
     isClose,
 }: DropsDownProps) {
     const { selectWeek, setSelectWeek } = useSelectMatchStore();
     const selectWeekHandler = (index: number) => () => {
-        setSelectWeek(index);
+        setSelectWeek(index.toString());
         isClose(false);
     };
 
@@ -37,13 +37,13 @@ export default function WeekDropDown({
             className="absolute -left-0 top-8 z-40 flex w-32 flex-col gap-y-1 rounded-[10px] bg-white p-4"
             onClick={handleModalClick}
         >
-            {weeklyArray.map((_, index: number) => (
+            {Array.from({ length: weeklyLength }).map((_, index: number) => (
                 <motion.li
                     whileHover={{ scale: 1.1, color: "#fff" }}
                     className={cn(
                         matchWeekVariant({
                             matchWeek: matchWeek === index,
-                            selectWeek: selectWeek === index,
+                            selectWeek: parseInt(selectWeek, 10) === index,
                         }),
                     )}
                     key={index}

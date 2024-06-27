@@ -20,7 +20,6 @@ export const useBettingModalState = create<ModalState>((set) => ({
         set({ bettingIsOpen: true, matchId, teamCode }),
     BettingOnClose: () =>
         set({
-            bettingPhase: 1,
             bettingIsOpen: false,
             matchId: null,
             teamCode: null,

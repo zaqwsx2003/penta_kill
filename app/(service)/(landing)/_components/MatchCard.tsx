@@ -7,6 +7,8 @@ import { DaysMatch } from "@/model/match";
 import TeamPanel from "@/app/(service)/(landing)/_components/TeamPanel";
 import MatchState from "@/app/(service)/(landing)/_components/MatchState";
 import BettingResult from "@/app/(service)/(landing)/_components/BettingResult";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 
 type MatchCardProps = {
     matches: DaysMatch;
@@ -14,6 +16,7 @@ type MatchCardProps = {
 
 export default function MatchCard({ matches }: MatchCardProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
+    const axiosAuth = useAxiosAuth();
 
     return (
         <div

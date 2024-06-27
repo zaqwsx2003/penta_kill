@@ -8,7 +8,7 @@ export const matchWeekVariant = cva(
                 true: `border border-blue-500 px-2 rounded`,
                 false: "",
             },
-            selectWeek: { true: "font-semibold text-indigo-500" },
+            selectWeek: { true: "font-semibold text-indigo-500", false: "" },
         },
     },
 );
@@ -21,7 +21,6 @@ export const panelVariants = cva(
                 0: `rounded-r-none border-r-0 justify-start`,
                 1: `rounded-l-none border-l-0 justify-end`,
             },
-
         },
     },
 );

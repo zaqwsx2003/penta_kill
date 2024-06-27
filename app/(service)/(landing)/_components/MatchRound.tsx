@@ -17,8 +17,8 @@ import MatchSkeleton from "@/app/(service)/(landing)/_components/MatchSkeleton";
 export default function MatchRound() {
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
     const axiosAuth = useAxiosAuth();
-    const { selectWeek, setSelectWeek } = useSelectMatchStore();
     const triggerRef = useRef<HTMLDivElement>(null);
+    const { selectWeek, setSelectWeek } = useSelectMatchStore();
     const [matchWeek, setMatchWeek] = useState<number | undefined>();
 
     const {
@@ -27,14 +27,14 @@ export default function MatchRound() {
         isSuccess,
         isError,
     } = useQuery({
-        queryKey: ["match", "betting"],
+        queryKey: ["match", "betting", selectWeek],
         queryFn: async () => {
+            const week = parseInt(selectWeek, 10);
             const response = await axiosAuth.get(
-                `/bets/recentTournament/schedules`,
+                `/bets/recentTournament/schedulesPage?page=${selectWeek}`,
             );
             return response.data;
         },
-        staleTime: 0,
     });
 
     useModalRef({
@@ -44,23 +44,20 @@ export default function MatchRound() {
 
     useEffect(() => {
         if (isSuccess && match) {
-            const currentWeek = match.data.currentWeek;
+            const currentWeek = match.data.currentBlockNameIndex;
             setMatchWeek(currentWeek);
-            if (selectWeek === undefined) {
-                setSelectWeek(currentWeek);
+            if (selectWeek === "") {
+                setSelectWeek(currentWeek.toString());
             }
         }
     }, [isSuccess, match, selectWeek, setSelectWeek]);
 
     if (isLoading) return <MatchSkeleton />;
-
     if (isError) return <ErrorPage />;
 
-    const weeklySchedules = match?.data?.weeklySchedules;
-    const weeklyArray = Array.from({ length: weeklySchedules?.length || 0 });
-    const weeklyArrayFiltered = weeklySchedules?.filter(
-        (data: any, index: number) => index === selectWeek,
-    );
+    console.log(match);
+
+    console.log(selectWeek, matchWeek);
 
     return (
         <>
@@ -75,7 +72,7 @@ export default function MatchRound() {
                         ref={triggerRef}
                     >
                         <div className="flex flex-grow justify-center font-bold">
-                            {selectWeek !== undefined && selectWeek + 1}
+                            {selectWeek !== "" && parseInt(selectWeek, 10) + 1}
                             <span className="font-normal">주차</span>
                         </div>
                         <motion.div
@@ -101,7 +98,7 @@ export default function MatchRound() {
                         {isDropDownOpen && (
                             <WeekDropDown
                                 matchWeek={matchWeek}
-                                weeklyArray={weeklyArray}
+                                weeklyLength={match.data.totalPages}
                                 isOpen={isDropDownOpen}
                                 isClose={setIsDropDownOpen}
                             />
@@ -110,13 +107,11 @@ export default function MatchRound() {
                 </motion.div>
             </div>
             <div className="flex flex-col gap-y-10">
-                {weeklyArrayFiltered?.map((event: any, index: number) => (
-                    <Fragment key={index}>
-                        {event.map((match: DaysMatch, index: number) => (
-                            <MatchCard key={index} matches={match} />
-                        ))}
-                    </Fragment>
-                ))}
+                {match.data.weeklySchedules.map(
+                    (match: DaysMatch, index: number) => (
+                        <MatchCard key={index} matches={match} />
+                    ),
+                )}
             </div>
         </>
     );
