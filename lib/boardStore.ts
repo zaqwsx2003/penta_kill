@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { BoardState, Post, CommentState } from "@/model/board";
+
+import { BoardState, CommentState } from "@/model/board";
 
 export const useBoardStore = create<BoardState>((set) => ({
     posts: [],

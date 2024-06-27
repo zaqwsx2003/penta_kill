@@ -8,12 +8,11 @@ import Image from "next/image";
 import MatchCard from "@/app/(service)/(landing)/_components/MatchCard";
 import { DaysMatch } from "@/model/match";
 import WeekDropDown from "@/app/(service)/(landing)/_components/WeekDropDown";
-import Spinner from "@/app/(service)/_components/Spinner";
 import ErrorPage from "@/app/(service)/_components/ErrorPage";
 import useModalRef from "@/app/(service)/_lib/useModalRef";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import { useSelectMatchStore } from "@/lib/selectMatchStore";
-import { useSession } from "next-auth/react";
+import MatchSkeleton from "@/app/(service)/(landing)/_components/MatchSkeleton";
 
 export default function MatchRound() {
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
@@ -53,7 +52,7 @@ export default function MatchRound() {
         }
     }, [isSuccess, match, selectWeek, setSelectWeek]);
 
-    if (isLoading) return <Spinner />;
+    if (isLoading) return <MatchSkeleton />;
 
     if (isError) return <ErrorPage />;
 

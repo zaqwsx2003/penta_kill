@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 import Header from "@/app/(service)/_components/Header";
 import { LayoutProps } from "@/model/layout";
 

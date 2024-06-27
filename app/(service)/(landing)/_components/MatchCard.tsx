@@ -3,8 +3,8 @@
 import React from "react";
 
 import useKoreanDateFormat from "@/lib/useDate";
-import TeamPanel from "@/app/(service)/(landing)/_components/TeamPanel";
 import { DaysMatch } from "@/model/match";
+import TeamPanel from "@/app/(service)/(landing)/_components/TeamPanel";
 import MatchState from "@/app/(service)/(landing)/_components/MatchState";
 import BettingResult from "@/app/(service)/(landing)/_components/BettingResult";
 

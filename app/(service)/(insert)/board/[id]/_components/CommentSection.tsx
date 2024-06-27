@@ -51,7 +51,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         <div className="mt-8 text-white">
             <h2 className="mb-4 text-xl font-bold">
                 댓글
-                <span className="ml-5">{data.data.totalElements}</span>
+                <span className="ml-5">{data?.data.totalElements}</span>
             </h2>
             <CommentForm postId={postId} />
             {isLoading && page === 0 ? (

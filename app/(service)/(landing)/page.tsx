@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import MatchRound from "./_components/MatchRound";
 import { Do_Hyeon } from "next/font/google";
+
+import MatchRound from "@/app/(service)/(landing)/_components/MatchRound";
 
 const font = Do_Hyeon({
     subsets: ["latin"],

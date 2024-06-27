@@ -1,5 +1,5 @@
 import React from "react";
-import { animate, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { useSelectMatchStore } from "@/lib/selectMatchStore";

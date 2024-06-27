@@ -5,7 +5,7 @@ import { fetchMatchSchedule } from "@/app/api/api";
 import { useScheduleStore } from "@/lib/scheduleStore";
 import { useEffect, useRef, useCallback } from "react";
 import MatchesPerDay from "./MatchesPerDay";
-import Spinner from "@/app/(service)/_components/Spinner";
+import MatchScheduleSkeleton from "@/app/(service)/(insert)/schedule/_components//MatchScheduleSkeleton";
 
 export default function MatchSchedule() {
     const {
@@ -104,7 +104,7 @@ export default function MatchSchedule() {
         <div className="mx-auto w-full">
             {(isLoading || (isFetching && matchDates.length === 0)) && (
                 <div className="text-center">
-                    <Spinner />
+                    <MatchScheduleSkeleton />
                 </div>
             )}
             {isError && (

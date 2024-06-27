@@ -5,17 +5,17 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { AnimatePresence } from "framer-motion";
 
+import { ImageLoaderProps, MatchDetails } from "@/model/match";
 import { cn } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
+import { useMatchState } from "@/lib/matchStore";
+import { useTeamState } from "@/lib/teamStore";
 import { useBettingModalState } from "@/lib/bettingModalStore";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
+import { Card, CardContent } from "@/components/ui/card";
 import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
 import BettingModal from "@/app/(service)/(landing)/_components/BettingModal";
 import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
 import { panelVariants } from "@/app/(service)/(landing)/_components/style";
-import { ImageLoaderProps, MatchDetails } from "@/model/match";
-import { useMatchState } from "@/lib/matchStore";
-import { useTeamState } from "@/lib/teamStore";
-import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 
 type TeamPanelProps = {
     match: MatchDetails;

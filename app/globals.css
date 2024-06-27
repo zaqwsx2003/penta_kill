@@ -16,6 +16,12 @@ body,
     font-style: normal;
 }
 
+@layer components {
+    .skeleton {
+      @apply animate-shimmer bg-gradient-custom bg-custom;
+    }
+  }
+
 @layer base {
     :root {
         --background: 0, 0%, 4%;

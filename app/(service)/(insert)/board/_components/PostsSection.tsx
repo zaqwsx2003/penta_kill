@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import BoardRow from "./BoardRow";
 import Pagination from "./Pagination";
 import Spinner from "@/app/(service)/_components/Spinner";
+import BoardRowSkeleton from "./BoardRowSkeleton";
 
 export default function PostsSection() {
     const {
@@ -60,9 +61,7 @@ export default function PostsSection() {
                         </div>
                         <div className="mt-2 grid grid-cols-1 gap-2 text-sm">
                             {isLoading ? (
-                                <div className="flex h-64 items-center justify-center">
-                                    <Spinner />
-                                </div>
+                                <BoardRowSkeleton />
                             ) : posts && posts.length > 0 ? (
                                 posts.map((post) => (
                                     <BoardRow key={post.id} {...post} />

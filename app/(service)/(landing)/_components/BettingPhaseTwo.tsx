@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
 import { useSelectedGameStore } from "@/lib/gameSelectStore";
 import { useMatchState } from "@/lib/matchStore";
 import { useTeamState } from "@/lib/teamStore";
-import { useSession } from "next-auth/react";
 import useBettingMutation from "@/app/(service)/(landing)/_lib/useBettingMutation";
 
 export default function BettingPhaseTwo() {
