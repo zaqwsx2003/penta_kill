@@ -81,7 +81,7 @@ export default function ReplySection({
                                     </span>
                                     <span className="text-xs text-gray-400">
                                         {new Date(
-                                            reply.createAt,
+                                            reply.createdAt,
                                         ).toLocaleString()}
                                     </span>
                                 </div>
