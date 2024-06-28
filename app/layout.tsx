@@ -43,7 +43,7 @@ export default function RootLayout({
                                 disableTransitionOnChange
                                 storageKey='pentakill-theme'>
                             </ThemeProvider> */}
-                            <ReactQueryDevtools />
+                            {/* <ReactQueryDevtools /> */}
                         </body>
                     </QueryClientProvider>
                 </GoogleOAuthProvider>
