@@ -6,6 +6,8 @@ import { Session } from "next-auth";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import { fetchReplies } from "@/app/api/api";
 import { useReplyStore } from "@/lib/boardStore";
+import ReplyPagination from "./ReplyPagination";
+import { Reply } from "@/model/board";
 
 interface ReplySectionProps {
     postId: number;
@@ -18,8 +20,18 @@ export default function ReplySection({
     commentId,
     session,
 }: ReplySectionProps) {
-    const { replies, page, size, setReplies, hasMore, setHasMore, addReplies } =
-        useReplyStore();
+    const {
+        page,
+        size,
+        currentPage,
+        totalPages,
+        setReplies,
+        addReplies,
+        setTotalPages,
+        setPage,
+        hasMore,
+        setHasMore,
+    } = useReplyStore();
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
@@ -27,6 +39,18 @@ export default function ReplySection({
         queryKey: ["replies", postId, commentId, page],
         queryFn: () => fetchReplies({ postId, commentId, page, size }),
     });
+
+    useEffect(() => {
+        if (data) {
+            if (page === 0) {
+                setReplies(data.data);
+            } else {
+                addReplies(data.data);
+            }
+            setTotalPages(data.data.totalPages);
+            setHasMore(data.currentPage < data.totalPages - 1);
+        }
+    }, [data, page, setReplies, addReplies, setHasMore, setTotalPages]);
 
     const deleteReplyMutation = useMutation({
         mutationFn: async (replyId: number) => {
@@ -48,9 +72,13 @@ export default function ReplySection({
         }
     }
 
+    function handlePageChange(newPage: number) {
+        setPage(newPage);
+    }
+
     return (
         <div className="mt-4">
-            {data?.data.map((reply: any) => {
+            {data?.data.map((reply: Reply) => {
                 const isReplyAuthor = session?.user?.email === reply.email;
                 return (
                     <div
@@ -129,6 +157,7 @@ export default function ReplySection({
                     </div>
                 );
             })}
+            <ReplyPagination onPageChange={handlePageChange} />
         </div>
     );
 }
