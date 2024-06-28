@@ -4,7 +4,7 @@ import React from "react";
 
 import { Do_Hyeon } from "next/font/google";
 import { cn } from "@/lib/utils";
-import useAnimated from "../_lib/useAnimated";
+import useAnimated from "@/app/(service)/(landing)/_lib/useAnimated";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";

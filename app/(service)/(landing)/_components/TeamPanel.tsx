@@ -87,9 +87,9 @@ export default function TeamPanel({
                     className={`${cn(panelVariants({ position }))}, ${panelColor} ${
                         team.code !== "TBD" && !isBetting
                             ? "cursor-pointer duration-150 ease-in-out hover:bg-blue-500"
-                            : "cursor-default"
+                            : "cursor-pointer"
                     }`}
-                >
+                >   
                     <CardContent
                         className={`flex w-full items-center justify-between ${
                             position === 1 ? "flex-row-reverse" : ""

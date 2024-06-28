@@ -16,8 +16,6 @@ export default function useHeader() {
                 setHeaderVisible(true);
             }
             setLastScrollTop(currentScrollTop);
-
-            console.log("Scroll event detected");
         };
 
         window.addEventListener("scroll", handleScroll);

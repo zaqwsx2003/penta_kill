@@ -5,7 +5,7 @@ import NextImage from "next/image";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { useBettingModalState } from "@/lib/bettingModalStore";
-import BettingPhaseOneModal from "./BettingPhaseOne";
+import BettingPhaseOneModal from "@/app/(service)/(landing)/_components/BettingPhaseOne";
 import { MatchTeams } from "@/model/match";
 import BettingPhaseTwo from "@/app/(service)/(landing)/_components/BettingPhaseTwo";
 import BettingPhaseThree from "@/app/(service)/(landing)/_components/BettingPhaseThree";
