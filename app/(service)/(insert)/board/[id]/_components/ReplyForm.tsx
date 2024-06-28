@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,14 +19,9 @@ type FormData = z.infer<typeof schema>;
 interface ReplyFormProps {
     postId: number;
     commentId: number;
-    session: Session | null;
 }
 
-export default function ReplyForm({
-    postId,
-    commentId,
-    session,
-}: ReplyFormProps) {
+export default function ReplyForm({ postId, commentId }: ReplyFormProps) {
     const axiosAuth = useAxiosAuth();
     const queryClient = useQueryClient();
 
@@ -42,7 +36,6 @@ export default function ReplyForm({
 
     const addReplyMutation = useMutation({
         mutationFn: async (data: { content: string }) => {
-            console.log("대댓글 등록", data, postId, commentId);
             const response = await axiosAuth.post(
                 `/posts/${postId}/comments/${commentId}/replies`,
                 {
@@ -52,11 +45,14 @@ export default function ReplyForm({
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["replies", commentId] });
+            console.log("test");
+            queryClient.invalidateQueries({
+                queryKey: ["replies", postId, commentId],
+            });
             reset();
         },
         onError: (error) => {
-            console.error("댓글오류:", error);
+            console.error("대댓글오류:", error);
         },
     });
 
@@ -64,11 +60,18 @@ export default function ReplyForm({
         addReplyMutation.mutate(data);
     };
 
+    function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(onSubmitHandler)();
+        }
+    }
+
     return (
         <>
             <form
                 onSubmit={handleSubmit(onSubmitHandler)}
-                className="mt-4 flex items-center rounded-[10px] bg-card"
+                className="mb-4 flex items-center rounded-[10px] bg-card"
             >
                 <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
                     <textarea
@@ -76,6 +79,7 @@ export default function ReplyForm({
                         className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none bg-transparent placeholder:text-gray-400 focus:outline-none"
                         placeholder="대댓글을 입력하세요."
                         name="content"
+                        onKeyDown={keyDownHandler}
                     ></textarea>
                     {errors.content && (
                         <span className="text-xs text-red-500">

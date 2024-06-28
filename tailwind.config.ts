@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config = {
     darkMode: ["class"],
@@ -87,7 +88,44 @@ const config = {
             backgroundSize: { custom: "300% 100%" },
         },
     },
-    plugins: [require("tailwindcss-animated")],
+    variants: {
+        extend: {
+            opacity: ["group1-hover", "group2-hover"],
+        },
+    },
+    plugins: [
+        require("tailwindcss-animated"),
+        plugin(function ({ addVariant, e }: { addVariant: any; e: any }) {
+            addVariant(
+                "group1-hover",
+                ({
+                    modifySelectors,
+                    separator,
+                }: {
+                    modifySelectors: any;
+                    separator: any;
+                }) => {
+                    modifySelectors(({ className }: { className: string }) => {
+                        return `.group1:hover .${e(`group1-hover${separator}${className}`)}`;
+                    });
+                },
+            );
+            addVariant(
+                "group2-hover",
+                ({
+                    modifySelectors,
+                    separator,
+                }: {
+                    modifySelectors: any;
+                    separator: any;
+                }) => {
+                    modifySelectors(({ className }: { className: string }) => {
+                        return `.group2:hover .${e(`group2-hover${separator}${className}`)}`;
+                    });
+                },
+            );
+        }),
+    ],
 } satisfies Config;
 
 export default config;
