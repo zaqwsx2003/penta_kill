@@ -145,7 +145,7 @@ export default function CommentSection({
                                 return (
                                     <div
                                         key={comment.id}
-                                        className={`group mb-4 rounded-[10px] p-4 ${isCommentAuthor ? "bg-zinc-700" : "bg-zinc-800"}`}
+                                        className={`group/comment mb-4 rounded-[10px] p-4 ${isCommentAuthor ? "bg-zinc-700" : "bg-zinc-800"}`}
                                     >
                                         {/* 댓글 헤더 */}
                                         <div className="mb-2 flex items-center justify-between">
@@ -197,7 +197,7 @@ export default function CommentSection({
                                                                 : comment.id,
                                                         )
                                                     }
-                                                    className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover:opacity-100`}
+                                                    className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -245,13 +245,12 @@ export default function CommentSection({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div>{comment.content}</div>
+                                            <div className="mb-1">{comment.content}</div>
                                         )}
                                         {replyingToCommentId === comment.id && (
                                             <ReplyForm
                                                 postId={postId}
                                                 commentId={comment.id}
-                                                session={session}
                                             />
                                         )}
                                         <ReplySection
