@@ -107,7 +107,6 @@ const nextAuthOptions: NextAuthConfig = {
                     expires: decodedUser.exp,
                 };
             }
-
             return { ...session };
         },
     },

@@ -55,10 +55,6 @@ export default function MatchRound() {
     if (isLoading) return <MatchSkeleton />;
     if (isError) return <ErrorPage />;
 
-    console.log(match);
-
-    console.log(selectWeek, matchWeek);
-
     return (
         <>
             <div className="relative flex items-center justify-end pr-5">

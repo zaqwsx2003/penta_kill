@@ -28,8 +28,6 @@ export default function PredictPercent() {
     const { isCompleted, rounded } = useAnimated({ targetRatio: AIRatio });
     const axiosAuth = useAxiosAuth();
 
-    console.log(AIRatio);
-
     return (
         <div
             className={cn(
