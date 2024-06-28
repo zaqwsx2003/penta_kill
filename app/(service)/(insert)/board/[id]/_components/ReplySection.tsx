@@ -103,8 +103,8 @@ export default function ReplySection({
                                             </button>{" "}
                                         </>
                                     )}
-                                    {/* 대댓글 작성 버튼 */}
-                                    <button
+                                    {/* 원댓 작성자 태그 기능❌ 대댓글 작성 버튼 */}
+                                    {/* <button
                                         className={`${isReplyAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/reply:opacity-100`}
                                     >
                                         <svg
@@ -121,7 +121,7 @@ export default function ReplySection({
                                         >
                                             <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
                                         </svg>
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                             <div>{reply.content}</div>
