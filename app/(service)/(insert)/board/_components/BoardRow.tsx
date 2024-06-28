@@ -16,6 +16,7 @@ export default function BoardRow({
     createdAt,
     nickname,
     isLast,
+    views,
 }: BoardRowProps) {
     const date = new Date(createdAt).toLocaleDateString("ko-KR", {
         year: "numeric",
@@ -26,7 +27,7 @@ export default function BoardRow({
 
     return (
         <div
-            className={`grid grid-cols-12 gap-4 p-4 text-sm ${
+            className={`grid-cols-13 grid gap-4 p-4 text-sm ${
                 isLast ? "border-none" : "border-b border-zinc-900"
             }`}
         >
@@ -41,6 +42,7 @@ export default function BoardRow({
             </div>
             <div className="col-span-2">{nickname}</div>
             <div className="col-span-3">{date}</div>
+            <div className="col-span-1">{views}</div>
             <div className="col-span-1">{likeCount}</div>
             <div className="col-span-1">{dislikeCount}</div>
         </div>

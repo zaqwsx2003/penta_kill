@@ -10,6 +10,7 @@ export interface Post {
     createdAt: string;
     modifiedAt: string;
     nickname: string;
+    views: number;
 }
 
 export interface BoardState {

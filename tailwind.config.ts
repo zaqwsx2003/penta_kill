@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config = {
     darkMode: ["class"],
@@ -85,6 +86,14 @@ const config = {
                     "repeating-linear-gradient(45deg, #808080 0%, #808080 3%, transparent 3%, transparent 6%)",
             },
             backgroundSize: { custom: "300% 100%" },
+            gridTemplateColumns: {
+                "13": "repeat(13, minmax(0, 1fr))",
+            },
+        },
+    },
+    variants: {
+        extend: {
+            opacity: ["group1-hover", "group2-hover"],
         },
     },
     plugins: [require("tailwindcss-animated")],
