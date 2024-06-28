@@ -32,12 +32,16 @@ export const useReplyStore = create<ReplyState>((set) => ({
     replies: [],
     page: 0,
     size: 5,
+    currentPage: 0,
+    totalPages: 1,
     hasMore: false,
     setReplies: (replies) => set({ replies }),
     setPage: (page) => set({ page }),
-    setHasMore: (hasMore) => set({ hasMore }),
+    setCurrentPage: (currentPage) => set({ currentPage }),
+    setTotalPages: (totalPages) => set({ totalPages }),
     addReplies: (newReplies) =>
         set((state) => ({
             replies: [...state.replies, ...newReplies],
         })),
+    setHasMore: (hasMore) => set({ hasMore }),
 }));

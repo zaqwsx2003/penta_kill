@@ -6,6 +6,8 @@ import { Session } from "next-auth";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import { fetchReplies } from "@/app/api/api";
 import { useReplyStore } from "@/lib/boardStore";
+import ReplyPagination from "./ReplyPagination";
+import { Reply } from "@/model/board";
 
 interface ReplySectionProps {
     postId: number;
@@ -18,8 +20,18 @@ export default function ReplySection({
     commentId,
     session,
 }: ReplySectionProps) {
-    const { replies, page, size, setReplies, hasMore, setHasMore, addReplies } =
-        useReplyStore();
+    const {
+        page,
+        size,
+        currentPage,
+        totalPages,
+        setReplies,
+        addReplies,
+        setTotalPages,
+        setPage,
+        hasMore,
+        setHasMore,
+    } = useReplyStore();
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
@@ -27,6 +39,18 @@ export default function ReplySection({
         queryKey: ["replies", postId, commentId, page],
         queryFn: () => fetchReplies({ postId, commentId, page, size }),
     });
+
+    useEffect(() => {
+        if (data) {
+            if (page === 0) {
+                setReplies(data.data);
+            } else {
+                addReplies(data.data);
+            }
+            setTotalPages(data.totalPages);
+            setHasMore(data.currentPage < data.totalPages - 1);
+        }
+    }, [data, page, setReplies, addReplies, setHasMore, setTotalPages]);
 
     const deleteReplyMutation = useMutation({
         mutationFn: async (replyId: number) => {
@@ -48,9 +72,15 @@ export default function ReplySection({
         }
     }
 
+    function handlePageChange(newPage: number) {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
+    }
+
     return (
         <div className="mt-4">
-            {data?.data.map((reply: any) => {
+            {data?.data.map((reply: Reply) => {
                 const isReplyAuthor = session?.user?.email === reply.email;
                 return (
                     <div
@@ -103,7 +133,7 @@ export default function ReplySection({
                                             </button>{" "}
                                         </>
                                     )}
-                                    {/* 원댓 작성자 태그 기능❌ 대댓글 작성 버튼 */}
+                                    {/* 원댓 작성자 태그 기능 추가 시 대댓글 작성 버튼 */}
                                     {/* <button
                                         className={`${isReplyAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/reply:opacity-100`}
                                     >
@@ -129,6 +159,9 @@ export default function ReplySection({
                     </div>
                 );
             })}
+            {data?.totalElements !== 0 ? (
+                <ReplyPagination onPageChange={handlePageChange} />
+            ) : null}
         </div>
     );
 }

@@ -54,15 +54,20 @@ export interface Reply {
     createAt: string;
     modifiedAt: string;
     nickname: string;
+    email: string;
 }
 
 export interface ReplyState {
     replies: Reply[];
     page: number;
     size: number;
+    currentPage: number;
+    totalPages: number;
     hasMore: boolean;
     setReplies: (replies: Reply[], reset?: boolean) => void;
     addReplies: (replies: Reply[]) => void;
     setPage: (page: number) => void;
+    setCurrentPage: (page: number) => void;
+    setTotalPages: (totalPages: number) => void;
     setHasMore: (hasMore: boolean) => void;
 }

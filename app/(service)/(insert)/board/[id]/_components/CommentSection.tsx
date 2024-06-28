@@ -188,32 +188,34 @@ export default function CommentSection({
                                                     </>
                                                 )}
                                                 {/* 대댓글 작성 버튼 */}
-                                                <button
-                                                    onClick={() =>
-                                                        setReplyingToCommentId(
-                                                            replyingToCommentId ===
-                                                                comment.id
-                                                                ? null
-                                                                : comment.id,
-                                                        )
-                                                    }
-                                                    className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="16"
-                                                        height="16"
-                                                        viewBox="0 0 24 24"
-                                                        fill="#ffffff"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="lucide lucide-message-circle"
+                                                {session && (
+                                                    <button
+                                                        onClick={() =>
+                                                            setReplyingToCommentId(
+                                                                replyingToCommentId ===
+                                                                    comment.id
+                                                                    ? null
+                                                                    : comment.id,
+                                                            )
+                                                        }
+                                                        className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}
                                                     >
-                                                        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                                                    </svg>
-                                                </button>
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            viewBox="0 0 24 24"
+                                                            fill="#ffffff"
+                                                            stroke="currentColor"
+                                                            strokeWidth="1"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            className="lucide lucide-message-circle"
+                                                        >
+                                                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                                                        </svg>
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                         {/* 댓글 작성자 댓글 수정 폼 */}
@@ -245,7 +247,9 @@ export default function CommentSection({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="mb-1">{comment.content}</div>
+                                            <div className="mb-1">
+                                                {comment.content}
+                                            </div>
                                         )}
                                         {replyingToCommentId === comment.id && (
                                             <ReplyForm
