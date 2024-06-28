@@ -86,6 +86,9 @@ const config = {
                     "repeating-linear-gradient(45deg, #808080 0%, #808080 3%, transparent 3%, transparent 6%)",
             },
             backgroundSize: { custom: "300% 100%" },
+            gridTemplateColumns: {
+                "13": "repeat(13, minmax(0, 1fr))",
+            },
         },
     },
     variants: {
@@ -93,39 +96,7 @@ const config = {
             opacity: ["group1-hover", "group2-hover"],
         },
     },
-    plugins: [
-        require("tailwindcss-animated"),
-        plugin(function ({ addVariant, e }: { addVariant: any; e: any }) {
-            addVariant(
-                "group1-hover",
-                ({
-                    modifySelectors,
-                    separator,
-                }: {
-                    modifySelectors: any;
-                    separator: any;
-                }) => {
-                    modifySelectors(({ className }: { className: string }) => {
-                        return `.group1:hover .${e(`group1-hover${separator}${className}`)}`;
-                    });
-                },
-            );
-            addVariant(
-                "group2-hover",
-                ({
-                    modifySelectors,
-                    separator,
-                }: {
-                    modifySelectors: any;
-                    separator: any;
-                }) => {
-                    modifySelectors(({ className }: { className: string }) => {
-                        return `.group2:hover .${e(`group2-hover${separator}${className}`)}`;
-                    });
-                },
-            );
-        }),
-    ],
+    plugins: [require("tailwindcss-animated")],
 } satisfies Config;
 
 export default config;
