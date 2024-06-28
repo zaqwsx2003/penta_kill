@@ -25,7 +25,6 @@ export const fetchMatchSchedule = async ({
         const response = await PENTAAPI.get(`/schedules/leagues`, {
             params: { page, size, year, month },
         });
-        console.log("경기일정", typeof response.data, response.data);
         return response.data;
     } catch (error) {
         throw error;
@@ -62,11 +61,15 @@ export const fetchPost = async (id: number) => {
 };
 
 // 댓글목록
-export const fetchComments = async (
-    postId: number,
-    page: number,
-    size: number,
-) => {
+export const fetchComments = async ({
+    postId,
+    page,
+    size,
+}: {
+    postId: number;
+    page: number;
+    size: number;
+}) => {
     try {
         const response = await PENTAAPI.get(`/posts/${postId}/comments`, {
             params: { page, size },
@@ -74,7 +77,32 @@ export const fetchComments = async (
         console.log("댓글통신", response.data);
         return response.data;
     } catch (error) {
-        console.error("댓글에러", error);
+        throw error;
+    }
+};
+
+// 대댓글목록
+export const fetchReplies = async ({
+    postId,
+    commentId,
+    page,
+    size,
+}: {
+    postId: number;
+    commentId: number;
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await PENTAAPI.get(
+            `/posts/${postId}/comments/${commentId}/replies`,
+            {
+                params: { page, size },
+            },
+        );
+        console.log("대댓글통신", commentId, response.data);
+        return response.data;
+    } catch (error) {
         throw error;
     }
 };

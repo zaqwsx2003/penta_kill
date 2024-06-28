@@ -4,18 +4,21 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchComments } from "@/app/api/api";
 import { useCommentStore } from "@/lib/boardStore";
+import { Session } from "next-auth";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import CommentForm from "../_components/CommentForm";
 import Spinner from "@/app/(service)/_components/Spinner";
+import ReplySection from "./ReplySection";
+import ReplyForm from "./ReplyForm";
 
 interface CommentSectionProps {
     postId: number;
-    isAuthor: boolean;
+    session: Session | null;
 }
 
 export default function CommentSection({
     postId,
-    isAuthor,
+    session,
 }: CommentSectionProps) {
     const {
         comments,
@@ -27,13 +30,19 @@ export default function CommentSection({
         setHasMore,
         addComments,
     } = useCommentStore();
-
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(
+        null,
+    );
+    const [editedContent, setEditedContent] = useState<string>("");
+    const [replyingToCommentId, setReplyingToCommentId] = useState<
+        number | null
+    >(null);
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["comments", postId, page],
-        queryFn: () => fetchComments(postId, page, size),
+        queryFn: () => fetchComments({ postId, page, size }),
     });
 
     useEffect(() => {
@@ -64,11 +73,6 @@ export default function CommentSection({
             queryClient.invalidateQueries({ queryKey: ["comments", postId] });
         },
     });
-
-    const [editingCommentId, setEditingCommentId] = useState<number | null>(
-        null,
-    );
-    const [editedContent, setEditedContent] = useState<string>("");
 
     const editCommentMutation = useMutation({
         mutationFn: async ({
@@ -111,6 +115,13 @@ export default function CommentSection({
         }
     };
 
+    function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            saveEditCommentHandler();
+        }
+    }
+
     return (
         <div className="mt-8 text-white">
             <h2 className="mb-4 text-xl font-bold">
@@ -128,12 +139,15 @@ export default function CommentSection({
                 <>
                     {comments.length > 0 ? (
                         <div>
-                            {comments.map(function (comment) {
+                            {comments.map((comment) => {
+                                const isCommentAuthor =
+                                    session?.user?.email === comment.email;
                                 return (
                                     <div
                                         key={comment.id}
-                                        className="mb-4 rounded-[10px] bg-zinc-700 p-4"
+                                        className={`group mb-4 rounded-[10px] p-4 ${isCommentAuthor ? "bg-zinc-700" : "bg-zinc-800"}`}
                                     >
+                                        {/* 댓글 헤더 */}
                                         <div className="mb-2 flex items-center justify-between">
                                             <div className="flex items-center">
                                                 <span className="mr-2">
@@ -145,32 +159,64 @@ export default function CommentSection({
                                                     ).toLocaleString()}
                                                 </span>
                                             </div>
-                                            {isAuthor && (
-                                                <div className="flex space-x-3 text-xs">
-                                                    <button
-                                                        onClick={() =>
-                                                            editCommentHandler(
-                                                                comment.id,
-                                                                comment.content,
-                                                            )
-                                                        }
-                                                        className="text-orange-400"
+                                            {/* 수정, 삭제, 대댓글 버튼 */}
+                                            <div className="flex space-x-3 text-xs">
+                                                {/* 댓글 작성자 수정, 삭제 버튼 */}
+                                                {isCommentAuthor && (
+                                                    <>
+                                                        <button
+                                                            onClick={() =>
+                                                                editCommentHandler(
+                                                                    comment.id,
+                                                                    comment.content,
+                                                                )
+                                                            }
+                                                            className="text-orange-400"
+                                                        >
+                                                            수정
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                deleteCommentHandler(
+                                                                    comment.id,
+                                                                )
+                                                            }
+                                                            className="text-red-500"
+                                                        >
+                                                            삭제
+                                                        </button>{" "}
+                                                    </>
+                                                )}
+                                                {/* 대댓글 작성 버튼 */}
+                                                <button
+                                                    onClick={() =>
+                                                        setReplyingToCommentId(
+                                                            replyingToCommentId ===
+                                                                comment.id
+                                                                ? null
+                                                                : comment.id,
+                                                        )
+                                                    }
+                                                    className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover:opacity-100`}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="16"
+                                                        height="16"
+                                                        viewBox="0 0 24 24"
+                                                        fill="#ffffff"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="lucide lucide-message-circle"
                                                     >
-                                                        수정
-                                                    </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            deleteCommentHandler(
-                                                                comment.id,
-                                                            )
-                                                        }
-                                                        className="text-red-500"
-                                                    >
-                                                        삭제
-                                                    </button>
-                                                </div>
-                                            )}
+                                                        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
+                                        {/* 댓글 작성자 댓글 수정 폼 */}
                                         {editingCommentId === comment.id ? (
                                             <div className="mb-4 flex items-center rounded-[10px] bg-card">
                                                 <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
@@ -180,6 +226,9 @@ export default function CommentSection({
                                                             setEditedContent(
                                                                 e.target.value,
                                                             )
+                                                        }
+                                                        onKeyDown={
+                                                            keyDownHandler
                                                         }
                                                         className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none rounded-[10px] bg-card placeholder:text-gray-400 focus:outline-none"
                                                     />
@@ -196,23 +245,45 @@ export default function CommentSection({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="min-h-10">
-                                                {comment.content}
-                                            </div>
+                                            <div>{comment.content}</div>
                                         )}
-                                        <button className="mt-2 text-xs text-blue-400">
-                                            댓글
-                                        </button>
+                                        {replyingToCommentId === comment.id && (
+                                            <ReplyForm
+                                                postId={postId}
+                                                commentId={comment.id}
+                                                session={session}
+                                            />
+                                        )}
+                                        <ReplySection
+                                            postId={postId}
+                                            commentId={comment.id}
+                                            session={session}
+                                        />
                                     </div>
                                 );
                             })}
+                            {/* 더보기 */}
                             <div className="text-center">
                                 {hasMore ? (
                                     <button
                                         onClick={loadMoreCommentsHandler}
-                                        className="mt-4 rounded-md bg-gray-700 px-4 py-2"
+                                        className="hover border-1 mt-4 rounded-full border-white bg-zinc-800 px-4 py-4 transition-colors duration-300 hover:bg-zinc-700"
                                     >
-                                        더보기
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="lucide lucide-plus"
+                                        >
+                                            <path d="M5 12h14" />
+                                            <path d="M12 5v14" />
+                                        </svg>
                                     </button>
                                 ) : (
                                     <div className="mt-4 text-gray-400">
