@@ -47,7 +47,7 @@ export default function ReplySection({
             } else {
                 addReplies(data.data);
             }
-            setTotalPages(data.data.totalPages);
+            setTotalPages(data.totalPages);
             setHasMore(data.currentPage < data.totalPages - 1);
         }
     }, [data, page, setReplies, addReplies, setHasMore, setTotalPages]);
@@ -73,7 +73,9 @@ export default function ReplySection({
     }
 
     function handlePageChange(newPage: number) {
-        setPage(newPage);
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
     }
 
     return (
@@ -131,7 +133,7 @@ export default function ReplySection({
                                             </button>{" "}
                                         </>
                                     )}
-                                    {/* 원댓 작성자 태그 기능❌ 대댓글 작성 버튼 */}
+                                    {/* 원댓 작성자 태그 기능 추가 시 대댓글 작성 버튼 */}
                                     {/* <button
                                         className={`${isReplyAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/reply:opacity-100`}
                                     >
@@ -157,7 +159,9 @@ export default function ReplySection({
                     </div>
                 );
             })}
-            <ReplyPagination onPageChange={handlePageChange} />
+            {data?.totalElements !== 0 ? (
+                <ReplyPagination onPageChange={handlePageChange} />
+            ) : null}
         </div>
     );
 }
