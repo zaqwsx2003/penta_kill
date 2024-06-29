@@ -6,6 +6,7 @@ import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import QueryClientProvider from "@/app/_components/QueryClientProvider";
 import AuthProvider from "@/app/_components/AuthProvider";
+import SSEProvider from "./_components/SSEProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,8 +43,9 @@ export default function RootLayout({
                                 enableSystem
                                 disableTransitionOnChange
                                 storageKey='pentakill-theme'>
-                            </ThemeProvider> */}
+                                </ThemeProvider> */}
                             {/* <ReactQueryDevtools /> */}
+                            <SSEProvider />
                         </body>
                     </QueryClientProvider>
                 </GoogleOAuthProvider>
