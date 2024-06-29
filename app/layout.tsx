@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
@@ -36,16 +36,8 @@ export default function RootLayout({
                                 inter.className,
                             )}
                         >
+
                             {children}
-                            {/* <ThemeProvider
-                                attribute='class'
-                                defaultTheme='system'
-                                enableSystem
-                                disableTransitionOnChange
-                                storageKey='pentakill-theme'>
-                                </ThemeProvider> */}
-                            {/* <ReactQueryDevtools /> */}
-                            <SSEProvider />
                         </body>
                     </QueryClientProvider>
                 </GoogleOAuthProvider>

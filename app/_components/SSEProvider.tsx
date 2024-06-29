@@ -1,24 +1,33 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
-import { useSession, getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
-import SSEMessage from "./SSEMessage";
-    
+import SSEMessage from "@/app/_components/SSEMessage";
+import { MatchNoticeType } from "@/model/SSE";
+import { AnimatePresence, motion } from "framer-motion";
+import { set } from "react-hook-form";
+
 export default function SSEProvider() {
     const { data: session, status } = useSession();
     const refreshAccessToken = useRefreshToken();
-    const [slidStyle, setSlidStyle] = useState("");
+    const [matchNotices, setMatchNotices] = useState<MatchNoticeType[]>([]);
+    const [visibleNotice, setVisibleNotice] = useState<MatchNoticeType[]>([]);
+    const sseConnected = useRef(false);
+    const retryCount = useRef(0);
+    const maxRetries = 5;
 
     useEffect(() => {
-        if (status !== "authenticated" || !session) return; // session이 없으면 실행하지 않음
+        if (status !== "authenticated" || !session) return;
 
         let SSEPool: any;
         const SSESource = EventSourcePolyfill || NativeEventSource;
 
         const connectSSE = (token: any) => {
+            if (sseConnected.current) return;
+
             SSEPool = new SSESource(
                 `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/sse/emitter`,
                 {
@@ -27,31 +36,41 @@ export default function SSEProvider() {
                         Connection: "keep-alive",
                         Accept: "text/event-stream",
                     },
-                    heartbeatTimeout: 86400000, // 기본 45초 24시간 연결
+                    heartbeatTimeout: 86400000, // 24시간 연결 유지
                 },
             );
 
             SSEPool.addEventListener("open", (event: any) => {
                 console.log("SSE connection opened", event);
+                sseConnected.current = true;
+                retryCount.current = 0; // 연결 성공 시 재시도 횟수 초기화
             });
 
-            SSEPool.addEventListener("connect", (event: any) => {
-                const { data: connect } = event;
-                if (connect === "connected!") {
-                    console.log("SSE CONNECTED");
-                } else {
-                    console.log(event);
-                }
+            SSEPool.addEventListener("matchNotice", (event: any) => {
+                const matchData = JSON.parse(event.data);
+                console.log("matchResultData", matchData);
+                setMatchNotices((prevNotices) => [
+                    ...prevNotices,
+                    ...matchData,
+                ]);
             });
 
             SSEPool.addEventListener("error", async (error: any) => {
-                if (error.status === 401) {
-                    await refreshAccessToken();
-                    const newSession = await getSession();
-                    const newToken = newSession?.token.accessToken;
-                    connectSSE(newToken);
+                console.error("SSE error:", error);
+
+                if (error.status === 401 && retryCount.current < maxRetries) {
+                    retryCount.current += 1;
+                    const newToken = await refreshAccessToken();
+                    if (newToken) {
+                        SSEPool.close();
+                        sseConnected.current = false;
+                        connectSSE(newToken);
+                    } else {
+                        console.error("Failed to refresh token.");
+                    }
                 } else {
-                    console.error("SSE error:", error);
+                    SSEPool.close();
+                    sseConnected.current = false;
                 }
             });
         };
@@ -61,9 +80,47 @@ export default function SSEProvider() {
         return () => {
             if (SSEPool) {
                 SSEPool.close();
+                sseConnected.current = false;
             }
         };
     }, [session, status, refreshAccessToken]);
 
-    return <SSEMessage />;
+    console.log("matchNotices", matchNotices);
+
+    const removeNotice = (index: number) => {
+        setMatchNotices((prevNotices) =>
+            prevNotices.filter((_, i) => i !== index),
+        );
+    };
+
+    useEffect(() => {
+        setVisibleNotice(matchNotices.slice(0, 5));
+    }, [matchNotices]);
+
+    return (
+        <>
+            <div className="fixed right-5 top-32 z-50">
+                <AnimatePresence>
+                    {visibleNotice?.map(
+                        (notice: MatchNoticeType, index: number) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 1, x: 400 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                layout
+                                layoutRoot
+                                style={{ position: "sticky" }}
+                            >
+                                <SSEMessage
+                                    notice={notice}
+                                    messageNumber={index}
+                                    removeNotice={() => removeNotice(index)}
+                                />
+                            </motion.div>
+                        ),
+                    )}
+                </AnimatePresence>
+            </div>
+        </>
+    );
 }

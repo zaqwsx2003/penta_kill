@@ -94,6 +94,7 @@ export default function BettingPhaseOne({
                 ) : (
                     <div className="flex w-full items-center justify-center text-center text-base">
                         <motion.div
+
                             whileHover={{ scale: 1.1 }}
                             className="mt-8 w-36 cursor-pointer rounded bg-blue-800 px-2 py-2 text-white ease-in-out hover:bg-blue-300 hover:font-semibold"
                             onClick={BettingOnClose}
