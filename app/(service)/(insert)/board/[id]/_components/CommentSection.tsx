@@ -171,7 +171,7 @@ export default function CommentSection({
                                                                     comment.content,
                                                                 )
                                                             }
-                                                            className="text-orange-400"
+                                                            className="cursor-pointer text-orange-400"
                                                         >
                                                             수정
                                                         </button>
@@ -181,7 +181,7 @@ export default function CommentSection({
                                                                     comment.id,
                                                                 )
                                                             }
-                                                            className="text-red-500"
+                                                            className="cursor-pointer text-red-500"
                                                         >
                                                             삭제
                                                         </button>{" "}
@@ -198,7 +198,7 @@ export default function CommentSection({
                                                                     : comment.id,
                                                             )
                                                         }
-                                                        className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}
+                                                        className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 cursor-pointer transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}
                                                     >
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
