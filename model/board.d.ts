@@ -51,7 +51,7 @@ export interface CommentState {
 export interface Reply {
     id: number;
     content: string;
-    createAt: string;
+    createdAt: string;
     modifiedAt: string;
     nickname: string;
     email: string;

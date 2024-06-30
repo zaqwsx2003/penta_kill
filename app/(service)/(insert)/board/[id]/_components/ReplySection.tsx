@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
@@ -8,6 +8,7 @@ import { fetchReplies } from "@/app/api/api";
 import { useReplyStore } from "@/lib/boardStore";
 import ReplyPagination from "./ReplyPagination";
 import { Reply } from "@/model/board";
+import { comment } from "postcss";
 
 interface ReplySectionProps {
     postId: number;
@@ -23,7 +24,6 @@ export default function ReplySection({
     const {
         page,
         size,
-        currentPage,
         totalPages,
         setReplies,
         addReplies,
@@ -35,7 +35,10 @@ export default function ReplySection({
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
-    const { data, isLoading, isError } = useQuery({
+    const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
+    const [editedContent, setEditedContent] = useState<string>("");
+
+    const { data } = useQuery({
         queryKey: ["replies", postId, commentId, page],
         queryFn: () => fetchReplies({ postId, commentId, page, size }),
     });
@@ -72,7 +75,44 @@ export default function ReplySection({
         }
     }
 
-    function handlePageChange(newPage: number) {
+    const editReplyMutation = useMutation({
+        mutationFn: async ({
+            replyId,
+            content,
+        }: {
+            replyId: number;
+            content: string;
+        }) => {
+            const response = await axiosAuth.put(
+                `posts/${postId}/comments/${commentId}/replies/${replyId}`,
+                { content },
+            );
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["replies", postId, commentId, page],
+            });
+            setEditingReplyId(null);
+            setEditedContent("");
+        },
+    });
+
+    function editReplyHandler(replyId: number, content: string) {
+        setEditingReplyId(replyId);
+        setEditedContent(content);
+    }
+
+    function saveEditedReplyHandler() {
+        if (editingReplyId !== null) {
+            editReplyMutation.mutate({
+                replyId: editingReplyId,
+                content: editedContent,
+            });
+        }
+    }
+
+    function pageChangeHandler(newPage: number) {
         if (newPage >= 0 && newPage < totalPages) {
             setPage(newPage);
         }
@@ -120,11 +160,19 @@ export default function ReplySection({
                                     {/* 댓글 작성자만 수정, 삭제 버튼 */}
                                     {isReplyAuthor && (
                                         <>
-                                            <button className="text-orange-400">
+                                            <button
+                                                className="cursor-pointer text-orange-400"
+                                                onClick={() =>
+                                                    editReplyHandler(
+                                                        reply.id,
+                                                        reply.content,
+                                                    )
+                                                }
+                                            >
                                                 수정
                                             </button>
                                             <button
-                                                className="text-red-500"
+                                                className="cursor-pointer text-red-500"
                                                 onClick={() =>
                                                     deleteReplyHandler(reply.id)
                                                 }
@@ -154,13 +202,35 @@ export default function ReplySection({
                                     </button> */}
                                 </div>
                             </div>
-                            <div>{reply.content}</div>
+                            {editingReplyId === reply.id ? (
+                                <div className="mb-4 flex items-center rounded-[10px] bg-card">
+                                    <div className="flex flex-grow flex-col rounded-[10px] rounded-r px-3 py-2 lg:rounded-r-none">
+                                        <textarea
+                                            value={editedContent}
+                                            onChange={(e) =>
+                                                setEditedContent(e.target.value)
+                                            }
+                                            className="scrollbar-hide text-t2 h-[64px] max-h-[64px] w-full resize-none rounded-[10px] bg-card placeholder:text-gray-400 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div className="lg:bg-gray-850 flex-shrink-0 lg:mt-0 lg:rounded-r lg:p-2">
+                                        <button
+                                            onClick={saveEditedReplyHandler}
+                                            className="w-30 my-auto mr-2 h-full select-none rounded border border-none bg-orange-500 px-5 py-4 text-center outline-none hover:bg-orange-400 active:bg-orange-400"
+                                        >
+                                            저장
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div>{reply.content}</div>
+                            )}
                         </div>
                     </div>
                 );
             })}
             {data?.totalElements !== 0 ? (
-                <ReplyPagination onPageChange={handlePageChange} />
+                <ReplyPagination onPageChange={pageChangeHandler} />
             ) : null}
         </div>
     );
