@@ -1,13 +1,14 @@
 "use client";
 
 import React from "react";
-
+import { motion } from "framer-motion";
 import { Do_Hyeon } from "next/font/google";
+
 import { cn } from "@/lib/utils";
 import useAnimated from "@/app/(service)/(landing)/_lib/useAnimated";
-import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
+import PredictPercentSkeleton from "./PredictPercentSkeleton";
 
 const font = Do_Hyeon({
     subsets: ["latin"],
@@ -27,6 +28,13 @@ export default function PredictPercent() {
     const AIRatio = accuracy ? Math.round(accuracy * 100) : 0;
     const { isCompleted, rounded } = useAnimated({ targetRatio: AIRatio });
     const axiosAuth = useAxiosAuth();
+
+    if (isLoading)
+        return (
+            <div className="flex items-center justify-center">
+                <PredictPercentSkeleton />
+            </div>
+        );
 
     return (
         <div

@@ -1,11 +1,12 @@
 import { Inter } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import QueryClientProvider from "@/app/_components/QueryClientProvider";
 import AuthProvider from "@/app/_components/AuthProvider";
+import SSEProvider from "./_components/SSEProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,15 +36,8 @@ export default function RootLayout({
                                 inter.className,
                             )}
                         >
+
                             {children}
-                            {/* <ThemeProvider
-                                attribute='class'
-                                defaultTheme='system'
-                                enableSystem
-                                disableTransitionOnChange
-                                storageKey='pentakill-theme'>
-                            </ThemeProvider> */}
-                            {/* <ReactQueryDevtools /> */}
                         </body>
                     </QueryClientProvider>
                 </GoogleOAuthProvider>

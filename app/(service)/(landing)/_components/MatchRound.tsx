@@ -12,7 +12,7 @@ import ErrorPage from "@/app/(service)/_components/ErrorPage";
 import useModalRef from "@/app/(service)/_lib/useModalRef";
 import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 import { useSelectMatchStore } from "@/lib/selectMatchStore";
-import MatchSkeleton from "@/app/(service)/(landing)/_components/MatchSkeleton";
+import MatchSkeleton from "@/app/(service)/(landing)/_components/MatchRoundSkeleton";
 
 export default function MatchRound() {
     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
