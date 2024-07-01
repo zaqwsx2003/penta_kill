@@ -43,7 +43,7 @@ jobs:
 
             - name: Copy files to EC2
               run: |
-                  scp -r -o StrictHostKeyChecking=no ./* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/myapp
+                  scp -r -o StrictHostKeyChecking=no ./* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill
 
             - name: Deploy to EC2
               run: |
