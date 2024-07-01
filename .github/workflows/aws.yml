@@ -48,9 +48,11 @@ jobs:
               run: npm install
 
             - name: Load environment variables from .env
+              id: load-env
               run: |
                   echo "Loading environment variables from .env file"
-                  node -e "require('dotenv').config(); Object.keys(process.env).forEach(key => { console.log(`${key}=${process.env[key]}`) })"
+                  export $(grep -v '^#' .env | xargs)
+                  echo "AWS_REGION=$AWS_REGION" >> $GITHUB_ENV
 
             - name: Build project
               run: npm run build
