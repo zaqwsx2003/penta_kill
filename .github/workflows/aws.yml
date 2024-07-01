@@ -43,7 +43,7 @@ jobs:
 
             - name: Copy files to EC2
               run: |
-                  find . -mindepth 1 -maxdepth 1 -exec scp -r -o StrictHostKeyChecking=no {} ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill \;
+                  rsync -av --exclude='.git' . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill
 
             - name: Deploy to EC2
               run: |
