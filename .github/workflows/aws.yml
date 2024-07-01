@@ -43,12 +43,12 @@ jobs:
 
             - name: Copy files to EC2
               run: |
-                  scp -r -o StrictHostKeyChecking=no ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill
+                  find . -mindepth 1 -maxdepth 1 -exec scp -r -o StrictHostKeyChecking=no {} ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill \;
 
             - name: Deploy to EC2
               run: |
                   ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-                  cd /home/ubuntu/myapp
+                  cd /home/ubuntu/penta_kill
                   npm install
-                  pm2 restart all || pm2 start npm --name "myapp" -- start
+                  pm2 restart all || pm2 start npm --name "penta_kill" -- start
                   EOF
