@@ -32,7 +32,7 @@ jobs:
                   echo "ECS_CLUSTER=$ECS_CLUSTER" >> $GITHUB_ENV
                   echo "ECS_TASK_DEFINITION=$ECS_TASK_DEFINITION" >> $GITHUB_ENV
                   echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
-                  echo "NEXT_PUBLIC_ENDPOINT_URL=$NEXT_PUBLIC_ENDPOINT_URL" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_ENDPOINT_URL=${{ secrets.NEXT_PUBLIC_ENDPOINT_URL }}" >> .env
 
             - name: Build project
               run: npm run build
