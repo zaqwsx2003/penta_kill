@@ -50,5 +50,8 @@ jobs:
                   ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
                   cd /home/ubuntu/penta_kill
                   npm install
+                  # pm2 설치
+                  npm install -g pm2
+                  # 애플리케이션 시작
                   pm2 restart all || pm2 start npm --name "penta_kill" -- start
                   EOF
