@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import axios from "@/lib/axiosHooks/axios";
 
@@ -36,7 +36,7 @@ export const useRefreshToken = () => {
                 refreshToken: newRefreshToken,
             };
         } catch (error) {
-            console.log("error", error);
+            throw new Error();
             return null;
         }
     };

@@ -45,7 +45,6 @@ export default function ReplyForm({ postId, commentId }: ReplyFormProps) {
             return response.data;
         },
         onSuccess: () => {
-            console.log("test");
             queryClient.invalidateQueries({
                 queryKey: ["replies", postId, commentId],
             });

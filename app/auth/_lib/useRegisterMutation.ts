@@ -46,7 +46,6 @@ export default function useRegisterMutation({
             if (onSuccess) onSuccess();
         },
         onError: (error: Error) => {
-            console.log(error);
             setError(error.message);
         },
     });

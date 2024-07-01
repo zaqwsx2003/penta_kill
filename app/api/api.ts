@@ -21,7 +21,6 @@ export const fetchMatchSchedule = async ({
     month: number;
 }) => {
     try {
-        console.log("check params", page, size, year, month);
         const response = await PENTAAPI.get(`/schedules/leagues`, {
             params: { page, size, year, month },
         });
@@ -53,7 +52,6 @@ export const fetchPosts = async ({
 export const fetchPost = async (id: number) => {
     try {
         const response = await PENTAAPI.get(`/posts/${id}`);
-        console.log("게시글 정보", response.data);
         return response.data;
     } catch (error) {
         throw error;
@@ -74,7 +72,6 @@ export const fetchComments = async ({
         const response = await PENTAAPI.get(`/posts/${postId}/comments`, {
             params: { page, size },
         });
-        console.log("댓글통신", response.data);
         return response.data;
     } catch (error) {
         throw error;
@@ -100,7 +97,6 @@ export const fetchReplies = async ({
                 params: { page, size },
             },
         );
-        console.log("대댓글통신", commentId, response.data);
         return response.data;
     } catch (error) {
         throw error;

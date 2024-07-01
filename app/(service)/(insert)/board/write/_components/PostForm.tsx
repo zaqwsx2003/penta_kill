@@ -112,13 +112,10 @@ export default function PostForm({ initialData, postId }: PostFormProps) {
     const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
         try {
             if (initialData) {
-                console.log("게시물 수정 요청", postId, data);
                 const response = await axiosAuth.put(`/posts/${postId}`, data);
-                console.log("게시글 수정 성공", response.data);
                 router.push(`/board/${postId}`);
             } else {
                 const response = await axiosAuth.post("/posts", data);
-                console.log("게시물 등록 성공", response.data);
                 router.push("/board");
             }
         } catch (err) {

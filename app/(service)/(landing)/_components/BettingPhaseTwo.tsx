@@ -60,8 +60,6 @@ export default function BettingPhaseTwo() {
         return `${team.image}?w=${width}&q=${quality || 75}`;
     };
 
-    console.log(team);
-
     return (
         <>
             <motion.div
