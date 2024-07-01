@@ -24,14 +24,31 @@ jobs:
             - name: Load environment variables from .env
               id: load-env
               run: |
-                  echo "Loading environment variables from .env file"
-                  export $(grep -v '^#' .env | xargs)
-                  echo "AWS_REGION=$AWS_REGION" >> $GITHUB_ENV
-                  echo "ECR_REPOSITORY=$ECR_REPOSITORY" >> $GITHUB_ENV
-                  echo "ECS_SERVICE=$ECS_SERVICE" >> $GITHUB_ENV
-                  echo "ECS_CLUSTER=$ECS_CLUSTER" >> $GITHUB_ENV
-                  echo "ECS_TASK_DEFINITION=$ECS_TASK_DEFINITION" >> $GITHUB_ENV
-                  echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+
+                  # API
+                  echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+                  echo NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} >> .env
+                  echo NEXT_PUBLIC_ENDPOINT_URL=${{ secrets.NEXT_PUBLIC_ENDPOINT_URL }} >> .env
+                  echo NEXT_PUBLIC_IMAGE_URL =${{ secrets.NEXT_PUBLIC_IMAGE_URL }} >> .env
+                  echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+
+                  # Auth Sercert Key
+                  echo AUTH_URL=${{ secrets.AUTH_URL }} >> .env
+                  echo AUTH_SECRET=${{ secrets.AUTH_SECRET }} >> .env
+
+                  # Google console API Key
+                  echo NEXT_PUBLIC_GOOGLE_REDIRECT_URL=${{ secrets.NEXT_PUBLIC_GOOGLE_REDIRECT_URL }} >> .env
+                  echo NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} >> .env
+                  echo NEXT_PUBLIC_GOOGLE_SECRET=${{ secrets.NEXT_PUBLIC_GOOGLE_SECRET }} >> .env
+
+                  echo AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID }} >> .env
+                  echo AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET }} >> .env
+
+                  # MySQL API Key
+                  echo NEXT_PUBLIC_MYSQL_HOST=${{ secrets.NEXT_PUBLIC_MYSQL_HOST }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_USER=${{ secrets.NEXT_PUBLIC_MYSQL_USER }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_PASSWORD=${{ secrets.NEXT_PUBLIC_MYSQL_PASSWORD }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_DATABASE=${{ secrets.NEXT_PUBLIC_MYSQL_DATABASE }} >> .env
                   echo "NEXT_PUBLIC_ENDPOINT_URL=${{ secrets.NEXT_PUBLIC_ENDPOINT_URL }}" >> .env
 
             - name: Build project
