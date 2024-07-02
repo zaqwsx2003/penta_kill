@@ -41,14 +41,12 @@ export default function SSEProvider() {
             );
 
             SSEPool.addEventListener("open", (event: any) => {
-                console.log("SSE connection opened", event);
                 sseConnected.current = true;
                 retryCount.current = 0; // 연결 성공 시 재시도 횟수 초기화
             });
 
             SSEPool.addEventListener("matchNotice", (event: any) => {
                 const matchData = JSON.parse(event.data);
-                console.log("matchResultData", matchData);
                 setMatchNotices((prevNotices) => [
                     ...prevNotices,
                     ...matchData,
@@ -84,8 +82,6 @@ export default function SSEProvider() {
             }
         };
     }, [session, status, refreshAccessToken]);
-
-    console.log("matchNotices", matchNotices);
 
     const removeNotice = (index: number) => {
         setMatchNotices((prevNotices) =>

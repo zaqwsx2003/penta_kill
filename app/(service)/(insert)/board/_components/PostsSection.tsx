@@ -58,7 +58,7 @@ export default function PostsSection() {
             }
         }
         return () => clearTimeout(timer);
-    }, [isLoading]);
+    }, [isLoading, isLoadingTime]);
 
     return (
         <div className="container mx-auto max-w-3xl p-4 text-white">

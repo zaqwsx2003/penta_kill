@@ -1,0 +1,77 @@
+name: Deploy to EC2
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "20.15"
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Load environment variables from .env
+              id: load-env
+              run: |
+
+                  # API
+                  echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+                  echo NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} >> .env
+                  echo NEXT_PUBLIC_ENDPOINT_URL=${{ secrets.NEXT_PUBLIC_ENDPOINT_URL }} >> .env
+                  echo NEXT_PUBLIC_IMAGE_URL =${{ secrets.NEXT_PUBLIC_IMAGE_URL }} >> .env
+                  echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+
+                  # Auth Sercert Key
+                  echo AUTH_URL=${{ secrets.AUTH_URL }} >> .env
+                  echo AUTH_SECRET=${{ secrets.AUTH_SECRET }} >> .env
+
+                  # Google console API Key
+                  echo NEXT_PUBLIC_GOOGLE_REDIRECT_URL=${{ secrets.NEXT_PUBLIC_GOOGLE_REDIRECT_URL }} >> .env
+                  echo NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} >> .env
+                  echo NEXT_PUBLIC_GOOGLE_SECRET=${{ secrets.NEXT_PUBLIC_GOOGLE_SECRET }} >> .env
+
+                  echo AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID }} >> .env
+                  echo AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET }} >> .env
+
+                  # MySQL API Key
+                  echo NEXT_PUBLIC_MYSQL_HOST=${{ secrets.NEXT_PUBLIC_MYSQL_HOST }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_USER=${{ secrets.NEXT_PUBLIC_MYSQL_USER }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_PASSWORD=${{ secrets.NEXT_PUBLIC_MYSQL_PASSWORD }} >> .env
+                  echo NEXT_PUBLIC_MYSQL_DATABASE=${{ secrets.NEXT_PUBLIC_MYSQL_DATABASE }} >> .env
+                  echo "NEXT_PUBLIC_ENDPOINT_URL=${{ secrets.NEXT_PUBLIC_ENDPOINT_URL }}" >> .env
+
+            - name: Build project
+              run: npm run build
+
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+            - name: Copy files to EC2
+              run: |
+                  rsync -av --exclude='.git' -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/penta_kill
+
+            - name: Deploy to EC2
+              run: |
+                  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+                  cd /home/ubuntu/penta_kill
+                  npm install
+                  if ! command -v pm2 &> /dev/null
+                  then
+                      echo "pm2 could not be found, installing..."
+                      sudo npm install -g pm2
+                  fi
+                  pm2 restart all || pm2 start npm --name "penta_kill" -- start
+                  EOF

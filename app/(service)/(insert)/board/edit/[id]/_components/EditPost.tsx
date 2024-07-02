@@ -14,7 +14,6 @@ export default function EditPost() {
     });
 
     const post = data?.data;
-    console.log(post);
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error loading post</div>;
 

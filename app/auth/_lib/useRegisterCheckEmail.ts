@@ -19,7 +19,6 @@ export default function useRegisterCheckEmail({
                 body: JSON.stringify({ email }),
             });
             const data = await response.json();
-            console.log(data);
             if (response.ok) {
                 if (response.status === 200) {
                     setEmailMessage(data.message);

@@ -51,7 +51,6 @@ export default function MatchSchedule() {
             addMoreSchedules(data.data);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
-            console.log("matchDates: " + dates);
         }
     }, [
         data,

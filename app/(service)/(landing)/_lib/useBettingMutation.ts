@@ -47,7 +47,6 @@ export default function useBettingMutation({ setError }: BettingMutationProps) {
         onError: (error) => {
             setBettingPhase(0);
             setError("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
-            console.log(error);
         },
     });
 
