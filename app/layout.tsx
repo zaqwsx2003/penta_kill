@@ -1,7 +1,6 @@
 import { Inter } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import QueryClientProvider from "@/app/_components/QueryClientProvider";
@@ -36,6 +35,7 @@ export default function RootLayout({
                                 inter.className,
                             )}
                         >
+                            <SSEProvider />
 
                             {children}
                         </body>

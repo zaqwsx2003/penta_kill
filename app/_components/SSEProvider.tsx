@@ -8,7 +8,6 @@ import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 import SSEMessage from "@/app/_components/SSEMessage";
 import { MatchNoticeType } from "@/model/SSE";
 import { AnimatePresence, motion } from "framer-motion";
-import { set } from "react-hook-form";
 
 export default function SSEProvider() {
     const { data: session, status } = useSession();
