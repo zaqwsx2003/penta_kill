@@ -30,6 +30,7 @@ export default function CommentSection({
         setHasMore,
         addComments,
     } = useCommentStore();
+
     const [editingCommentId, setEditingCommentId] = useState<number | null>(
         null,
     );
@@ -37,6 +38,8 @@ export default function CommentSection({
     const [replyingToCommentId, setReplyingToCommentId] = useState<
         number | null
     >(null);
+    const [creatingComment, setCreatingComment] = useState<boolean>(false);
+
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
@@ -102,6 +105,8 @@ export default function CommentSection({
     function editCommentHandler(commetId: number, content: string) {
         setEditingCommentId(commetId);
         setEditedContent(content);
+        setReplyingToCommentId(null);
+        setCreatingComment(false);
     }
 
     const saveEditCommentHandler = () => {
@@ -114,6 +119,13 @@ export default function CommentSection({
             setEditedContent("");
         }
     };
+
+    function toggleReplyFormHandler(commentId: number) {
+        setReplyingToCommentId((prevId) =>
+            prevId === commentId ? null : commentId,
+        );
+        setEditingCommentId(null);
+    }
 
     function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -191,11 +203,8 @@ export default function CommentSection({
                                                 {session && (
                                                     <button
                                                         onClick={() =>
-                                                            setReplyingToCommentId(
-                                                                replyingToCommentId ===
-                                                                    comment.id
-                                                                    ? null
-                                                                    : comment.id,
+                                                            toggleReplyFormHandler(
+                                                                comment.id,
                                                             )
                                                         }
                                                         className={`${isCommentAuthor ? "opacity-100" : "opacity-0"} ml-1 cursor-pointer transition-opacity duration-200 group-hover/comment:opacity-100 group-hover/reply:opacity-0`}

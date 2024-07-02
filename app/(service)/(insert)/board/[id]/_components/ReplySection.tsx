@@ -8,7 +8,6 @@ import { fetchReplies } from "@/app/api/api";
 import { useReplyStore } from "@/lib/boardStore";
 import ReplyPagination from "./ReplyPagination";
 import { Reply } from "@/model/board";
-import { comment } from "postcss";
 
 interface ReplySectionProps {
     postId: number;
@@ -32,6 +31,7 @@ export default function ReplySection({
         hasMore,
         setHasMore,
     } = useReplyStore();
+
     const queryClient = useQueryClient();
     const axiosAuth = useAxiosAuth();
 
