@@ -60,15 +60,17 @@ export default function SSEMessage({
                 </>
             )}
             {notice.type === "signupNotice" && (
-                <div>
-                    <div className="font-semibold">회원가입 포인트</div>
-                    <div className="self-end text-sm text-gray-800">
-                        {KoreanDateFormat(notice.time)}
+                <>
+                    <div className="flex flex-row justify-between gap-4">
+                        <div className="font-semibold">회원가입 포인트</div>
+                        <div className="self-end text-sm text-gray-800">
+                            {KoreanDateFormat(notice.time)}
+                        </div>
+                        <div className="mt-3 flex justify-end text-xl font-bold">
+                            + {notice.point}
+                        </div>
                     </div>
-                    <div className="mt-3 flex justify-end text-xl font-bold">
-                        + {notice.point}
-                    </div>
-                </div>
+                </>
             )}
         </motion.div>
     );

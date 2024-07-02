@@ -47,6 +47,7 @@ export default function SSEProvider() {
 
             SSEPool.addEventListener("matchNotice", (event: any) => {
                 const matchData = JSON.parse(event.data);
+                console.log(matchData);
                 setMatchNotices((prevNotices) => [
                     ...prevNotices,
                     ...matchData,
