@@ -66,9 +66,9 @@ export default function SSEMessage({
                         <div className="self-end text-sm text-gray-800">
                             {KoreanDateFormat(notice.time)}
                         </div>
-                        <div className="mt-3 flex justify-end text-xl font-bold">
-                            + {notice.point}
-                        </div>
+                    </div>
+                    <div className="mt-3 flex justify-end text-xl font-bold">
+                        + {notice.point}
                     </div>
                 </>
             )}
