@@ -27,16 +27,20 @@ export default function BoardRow({
 
     return (
         <div
-            className={`grid-cols-13 grid gap-4 p-4 text-sm ${
+            className={`grid grid-cols-13 gap-4 p-4 text-sm ${
                 isLast ? "border-none" : "border-b border-zinc-900"
             }`}
         >
             <div className="col-span-1">{id}</div>
             <div className="col-span-4">
-                <Link href={`/board/${id}`}>
-                    <span className="truncate hover:underline">{title}</span>
+                <Link href={`/board/${id}`} className="flex items-center">
+                    <span className="block overflow-hidden truncate text-ellipsis whitespace-nowrap hover:underline">
+                        {title}
+                    </span>
                     {commentCount > 0 ? (
-                        <span className="ml-3 font-bold">{commentCount}</span>
+                        <span className="ml-1 flex-shrink-0 font-bold">
+                            {commentCount}
+                        </span>
                     ) : null}
                 </Link>
             </div>
