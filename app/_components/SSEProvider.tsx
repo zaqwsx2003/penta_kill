@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { useSession } from "next-auth/react";
 
@@ -8,12 +8,13 @@ import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
 import SSEMessage from "@/app/_components/SSEMessage";
 import { MatchNoticeType } from "@/model/SSE";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSSEState } from "@/lib/SSEStore";
 
 export default function SSEProvider() {
     const { data: session, status } = useSession();
     const refreshAccessToken = useRefreshToken();
-    const [matchNotices, setMatchNotices] = useState<MatchNoticeType[]>([]);
-    const [visibleNotice, setVisibleNotice] = useState<MatchNoticeType[]>([]);
+    const { matchNotices, setMatchNotices, addMatchNotice, removeNotice } =
+        useSSEState();
     const sseConnected = useRef(false);
     const retryCount = useRef(0);
     const maxRetries = 5;
@@ -45,7 +46,7 @@ export default function SSEProvider() {
             });
 
             SSEPool.addEventListener("matchNotice", (event: any) => {
-                const matchData = JSON.parse(event.data);
+                const matchData: MatchNoticeType[] = JSON.parse(event.data);
                 console.log(matchData);
                 setMatchNotices((prevNotices) => [
                     ...prevNotices,
@@ -81,28 +82,20 @@ export default function SSEProvider() {
                 sseConnected.current = false;
             }
         };
-    }, [session, status, refreshAccessToken]);
-
-    const removeNotice = (index: number) => {
-        setMatchNotices((prevNotices) =>
-            prevNotices.filter((_, i) => i !== index),
-        );
-    };
-
-    useEffect(() => {
-        setVisibleNotice(matchNotices.slice(0, 5));
-    }, [matchNotices]);
+    }, [session, status, refreshAccessToken, setMatchNotices]);
 
     return (
         <>
             <div className="fixed right-5 top-32 z-50">
                 <AnimatePresence>
-                    {visibleNotice?.map(
-                        (notice: MatchNoticeType, index: number) => (
+                    {matchNotices
+                        .slice(0, 5)
+                        ?.map((notice: MatchNoticeType, index: number) => (
                             <motion.div
                                 key={index}
                                 initial={{ opacity: 1, x: 400 }}
                                 animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 1, x: 400 }}
                                 layout
                                 layoutRoot
                                 style={{ position: "sticky" }}
@@ -113,8 +106,7 @@ export default function SSEProvider() {
                                     removeNotice={() => removeNotice(index)}
                                 />
                             </motion.div>
-                        ),
-                    )}
+                        ))}
                 </AnimatePresence>
             </div>
         </>
