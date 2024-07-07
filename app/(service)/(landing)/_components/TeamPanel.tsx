@@ -1,69 +1,129 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import useMatchPanelColor from "../_lib/useMatchPanelColor";
-import { Event } from "@/model/match";
-import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import { AnimatePresence } from "framer-motion";
 
-type TeamPanel = {
-    event: Event;
+import { ImageLoaderProps, MatchDetails } from "@/model/match";
+import { cn } from "@/lib/utils";
+import { useMatchState } from "@/lib/matchStore";
+import { useTeamState } from "@/lib/teamStore";
+import { useBettingModalState } from "@/lib/bettingModalStore";
+import { useRefreshToken } from "@/lib/axiosHooks/useRefreshToken";
+import { Card, CardContent } from "@/components/ui/card";
+import useMatchPanelColor from "@/app/(service)/(landing)/_lib/useMatchPanelColor";
+import BettingModal from "@/app/(service)/(landing)/_components/BettingModal";
+import SessionModal from "@/app/(service)/(landing)/_components/SessionModal";
+import { panelVariants } from "@/app/(service)/(landing)/_components/style";
+
+type TeamPanelProps = {
+    match: MatchDetails;
     position: 0 | 1;
+    matchTime: string;
+    matchState: string;
 };
 
-const panelVariants = cva(
-    `relative flex items-center light:border-none rounded-[10px] dark:border-gray-800
- px-5 py-3 `,
-    {
-        variants: {
-            position: {
-                0: `rounded-r-none border-r-0 justify-start`,
-                1: `rounded-l-none border-l-0 justify-end`,
-            },
-        },
-    }
-);
-
-export default function TeamPanel({ event, position }: TeamPanel) {
-    const team = event.match?.teams[position];
-    // const panelColor = useMatchPanelColor(team?.result || null);  ${panelColor}
+export default function TeamPanel({
+    match,
+    position,
+    matchTime,
+    matchState,
+}: TeamPanelProps) {
+    const { data: session } = useSession();
+    const { bettingIsOpen, matchId, teamCode, BettingOnOpen, BettingOnClose } =
+        useBettingModalState();
+    const [sessionModal, setSessionModal] = useState<boolean>(false);
+    const team = match.teams[position];
+    const chooseTeam = match.teamCode;
+    const betResult = match.status;
+    const isBetting = match.betting;
+    const panelColor = useMatchPanelColor({
+        team,
+        matchState,
+        chooseTeam,
+        betResult,
+        isBetting,
+        position,
+    });
+    const refreshToken = useRefreshToken();
+    const setTeamData = useTeamState((state) => state.setTeamData);
+    const setMatchData = useMatchState((state) => state.setMatchData);
 
     if (!team) {
         return null;
     }
+
+    const handleOpenModal = async () => {
+        if (team.code === "TBD") {
+            return;
+        }
+        if (!session) {
+            setSessionModal(true);
+        } else if (matchId === match.id && teamCode === team.code) {
+            await refreshToken();
+            BettingOnOpen(match.id, team.code);
+        } else {
+            setTeamData({ ...team, position });
+            const matchData = {
+                ...match,
+                matchState,
+                startTime: new Date(matchTime).toISOString(),
+            };
+            setMatchData(matchData);
+            await refreshToken();
+            BettingOnOpen(match.id, team.code);
+        }
+    };
+
+    const teamImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `${team.image}?w=${width}&q=${quality || 75}`;
+    };
+
     return (
         <>
-            <div className='w-1/2 '>
+            <div className="max-h-28 w-1/2" onClick={handleOpenModal}>
                 <Card
-                    className={`${cn(panelVariants({ position }))}
-
-                 `}>
+                    className={`${cn(panelVariants({ position }))}, ${panelColor} ${
+                        team.code !== "TBD" && !isBetting
+                            ? "cursor-pointer duration-150 ease-in-out hover:bg-blue-500"
+                            : "cursor-pointer"
+                    }`}
+                >   
                     <CardContent
-                        className={`flex justify-between w-full ${
+                        className={`flex w-full items-center justify-between ${
                             position === 1 ? "flex-row-reverse" : ""
-                        }`}>
-                        <div className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}>
-                            <div className='min-w-[60px] min-h-[60px]'>
+                        } `}
+                    >
+                        <div
+                            className={`flex gap-5 ${position === 1 ? "flex-row-reverse" : ""}`}
+                        >
+                            <div className="flex min-h-[62px] min-w-[62px] items-center justify-center">
                                 <Image
-                                    src={event.match.teams[position].image}
+                                    loader={teamImageLoader}
+                                    src={team.image}
                                     width={60}
                                     height={60}
-                                    alt='team'
+                                    alt="team"
                                 />
                             </div>
-                            <div className='font-bold'>{event.match.teams[position].code}</div>
+                            <div className="font-bold">{team.code}</div>
                         </div>
-                        <div className='flex items-center justify-center'>
-                            <div className='bg-gray-800 flex items-center justify-center border rounded-[10px] w-12 h-12'>
-                                <div className='text-white text-4xl font-bold'>
-                                    {event.match.teams[position].result?.gameWins}
+                        <div className="flex items-center justify-center">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-[10px] border bg-gray-800">
+                                <div className="text-4xl font-bold text-white">
+                                    {team.result?.gameWins}
                                 </div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
+                {sessionModal && <SessionModal />}
+                <AnimatePresence>
+                    {bettingIsOpen &&
+                        matchId === match.id &&
+                        teamCode === team.code && <BettingModal team={team} />}
+                </AnimatePresence>
             </div>
         </>
     );

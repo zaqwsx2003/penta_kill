@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
-
-const { fontFamily } = require("tailwindcss/defaultTheme");
+import plugin from "tailwindcss/plugin";
 
 const config = {
     darkMode: ["class"],
@@ -20,9 +19,6 @@ const config = {
             },
         },
         extend: {
-            fontFamily: {
-                sans: ["var(--font-sans)", ...fontFamily.sans],
-            },
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -57,6 +53,7 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                "neutral-900": "#111827",
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -72,14 +69,34 @@ const config = {
                     from: { height: "var(--radix-accordion-content-height)" },
                     to: { height: "0" },
                 },
+                shimmer: {
+                    "0%": { backgroundPosition: "200%" },
+                    "100%": { backgroundPosition: "-200%" },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                shimmer: "shimmer 2s infinite linear",
+            },
+            backgroundImage: {
+                "gradient-custom":
+                    "linear-gradient(to right, #2c2c2c 0%, #3a3a3a 50%, #2c2c2c 100%)",
+                "diagonal-stripes":
+                    "repeating-linear-gradient(45deg, #808080 0%, #808080 3%, transparent 3%, transparent 6%)",
+            },
+            backgroundSize: { custom: "300% 100%" },
+            gridTemplateColumns: {
+                "13": "repeat(13, minmax(0, 1fr))",
             },
         },
     },
-    plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar-hide")],
+    variants: {
+        extend: {
+            opacity: ["group1-hover", "group2-hover"],
+        },
+    },
+    plugins: [require("tailwindcss-animated")],
 } satisfies Config;
-    
+
 export default config;

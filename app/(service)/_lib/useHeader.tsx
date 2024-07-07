@@ -8,8 +8,8 @@ export default function useHeader() {
 
     useEffect(() => {
         const handleScroll = () => {
-            const currentScrollTop = window.scrollY || document.documentElement.scrollTop;
-            // Hide header on scroll down, show on scroll up
+            const currentScrollTop =
+                window.scrollY || document.documentElement.scrollTop;
             if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
                 setHeaderVisible(false);
             } else if (currentScrollTop < lastScrollTop) {

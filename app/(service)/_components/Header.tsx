@@ -1,82 +1,62 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Cookies from "js-cookie";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { AnimatePresence, motion } from "framer-motion";
+
 import { gnbRootList } from "@/routes";
 import GnbItem from "@/app/(service)/_components/GnbItem";
-import { usePathname, useRouter } from "next/navigation";
-import { ModeToggle } from "@/components/ui/ModeToggle";
 import useHeader from "@/app/(service)/_lib/useHeader";
+import Spinner from "@/app/(service)/_components/Spinner";
+import UserModal from "@/app/(service)/_components/UserModal";
+import useModalRef from "@/app/(service)/_lib/useModalRef";
 
 export default function Header() {
-    const [token, setToken] = useState<string | null>(null);
-    const [session, setSession] = useState<any>(null);
     const path = usePathname();
     const { headerVisible } = useHeader();
     const route = useRouter();
+    const { data: session, status } = useSession();
+    const [userMenu, setUserMenu] = useState(false);
+    const userMenuRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const response = await fetch("/api/auth/session");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch session");
-                }
-                const data = await response.json();
-                console.log("Session Data:", data);
-                setSession(data.session);
-            } catch (error) {
-                console.error("Error fetching session:", error);
-            }
-        };
-
-        fetchSession();
-
-        const accessToken = Cookies.get("Access_Token");
-        console.log("Access Token:", accessToken); // Access Token 출력
-        setToken(accessToken || null);
-    }, []); // 빈 배열을 의존성 배열로 설정하여 한 번만 실행되도록 함
-
-    const routeRootPageHandler = () => {
+    const rootRoutePageHandler = () => {
         route.push("/");
     };
 
-    const routeLoginPageHandler = () => {
-        route.push("/auth/login");
-    };
+    useModalRef({
+        refs: { userMenuRef },
+        setState: setUserMenu,
+    });
 
-    const handleLogout = () => {
-        Cookies.remove("Access_Token");
-        setToken(null);
-        route.push("/");
+    const userModalHandler = () => {
+        setUserMenu((prev) => !prev);
     };
 
     return (
         <header
-            className={`sticky w-full transition-transform duration-300 ease-in-out ${
+            className={`sticky transition-transform duration-300 ease-in-out ${
                 headerVisible ? "translate-y-0" : "-translate-y-full"
-            } top-0 left-0 z-50`}>
-            <div className='bg-white dark:bg-orange-400 h-20 flex items-center justify-between py-0 px-14 border-b'>
-                <div className='max-w-[200px] cursor-pointer' onClick={routeRootPageHandler}>
+            } left-0 top-0 z-50`}
+        >
+            <div className="flex h-20 flex-row items-center justify-between border-b bg-orange-400 px-14 py-0">
+                <Link
+                    href="/"
+                    className="max-w-[200px] cursor-pointer"
+                    onClick={rootRoutePageHandler}
+                >
                     <Image
-                        src='/light_small_logo.png'
-                        className='dark:hidden'
-                        alt='logo'
+                        src="/dark_small_logo.png"
+                        className="block"
+                        alt="logo"
                         width={200}
                         height={40}
                         priority={true}
                     />
-                    <Image
-                        src='/dark_small_logo.png'
-                        className='hidden dark:block'
-                        alt='logo'
-                        width={200}
-                        height={40}
-                        priority={true}
-                    />
-                </div>
-                <div className='flex-1 text-center w-auto'>
+                </Link>
+                <div className="w-100 flex flex-grow justify-center gap-10">
                     {gnbRootList.map((item, i) => (
                         <GnbItem
                             route={item.route}
@@ -86,13 +66,37 @@ export default function Header() {
                         />
                     ))}
                 </div>
-                <div className='flex flex-row items-center gap-5 ml-10 cursor-pointer'>
-                    {token ? (
-                        <div onClick={handleLogout}>로그아웃</div>
+                <div className="ml-10 flex flex-row items-center gap-5 pl-28">
+                    {status !== "loading" && session ? (
+                        <>
+                            <motion.div
+                                className="relative"
+                                ref={userMenuRef}
+                                whileTap={{ scale: 0.97 }}
+                            >
+                                <Image
+                                    src="/blank-avatar.webp"
+                                    width={40}
+                                    height={40}
+                                    alt="avatar"
+                                    className="cursor-pointer rounded-full hover:border-2 hover:border-indigo-500"
+                                    onClick={userModalHandler}
+                                />
+                                <AnimatePresence>
+                                    {userMenu && <UserModal />}
+                                </AnimatePresence>
+                            </motion.div>
+                        </>
+                    ) : status === "loading" ? (
+                        <Spinner />
                     ) : (
-                        <div onClick={routeLoginPageHandler}>로그인</div>
+                        <Link
+                            href="/auth/login"
+                            className="text-white ease-in-out hover:font-bold"
+                        >
+                            로그인
+                        </Link>
                     )}
-                    <ModeToggle />
                 </div>
             </div>
         </header>

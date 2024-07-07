@@ -1,12 +1,11 @@
-import { ReactNode } from "react";
-import Header from "./_components/Header";
+import Header from "@/app/(service)/_components/Header";
+import { LayoutProps } from "@/model/layout";
 
-type Props = { children: ReactNode };
-export default function Layout({ children }: Props) {
+export default async function Layout({ children }: LayoutProps) {
     return (
-        <div className='min-h-[100vh] flex flex-col'>
+        <div className="flex min-h-[100vh] flex-col">
             <Header />
-            <div className=''>{children}</div>
+            <div className="">{children}</div>
         </div>
     );
 }

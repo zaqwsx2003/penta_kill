@@ -1,93 +1,56 @@
 "use client";
 
-import useKoreanDateFormat from "@/app/(service)/_lib/useDate";
-import React, { useState } from "react";
-import { Event } from "@/model/match";
-import TeamPanel from "./TeamPanel";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useIncreasePanel } from "../_lib/useIncreasePanel";
+import React from "react";
+
+import useKoreanDateFormat from "@/lib/useDate";
+import { DaysMatch } from "@/model/match";
+import TeamPanel from "@/app/(service)/(landing)/_components/TeamPanel";
+import MatchState from "@/app/(service)/(landing)/_components/MatchState";
+import BettingResult from "@/app/(service)/(landing)/_components/BettingResult";
+import useAxiosAuth from "@/lib/axiosHooks/useAxiosAuth";
 
 type MatchCardProps = {
-    event: Event;
+    matches: DaysMatch;
 };
 
-export default function MatchCard({ event }: MatchCardProps) {
+export default function MatchCard({ matches }: MatchCardProps) {
     const KoreanDateFormat = (dates: string) => useKoreanDateFormat(dates);
-    const [isHovered, setIsHovered] = useState(false);
-    const [isPanelHover, setIsPanelHover] = useState(false);
-    const [isChevronVisible, setIsChevronVisible] = useState(false);
-    const panel = useIncreasePanel();
-
-    const handleMouseEnter = () => {
-        if (!outcomeNull) {
-            setIsHovered(true);
-            setIsPanelHover(true);
-            setIsChevronVisible(true);
-        }
-    };
-
-    const handleMouseLeave = () => {
-        if (!outcomeNull) {
-            setIsHovered(false);
-            setIsPanelHover(false);
-            setIsChevronVisible(false);
-        }
-    };
-
-    const handleChevronClick = (id: string) => () => {
-        if (!outcomeNull) {
-            if (panel.openPanels[id]) {
-                panel.onClose(id);
-            } else {
-                panel.onOpen(id);
-            }
-        }
-    };
-
-    const outcomeNull = event.match.teams.some(
-        (team) => team.result === null || team.result.outcome === null
-    );
-
-    const isOpen = (!outcomeNull && panel.openPanels[event.match.id]) || false;
+    const axiosAuth = useAxiosAuth();
 
     return (
-        <div className='flex justify-between flex-col gap-2' key={event.match.id}>
-            <div className='flex gap-2 font-bold pl-2'>
-                <span>{KoreanDateFormat(event.startTime)}</span>
-                <span>{event.league.name}</span>
-                <span>{event.blockName}</span>
-            </div>
-            <div
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onClick={handleChevronClick(event.match.id)}>
-                <div className='flex'>
-                    <TeamPanel event={event} position={0} />
-                    <TeamPanel event={event} position={1} />
+        <div
+            className="flex flex-col justify-between gap-2"
+            key={matches.match.id}
+        >
+            <div className="flex items-center gap-2 pl-2 text-center font-bold">
+                <div className="flex items-center justify-center rounded-[5px] bg-blue-600 px-1 text-white">
+                    <span className="text-base leading-5">
+                        {matches.league?.name}
+                    </span>
                 </div>
-                {/* <div
-                    className={`rounded-[10px] rounded-t-none w-full duration-300 overflow-hidden transition-max-height ease-out ${
-                        !outcomeNull && isHovered
-                            ? "pb-8 bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
-                            : "pb-0"
-                    } ${
-                        isOpen
-                            ? "min-h-[600px] bg-gradient-to-b from-white to-gray-200 dark:from-[#020817] dark:to-gray-800"
-                            : "max-h-0"
-                    }`}>
-                    <div className={`bottom-0 flex justify-center w-full pt-1`}>
-                        {isOpen ? (
-                            <ChevronUp />
-                        ) : (
-                            <ChevronDown className={`${isPanelHover ? "animate-bounce" : ""}`} />
-                        )}
-                    </div>
-                    {isOpen && (
-                        <div className='h-full '>
-                            ㄴㅇㄹㄴㅇㄴㅇㅁㄹㄴㅇㄹㅁㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
-                        </div>
-                    )}
-                </div> */}
+                <span className="text-white">
+                    {KoreanDateFormat(matches.startTime)}
+                </span>
+                {!/주 차/.test(matches.blockName) && (
+                    <span className="text-white">{matches.blockName}</span>
+                )}
+                <MatchState matchState={matches.state} />
+                <BettingResult
+                    matchState={matches.state}
+                    bettingState={matches.match.betting}
+                    bettingResult={matches.match.status}
+                />
+            </div>
+            <div className={`flex rounded-[10px]`}>
+                {matches.match.teams?.map((team, index) => (
+                    <TeamPanel
+                        key={index}
+                        match={matches.match}
+                        position={index as 0 | 1}
+                        matchTime={matches.startTime}
+                        matchState={matches.state}
+                    />
+                ))}
             </div>
         </div>
     );

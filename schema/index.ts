@@ -20,3 +20,9 @@ export const RegisterSchema = z.object({
         message: "이름을 입력하세요",
     }),
 });
+
+export const BettingSchema = z.object({
+    point: z.number().min(100, {
+        message: "100 포인트 이상을 입력하세요",
+    }),
+});

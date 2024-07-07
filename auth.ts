@@ -1,78 +1,123 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
-interface User {
-    id: string;
+import authConfig from "@/auth.config";
+import { access } from "fs";
+
+interface UserInfo {
     email: string;
-    name: string;
-    token: string;
+    username: string;
+    point: number;
+    exp: number;
+    iat: number;
 }
 
-export const authOptions: NextAuthConfig = {
+const nextAuthOptions: NextAuthConfig = {
+    debug: true,
     pages: {
         signIn: "/auth/login",
         newUser: "/auth/register",
     },
-    providers: [
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                username: { label: "Username", type: "text" },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials) {
+    session: { strategy: "jwt" },
+    ...authConfig,
+    callbacks: {
+        async signIn({ user, account }: any) {
+            if (account.provider === "google") {
                 try {
-                    const response = await axios.post(
-                        `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+                    const response = await fetch(
+                        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/users/google`,
                         {
-                            username: credentials.username,
-                            password: credentials.password,
-                        }
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                userId: user.id,
+                                googleAccessToken: account.access_token,
+                            }),
+                        },
                     );
 
-                    const user: User = response.data;
+                    if (response) {
+                        user.accessToken = response.headers.get(
+                            "Authorization",
+                        ) as string;
+                        user.refreshToken = response.headers.get(
+                            "RefreshToken",
+                        ) as string;
 
-                    if (user) {
-                        return user;
-                    } else {
-                        return null;
+                        return { ...user };
                     }
                 } catch (error) {
-                    console.error("Error during authorization:", error);
-                    return null;
+                    throw new Error("Unexpected response format");
                 }
-            },
-        }),
-        GoogleProvider({
-            clientId: process.env.GOOGLE_ID,
-            clientSecret: process.env.GOOGLE_SECRET,
-            authorization: {
-                params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code",
-                },
-            },
-        }),
-    ],
-    callbacks: {
-        async jwt({ token, user, account, profile, isNewUser }: any) {
-            if (user) {
-                token.accessToken = (user as User).token;
             }
-            return token;
+
+            return { ...user };
         },
-        async session({ session, token }: any) {
-            session.user = {
-                ...session.user,
-                accessToken: token.accessToken,
-            };
-            return session;
+        async jwt({ token, user, account, trigger, session }: any) {
+            if (user) {
+                token.accessToken = user.accessToken;
+                token.refreshToken = user.refreshToken;
+            }
+
+            if (trigger === "update") {
+                return {
+                    ...token,
+                    ...account,
+                    ...session,
+                    ...session.user,
+                    ...session.token,
+                };
+            }
+
+            return { ...token, ...user, ...account };
+        },
+        // token에서는 Bearer를 제거하고 accessToken을 저장
+        async session({ session, user, token }: any) {
+            if (token.provider === "google") {
+                const accessToken = token.accessToken.startsWith("Bearer ")
+                    ? token.accessToken.split(" ")[1]
+                    : token.accessToken;
+
+                const decodedUser = jwtDecode<UserInfo>(accessToken);
+                session.token = {
+                    accessToken: token.accessToken,
+                    refreshToken: token.refreshToken,
+                };
+                session.user = {
+                    email: token.email,
+                    name: token.name,
+                    point: decodedUser.point,
+                    expires: decodedUser.exp,
+                };
+            } else if (token.provider === "credentials") {
+                const accessToken = token.accessToken.startsWith("Bearer ")
+                    ? token.accessToken.split(" ")[1]
+                    : token.accessToken;
+                const decodedUser = jwtDecode<UserInfo>(accessToken);
+                session.token = {
+                    accessToken: token.accessToken,
+                    refreshToken: token.refreshToken,
+                };
+                session.user = {
+                    email: decodedUser.email,
+                    name: decodedUser.username,
+                    point: decodedUser.point,
+                    expires: decodedUser.exp,
+                };
+            }
+            return { ...session };
         },
     },
-    secret: process.env.AUTH_SECRET,
 };
 
-export default NextAuth(authOptions);
+const {
+    handlers: { GET, POST },
+    signIn,
+    signOut,
+    auth,
+} = NextAuth(nextAuthOptions);
+
+export { GET, POST, signIn, signOut, auth };
+export default nextAuthOptions;

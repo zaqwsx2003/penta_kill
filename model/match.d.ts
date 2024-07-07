@@ -1,55 +1,61 @@
-export interface League {
+export interface WeekMatches {
+    data: DaysMatch[];
+}
+
+export interface DaysMatch {
+    blockName: string;
+    league: MatchLeague;
+    match: MatchDetails;
+    startTime: string;
+    state: string;
+    type: string;
+}
+
+export interface MatchLeague {
     name: string;
     slug: string;
 }
 
-export interface Result {
-    outcome: string | null;
-    gameWins: number;
+export interface MatchDetails {
+    id: string;
+    strategy?: MatchStrategy;
+    teams: MatchTeams[];
+    startTime?: Date | string;
+    state: string;
+    type?: string;
+    teamCode: string | null;
+    status: null | "unstarted" | "inProgress" | "win" | "loss";
+    betting: boolean;
+    amount: number;
 }
 
-export interface record {
+export interface MatchStrategy {
+    count: number;
+    type: string;
+}
+
+export interface MatchTeams {
+    code: string;
+    image: string;
+    name: string;
+    probability: number;
+    ratio: number;
+    record: MatchRecord;
+    result: MatchResult;
+}
+
+export interface MatchRecord {
     wins: number;
     losses: number;
 }
 
-export interface Team {
-    name: string;
-    code: string;
-    image: string;
-    result: Result | null;
-    record: record | null;
+export interface MatchResult {
+    gameWins: number;
+    outcome: string | null;
 }
 
-export interface Match {
-    id: string;
-    flags: string[];
-    teams: Team[];
-    strategy: {
-        type: string;
-        count: number;
-    };
-}
-
-export interface Event {
-    startTime: string;
-    state: string;
-    type: string;
-    blockName: string;
-    league: League;
-    match: Match;
-}
-
-export interface VersersData {
-    schedule: {
-        pages: {
-            older: string | null;
-            newer: string | null;
-        };
-        events: Event[];
-    };
-}
-
-export interface Versers {
-    data: VersersData;
+export interface ImageLoaderProps {
+    src: string;
+    width: number;
+    quality?: number;
 }

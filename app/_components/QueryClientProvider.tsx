@@ -9,5 +9,9 @@ import {
 const queryClient = new QueryClient();
 
 export default function QueryClientProvider({ children }: PropsWithChildren) {
-    return <ReactQueryClientProvider client={queryClient}>{children}</ReactQueryClientProvider>;
+    return (
+        <ReactQueryClientProvider client={queryClient}>
+            {children}
+        </ReactQueryClientProvider>
+    );
 }

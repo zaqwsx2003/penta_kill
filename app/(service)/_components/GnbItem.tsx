@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+
+import { cn } from "@/lib/utils";
+import { menuActivate } from "@/app/(service)/_components/style";
 
 export default function GnbItem({
     route,
@@ -9,17 +15,25 @@ export default function GnbItem({
     path: string;
     currentPath: boolean;
 }) {
+    const [mouseHover, setMouseHover] = useState(false);
+    const onMouseHandler = () => {
+        setMouseHover((prev) => !prev);
+    };
+
     return (
         <>
-            <Link
-                href={path}
-                className={`cursor-pointer inline-block mx-10 py-6 px-4 ${
-                    currentPath
-                        ? "font-bold border-blue-800 dark.border-white border-b-4 py-4 text-blue-800 dark:text-white "
-                        : ""
-                }hover:border-blue-400 hover:border-b-4 hover:transition-all ease-in-out duration-500`}>
-                <div className='text-lg'>{route}</div>
-            </Link>
+            <div
+                className="relative h-fit w-fit"
+                onMouseEnter={onMouseHandler}
+                onMouseLeave={onMouseHandler}
+            >
+                <Link href={path} className="relative text-white">
+                    <div className="text-lg">{route}</div>
+                    <span
+                        className={`${cn(menuActivate({ currentPath, mouseHover }))} `}
+                    />
+                </Link>
+            </div>
         </>
     );
 }

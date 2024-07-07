@@ -1,50 +1,104 @@
-import instance from "@/app/api/instance";
-import Cookies from "js-cookie";
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/settingToken";
+"use client";
 
-// 회원가입
-export type RegisterParams = {
-    username: string;
-    email: string;
-    password: string;
-};
+import axios from "axios";
 
-export const userRegister = async ({
-    username,
-    email,
-    password,
-}: RegisterParams): Promise<RegisterParams> => {
+const API_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT_URL;
+
+const PENTAAPI = axios.create({
+    baseURL: API_ENDPOINT,
+});
+
+// 경기일정
+export const fetchMatchSchedule = async ({
+    page,
+    size,
+    year,
+    month,
+}: {
+    page: number;
+    size: number;
+    year: number;
+    month: number;
+}) => {
     try {
-        const response = await instance.post("/users/signup", { username, email, password });
+        const response = await PENTAAPI.get(`/schedules/leagues`, {
+            params: { page, size, year, month },
+        });
         return response.data;
     } catch (error) {
         throw error;
     }
 };
 
-// 로그인
-type LoginParams = Pick<RegisterParams, "email" | "password">;
-
-export const userLogin = async ({ email, password }: LoginParams) => {
+// 펜타톡
+export const fetchPosts = async ({
+    page,
+    size,
+}: {
+    page: number;
+    size: number;
+}) => {
     try {
-        const response = await instance.post("/users/login", { email, password });
-
-        // Extract the token from the Authorization header
-        const authHeader = response.headers["authorization"];
-        const accessToken = authHeader && authHeader.split(" ")[1];
-
-        if (accessToken) {
-            Cookies.set("Access_Token", accessToken, { sameSite: "strict" });
-        }
-
+        const response = await PENTAAPI.get(`/posts`, {
+            params: { page, size },
+        });
         return response.data;
     } catch (error) {
         throw error;
     }
 };
-// TOKEN 가져오기
-export async function GET(request: NextRequest) {
-    const session = await getSession();
-    return NextResponse.json({ session });
-}
+
+// 게시글 상세
+export const fetchPost = async (id: number) => {
+    try {
+        const response = await PENTAAPI.get(`/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 댓글목록
+export const fetchComments = async ({
+    postId,
+    page,
+    size,
+}: {
+    postId: number;
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await PENTAAPI.get(`/posts/${postId}/comments`, {
+            params: { page, size },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 대댓글목록
+export const fetchReplies = async ({
+    postId,
+    commentId,
+    page,
+    size,
+}: {
+    postId: number;
+    commentId: number;
+    page: number;
+    size: number;
+}) => {
+    try {
+        const response = await PENTAAPI.get(
+            `/posts/${postId}/comments/${commentId}/replies`,
+            {
+                params: { page, size },
+            },
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
